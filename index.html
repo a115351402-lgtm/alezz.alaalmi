@@ -2146,10 +2146,17 @@
     frames2.push(img2);
   }
 
-  // ── Draw — object-fit:cover equivalent ───────────────────
-  // Fixes "stretched/tall images" on portrait mobile screens.
-  // Crops the image to fill the canvas maintaining aspect ratio,
-  // centred — exactly like CSS object-fit:cover.
+  // ── Draw — smart strategy per orientation ─────────────────
+  //
+  //  LANDSCAPE (desktop / tablet):
+  //    object-fit:cover — fills screen, crops sides slightly ✅
+  //    e.g. 1280×800: shows 1082px of 1920px = 56% ✅
+  //
+  //  PORTRAIT (mobile phone):
+  //    fit-to-width — image fills full width, shown in upper area
+  //    Shows 100% of the 1920×1080 image scaled to phone width
+  //    Dark gradient fills the remaining lower canvas area
+  //    e.g. 375×812: image = 375×211px at top, dark fill below ✅
   //
   // vIdx 0-149   → frames1[0-149]   (S1)
   // vIdx 150-269 → frames2[0-119]   (S2)
@@ -2160,19 +2167,45 @@
     var img = i < S1_COUNT ? frames1[i] : frames2[i - S1_COUNT];
     if (!img || !img.complete || !img.naturalWidth) return;
 
-    var iW = img.naturalWidth;   // 1920
-    var iH = img.naturalHeight;  // 1080
-    var cW = canvas.width;       // e.g. 375 on mobile
-    var cH = canvas.height;      // e.g. 812 on mobile
+    var iW = img.naturalWidth;
+    var iH = img.naturalHeight;
+    var cW = canvas.width;
+    var cH = canvas.height;
 
-    // Scale factor so image COVERS the canvas (never letterboxes)
-    var scale = Math.max(cW / iW, cH / iH);
-    var sW = cW / scale;         // source crop width  in image pixels
-    var sH = cH / scale;         // source crop height in image pixels
-    var sX = (iW - sW) / 2;     // centre crop horizontally
-    var sY = (iH - sH) / 2;     // centre crop vertically
+    if (cH > cW) {
+      /* ── PORTRAIT MOBILE: fit to full width ─────────────────
+         Scale image so width = canvas width.
+         Image height = cW × (iH/iW) e.g. 375 × (1080/1920) = 211px
+         Position: top 1/3 of canvas so car is in natural view zone.
+         Fill rest with dark background + gradient overlay.        */
+      var dW  = cW;
+      var dH  = Math.round(cW * iH / iW);          // 211px
+      var dX  = 0;
+      var dY  = Math.round((cH - dH) * 0.25);      // ~150px from top
 
-    ctx.drawImage(img, sX, sY, sW, sH, 0, 0, cW, cH);
+      // Dark background
+      ctx.fillStyle = '#07080F';
+      ctx.fillRect(0, 0, cW, cH);
+
+      // Full image — no crop
+      ctx.drawImage(img, 0, 0, iW, iH, dX, dY, dW, dH);
+
+      // Seamless dark gradient below the image
+      var grad = ctx.createLinearGradient(0, dY + dH * 0.7, 0, cH);
+      grad.addColorStop(0, 'rgba(7,8,15,0)');
+      grad.addColorStop(1, 'rgba(7,8,15,1)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, dY + dH * 0.7, cW, cH - (dY + dH * 0.7));
+
+    } else {
+      /* ── LANDSCAPE DESKTOP: object-fit:cover ──────────────── */
+      var scale = Math.max(cW / iW, cH / iH);
+      var sW = cW / scale;
+      var sH = cH / scale;
+      var sX = (iW - sW) / 2;
+      var sY = (iH - sH) / 2;
+      ctx.drawImage(img, sX, sY, sW, sH, 0, 0, cW, cH);
+    }
   }
 
   // ── Target index (PIECEWISE — clean boundary at 6000px) ──
