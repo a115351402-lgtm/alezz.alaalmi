@@ -22,3 +22,8 @@ desktop.ini
 # Logs
 *.log
 npm-debug.log*
+
+# Node modules & build artifacts
+node_modules/
+.vercel/
+dist/
