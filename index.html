@@ -2,7 +2,10 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#09090F" />
   <title>العز العالمي — استيراد سيارات فاخرة من كوريا</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -168,6 +171,7 @@
 
     /* Sticky viewport — stays pinned for 12000px of scroll */
     #canvas-sticky {
+      position: -webkit-sticky; /* Safari */
       position: sticky;
       top: 0;
       width: 100%;
@@ -462,6 +466,25 @@
       background: linear-gradient(to top, rgba(13,53,88,0.75) 0%, transparent 55%);
     }
 
+    /* ── Safari/iOS safe-area ── */
+    nav {
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-left: max(1rem, env(safe-area-inset-left, 1rem));
+      padding-right: max(1rem, env(safe-area-inset-right, 1rem));
+    }
+    footer {
+      padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 1.5rem));
+    }
+    /* Smooth momentum scrolling — iOS Safari */
+    body { -webkit-overflow-scrolling: touch; }
+
+    /* Touch target improvement — all interactive elements */
+    button, a, input[type=range], .faq-trigger, .btn-gold, .btn-sky-outline {
+      touch-action: manipulation;
+    }
+    /* Allow vertical scroll on canvas wrapper */
+    #canvas-wrap, #canvas-sticky { touch-action: pan-y; }
+
     /* ── Responsive nav ── */
     #mobile-menu { display: none; }
     #mobile-menu.open { display: block; }
@@ -529,7 +552,24 @@
 
       /* ── General: no horizontal overflow ── */
       body { overflow-x: hidden; }
-      section { overflow-x: hidden; }
+      section, div { max-width: 100vw; }
+
+      /* ── Auction calculator result grid ── */
+      #calc-result > div[style*='grid'] {
+        grid-template-columns: 1fr !important;
+      }
+
+      /* ── Fix nav logo text wrapping ── */
+      nav .font-cairo { white-space: nowrap; }
+
+      /* ── Ensure hero canvas covers full mobile screen ── */
+      #hero-canvas { object-fit: cover; }
+
+      /* ── Ticker: smaller text on mobile ── */
+      .ticker-track span { font-size: 0.75rem !important; }
+
+      /* ── Fix z-index stacking on iOS ── */
+      #canvas-sticky { -webkit-transform: translateZ(0); transform: translateZ(0); }
     }
 
     /* ── Extra small (< 375px) ── */
@@ -1084,8 +1124,14 @@
   var sect = document.getElementById('features');
   if (!sc || !sect) return;
 
-  var gl = sc.getContext('webgl', {alpha:false})
-         || sc.getContext('experimental-webgl', {alpha:false});
+  var glOpts = {
+    alpha: false,
+    antialias: false,               // faster on mobile
+    powerPreference: 'low-power',   // saves battery on iOS
+    failIfMajorPerformanceCaveat: false  // don't fail on slow GPUs
+  };
+  var gl = sc.getContext('webgl', glOpts)
+         || sc.getContext('experimental-webgl', glOpts);
   if (!gl) return;
 
   /* ---------- shaders ---------- */
@@ -1162,8 +1208,8 @@
 
   /* ---------- resize ---------- */
   function resize() {
-    sc.width  = sect.offsetWidth  || 1280;
-    sc.height = sect.offsetHeight || 500;
+    sc.width  = sect.clientWidth  || sect.offsetWidth  || 1280;
+    sc.height = sect.clientHeight || sect.offsetHeight || 500;
     gl.viewport(0, 0, sc.width, sc.height);
   }
   resize();
@@ -2035,11 +2081,13 @@
   navbar.style.backdropFilter    = 'blur(20px) saturate(180%)';
   navbar.style.borderBottomColor = 'rgba(255,255,255,0.07)';
 
-  // ── Canvas sizing ────────────────────────────────────────
+  // ── Canvas sizing — Safari/iOS visual viewport aware ─────
   var lastDrawn = -1;
   function sizeCanvas() {
-    var w = document.documentElement.clientWidth  || 1280;
-    var h = document.documentElement.clientHeight || 800;
+    // Use visualViewport when available (avoids iOS address-bar issues)
+    var vvp = window.visualViewport;
+    var w = vvp ? Math.round(vvp.width)  : (document.documentElement.clientWidth  || window.innerWidth  || 1280);
+    var h = vvp ? Math.round(vvp.height) : (document.documentElement.clientHeight || window.innerHeight || 800);
     if (canvas.width !== w || canvas.height !== h) {
       canvas.width  = w;
       canvas.height = h;
@@ -2047,7 +2095,11 @@
     }
   }
   sizeCanvas();
-  window.addEventListener('resize', sizeCanvas);
+  window.addEventListener('resize', sizeCanvas, { passive: true });
+  // Also resize on iOS address-bar show/hide
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', sizeCanvas, { passive: true });
+  }
 
   // ── Image loading ─────────────────────────────────────────
   var frames1      = [];
@@ -2097,7 +2149,11 @@
     frames2.push(img2);
   }
 
-  // ── Draw ─────────────────────────────────────────────────
+  // ── Draw — object-fit:cover equivalent ───────────────────
+  // Fixes "stretched/tall images" on portrait mobile screens.
+  // Crops the image to fill the canvas maintaining aspect ratio,
+  // centred — exactly like CSS object-fit:cover.
+  //
   // vIdx 0-149   → frames1[0-149]   (S1)
   // vIdx 150-269 → frames2[0-119]   (S2)
   function doDraw(vIdx) {
@@ -2106,7 +2162,20 @@
     lastDrawn = i;
     var img = i < S1_COUNT ? frames1[i] : frames2[i - S1_COUNT];
     if (!img || !img.complete || !img.naturalWidth) return;
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    var iW = img.naturalWidth;   // 1920
+    var iH = img.naturalHeight;  // 1080
+    var cW = canvas.width;       // e.g. 375 on mobile
+    var cH = canvas.height;      // e.g. 812 on mobile
+
+    // Scale factor so image COVERS the canvas (never letterboxes)
+    var scale = Math.max(cW / iW, cH / iH);
+    var sW = cW / scale;         // source crop width  in image pixels
+    var sH = cH / scale;         // source crop height in image pixels
+    var sX = (iW - sW) / 2;     // centre crop horizontally
+    var sY = (iH - sH) / 2;     // centre crop vertically
+
+    ctx.drawImage(img, sX, sY, sW, sH, 0, 0, cW, cH);
   }
 
   // ── Target index (PIECEWISE — clean boundary at 6000px) ──
