@@ -160,7 +160,10 @@
     /* Outer wrapper — creates the total scroll distance */
     #canvas-wrap {
       position: relative;
-      height: calc(100vh + 12000px);
+      height: calc(100vh + 12000px);   /* desktop */
+    }
+    @media (max-width: 768px) {
+      #canvas-wrap { height: calc(100vh + 6000px); }   /* mobile: shorter */
     }
 
     /* Sticky viewport — stays pinned for 12000px of scroll */
@@ -462,6 +465,78 @@
     /* ── Responsive nav ── */
     #mobile-menu { display: none; }
     #mobile-menu.open { display: block; }
+
+    /* ══════════════════════════════════════════════
+       MOBILE-FIRST FIXES (max-width: 768px)
+    ══════════════════════════════════════════════ */
+    @media (max-width: 768px) {
+
+      /* ── Sliders: 44px touch targets ── */
+      .range-wrap { padding: 10px 0; }
+      input.custom-range {
+        height: 44px;
+        cursor: pointer;
+        /* centre the track vertically inside the 44px hit area */
+        padding: 19px 0;
+      }
+      input.custom-range::-webkit-slider-thumb {
+        width: 26px;
+        height: 26px;
+      }
+      input.custom-range::-moz-range-thumb {
+        width: 26px;
+        height: 26px;
+      }
+
+      /* ── S3 ContainerScroll: shorter on mobile ── */
+      #s3-container {
+        height: 55rem !important;
+      }
+      #s3-card {
+        height: 18rem !important;
+        margin-top: -1.5rem !important;
+      }
+
+      /* ── Hero canvas content: smaller padding ── */
+      .seq-content { padding-top: 72px; }
+      #s1-content .max-w-7xl,
+      #s2-content .max-w-7xl { padding-left: 1rem; padding-right: 1rem; }
+
+      /* ── Auction calculator: stack vertically ── */
+      #auctions [style*="grid-template-columns:1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+      }
+
+      /* ── Feature cards: single column on very small ── */
+      .feature-card { min-height: unset; }
+
+      /* ── Section gradient fades: smaller ── */
+      .section-fade::before,
+      .section-fade::after { height: 50px; }
+
+      /* ── Canvas section: hide floating stats (no room) ── */
+      #s1-content .hidden.md\\:flex { display: none !important; }
+
+      /* ── Testimonial cards text ── */
+      .testimonial-card p { font-size: 0.82rem; }
+
+      /* ── FAQ: smaller padding ── */
+      .faq-trigger { padding: 1rem 1.25rem; }
+      .faq-answer  { padding-left: 1.25rem; padding-right: 1.25rem; }
+
+      /* ── Footer: single column ── */
+      footer .grid { gap: 2rem; }
+
+      /* ── General: no horizontal overflow ── */
+      body { overflow-x: hidden; }
+      section { overflow-x: hidden; }
+    }
+
+    /* ── Extra small (< 375px) ── */
+    @media (max-width: 374px) {
+      #s3-container { height: 45rem !important; }
+      #s3-card      { height: 14rem !important; }
+    }
   </style>
 </head>
 
@@ -1939,10 +2014,12 @@
   var S1_COUNT  = 150;
   var S2_COUNT  = 120;
   var TOTAL     = S1_COUNT + S2_COUNT;
-  var S1_SCROLL = 6000;
-  var S2_SCROLL = 6000;
+  /* Shorter scroll distance on mobile — matches CSS canvas-wrap height */
+  var IS_MOBILE  = window.innerWidth <= 768;
+  var S1_SCROLL  = IS_MOBILE ? 3000 : 6000;
+  var S2_SCROLL  = IS_MOBILE ? 3000 : 6000;
   var LERP      = 0.10;
-  var FADE      = 500;
+  var FADE      = IS_MOBILE ? 250 : 500;
 
   // ── DOM refs ─────────────────────────────────────────────
   var canvas = document.getElementById('hero-canvas');
