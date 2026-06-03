@@ -796,10 +796,10 @@
     <canvas id="hero-canvas" class="hidden md:block absolute inset-0 w-full h-full" aria-hidden="true"></canvas>
 
     <!-- Mobile Videos -->
-    <video id="mobile-vid1" autoplay muted playsinline webkit-playsinline preload="auto" class="block md:hidden absolute inset-0 w-full h-full object-cover" style="opacity: 1; filter: brightness(0.4); z-index: 0;">
+    <video id="mobile-vid1" autoplay loop muted playsinline webkit-playsinline preload="metadata" class="block md:hidden absolute inset-0 w-full h-full object-cover" style="opacity:1;z-index:0;will-change:transform,opacity;">
       <source src="vid1.mp4" type="video/mp4">
     </video>
-    <video id="mobile-vid2" autoplay muted playsinline webkit-playsinline preload="auto" class="block md:hidden absolute inset-0 w-full h-full object-cover" style="opacity: 0; filter: brightness(0.4); z-index: 0;">
+    <video id="mobile-vid2" autoplay loop muted playsinline webkit-playsinline preload="metadata" class="block md:hidden absolute inset-0 w-full h-full object-cover" style="opacity:0;z-index:0;will-change:transform,opacity;">
       <source src="vid2.mp4" type="video/mp4">
     </video>
 
@@ -2250,43 +2250,24 @@
   }
 
   // ── Image loading ─────────────────────────────────────────
-  var frames1          = [];
-  var frames2          = [];
-  var isReady          = false;
-  var v1Dur            = 0;
-  var v2Dur            = 0;
-  var v2PlayTriggered  = false;
+  var frames1 = [];
+  var frames2 = [];
+  var isReady = false;
 
   if (IS_MOBILE) {
     isReady = true;
 
-    // Get durations + enable scrubbing as soon as metadata is available
-    var grabDur = function(vid, setter) {
-      if (!vid) return;
-      var fn = function() { setter(isFinite(vid.duration) ? vid.duration : 0); };
-      if (vid.readyState >= 1) fn();
-      else vid.addEventListener('loadedmetadata', fn, { once: true });
-    };
-    // Store durations — scrubbing starts as soon as duration is known
-    grabDur(v1, function(d) { v1Dur = d; });
-    grabDur(v2, function(d) { v2Dur = d; });
-
-    // Pause autoplay immediately so scroll controls the video instead
-    if (v1) v1.addEventListener('playing', function onV1() { v1.removeEventListener('playing', onV1); v1.pause(); });
-    if (v2) v2.addEventListener('playing', function onV2() { v2.removeEventListener('playing', onV2); v2.pause(); });
-
-    // Old iOS: play() once on first touch to unlock currentTime seeking
-    document.addEventListener('touchstart', function() {
+    // Ensure both videos play — iOS sometimes needs explicit play() call
+    var ensurePlaying = function() {
       if (v1 && v1.paused) v1.play().catch(function(){});
       if (v2 && v2.paused) v2.play().catch(function(){});
-    }, { passive: true, once: true });
+    };
+    ensurePlaying();
 
-    // iOS auto-resumes videos on tab focus — keep them paused
+    // Retry on first touch (iOS backup) and on tab return
+    document.addEventListener('touchstart', ensurePlaying, { passive: true, once: true });
     document.addEventListener('visibilitychange', function() {
-      if (!document.hidden) {
-        if (v1 && !v1.paused) v1.pause();
-        if (v2 && !v2.paused) v2.pause();
-      }
+      if (!document.hidden) ensurePlaying();
     });
   } else {
     var loadedCount  = 0;
@@ -2418,15 +2399,14 @@
     s2El.style.opacity = op2;
 
     if (IS_MOBILE) {
+      // Opacity crossfade between vid1 and vid2
       if (v1) v1.style.opacity = op1;
-      if (v2) {
-        v2.style.opacity = op2;
-        // Ensure v2 is seekable the moment it first becomes visible (old iOS needs play() once)
-        if (op2 > 0 && !v2PlayTriggered) {
-          v2PlayTriggered = true;
-          v2.play().then(function() { v2.pause(); }).catch(function(){});
-        }
-      }
+      if (v2) v2.style.opacity = op2;
+      // Cinematic parallax: subtle zoom-in as user scrolls (1.0 → 1.08)
+      var zp = Math.min(1, sc / S1_SCROLL);
+      var zs = (1 + zp * 0.08).toFixed(4);
+      if (v1) v1.style.transform = 'scale(' + zs + ')';
+      if (v2) v2.style.transform = 'scale(' + (1 + Math.min(1,(sc-S1_SCROLL)/S2_SCROLL) * 0.08).toFixed(4) + ')';
     }
   }
 
@@ -2444,18 +2424,6 @@
 
     if (!IS_MOBILE) {
       doDraw(lerpIdx);
-    } else if (v1Dur > 0) {
-      // Cinematic video scrub — maps scroll progress → video currentTime
-      var MN = 0.033; // skip seeks < ~1 frame at 30fps
-      if (v1 && v1Dur > 0) {
-        var st1 = Math.max(0, Math.min(v1Dur, (tgt / (S1_COUNT - 1)) * v1Dur));
-        if (Math.abs(v1.currentTime - st1) > MN) v1.currentTime = st1;
-      }
-      if (v2 && v2Dur > 0) {
-        var rawP = (tgt - S1_COUNT) / (S2_COUNT - 1);
-        var st2 = Math.max(0, Math.min(v2Dur, rawP * v2Dur));
-        if (Math.abs(v2.currentTime - st2) > MN) v2.currentTime = st2;
-      }
     }
 
     if (bar) {
