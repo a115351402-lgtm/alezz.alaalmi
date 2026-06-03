@@ -796,8 +796,12 @@
     <canvas id="hero-canvas" class="hidden md:block absolute inset-0 w-full h-full" aria-hidden="true"></canvas>
 
     <!-- Mobile Videos -->
-    <video id="mobile-vid1" src="vid1.mp4" autoplay loop muted playsinline class="block md:hidden absolute inset-0 w-full h-full object-cover" style="opacity: 1; filter: brightness(0.4); z-index: 0;"></video>
-    <video id="mobile-vid2" src="vid2.mp4" autoplay loop muted playsinline class="block md:hidden absolute inset-0 w-full h-full object-cover" style="opacity: 0; filter: brightness(0.4); z-index: 0;"></video>
+    <video id="mobile-vid1" autoplay loop muted playsinline webkit-playsinline preload="auto" class="block md:hidden absolute inset-0 w-full h-full object-cover" style="opacity: 1; filter: brightness(0.4); z-index: 0;">
+      <source src="vid1.mp4" type="video/mp4">
+    </video>
+    <video id="mobile-vid2" autoplay loop muted playsinline webkit-playsinline preload="auto" class="block md:hidden absolute inset-0 w-full h-full object-cover" style="opacity: 0; filter: brightness(0.4); z-index: 0;">
+      <source src="vid2.mp4" type="video/mp4">
+    </video>
 
     <!-- ② Always-on cinematic overlay -->
     <div class="seq-overlay"></div>
@@ -2249,20 +2253,18 @@
   var frames1      = [];
   var frames2      = [];
   var isReady      = false;
+  var v2Started    = false;
 
   if (IS_MOBILE) {
     isReady = true;
-    
-    // Autoplay helper to make sure videos start playing on mobile browsers
+
     var startVideos = function() {
-      if (v1) v1.play().catch(function(e){ console.log("v1 play failed:", e); });
-      if (v2) v2.play().catch(function(e){ console.log("v2 play failed:", e); });
+      if (v1 && v1.paused) v1.play().catch(function(e){ console.log('v1 play failed:', e); });
+      if (v2 && v2.paused) v2.play().catch(function(e){ console.log('v2 play failed:', e); });
     };
-    
-    // Attempt autoplay immediately
+
     startVideos();
-    
-    // If blocked, unlock on first scroll or touch
+
     var unlock = function() {
       startVideos();
       window.removeEventListener('touchstart', unlock);
@@ -2270,6 +2272,11 @@
     };
     window.addEventListener('touchstart', unlock, { passive: true });
     window.addEventListener('scroll', unlock, { passive: true });
+
+    // iOS pauses videos when the app goes to background — resume on return
+    document.addEventListener('visibilitychange', function() {
+      if (!document.hidden) startVideos();
+    });
   } else {
     var loadedCount  = 0;
     var totalLoad    = S1_COUNT + S2_COUNT;
@@ -2401,7 +2408,13 @@
 
     if (IS_MOBILE) {
       if (v1) v1.style.opacity = op1;
-      if (v2) v2.style.opacity = op2;
+      if (v2) {
+        v2.style.opacity = op2;
+        if (op2 > 0 && !v2Started) {
+          v2Started = true;
+          v2.play().catch(function(e){ console.log('v2 delayed play failed:', e); });
+        }
+      }
     }
   }
 
