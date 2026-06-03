@@ -796,8 +796,8 @@
     <canvas id="hero-canvas" class="hidden md:block absolute inset-0 w-full h-full" aria-hidden="true"></canvas>
 
     <!-- Mobile Videos -->
-    <video id="mobile-vid1" src="vid1.MOV" preload="auto" muted playsinline class="block md:hidden absolute inset-0 w-full h-full object-cover" style="opacity: 1; filter: brightness(0.4); z-index: 0;"></video>
-    <video id="mobile-vid2" src="vid2.MOV" preload="auto" muted playsinline class="block md:hidden absolute inset-0 w-full h-full object-cover" style="opacity: 0; filter: brightness(0.4); z-index: 0;"></video>
+    <video id="mobile-vid1" src="vid1.mp4" preload="auto" muted playsinline class="block md:hidden absolute inset-0 w-full h-full object-cover" style="opacity: 1; filter: brightness(0.4); z-index: 0;"></video>
+    <video id="mobile-vid2" src="vid2.mp4" preload="auto" muted playsinline class="block md:hidden absolute inset-0 w-full h-full object-cover" style="opacity: 0; filter: brightness(0.4); z-index: 0;"></video>
 
     <!-- ② Always-on cinematic overlay -->
     <div class="seq-overlay"></div>
@@ -2252,6 +2252,36 @@
 
   if (IS_MOBILE) {
     isReady = true;
+    
+    // Play/Pause initialization trick to force loading metadata/decoders on mobile devices
+    var initVideo = function(v) {
+      if (!v) return;
+      v.load();
+      
+      var playPromise = v.play();
+      if (playPromise !== undefined) {
+        playPromise.then(function() {
+          v.pause();
+        }).catch(function(err) {
+          // Auto-play blocked (typical for mobile without interaction), try on first user scroll/touch
+          var unlock = function() {
+            v.play().then(function() {
+              v.pause();
+            }).catch(function(){});
+            window.removeEventListener('touchstart', unlock);
+            window.removeEventListener('scroll', unlock);
+          };
+          window.addEventListener('touchstart', unlock, { passive: true });
+          window.addEventListener('scroll', unlock, { passive: true });
+        });
+      }
+    };
+    
+    // Wait for DOM to settle, then initialize both videos
+    setTimeout(function() {
+      initVideo(v1);
+      initVideo(v2);
+    }, 100);
   } else {
     var loadedCount  = 0;
     var totalLoad    = S1_COUNT + S2_COUNT;
