@@ -2996,9 +2996,9 @@
   <!-- ═══════════════════════════════════════════
      FAQ SECTION
 ═══════════════════════════════════════════ -->
-  <section id="faq" style="position:relative; padding:5rem 0; background:#0A1228; color:white;">
+  <section id="faq" style="position:relative; padding:5rem 0; background:#000000; color:white; overflow:hidden;">
 
-    <!-- BackgroundPaths SVG injected by JS below -->
+
 
     <div class="max-w-3xl mx-auto px-4" style="position:relative; z-index:2;">
       <div class="text-center mb-12">
@@ -3096,93 +3096,6 @@
     </div>
   </section>
 
-  <!-- BackgroundPaths — SMIL SVG animations (smooth, compositor-thread, no unit mismatch) -->
-  <script>
-    (function () {
-      'use strict';
-
-      var faq = document.getElementById('faq');
-      if (!faq) return;
-
-      var NS = 'http://www.w3.org/2000/svg';
-
-      /* ── SVG container ─────────────────────────────────── */
-      var svg = document.createElementNS(NS, 'svg');
-      svg.setAttribute('viewBox', '0 0 696 316');
-      svg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
-      svg.setAttribute('fill', 'none');
-      svg.setAttribute('aria-hidden', 'true');
-      /* Sticky SVG — always fills viewport as user scrolls through FAQ */
-      svg.style.cssText = 'position:sticky;top:0;width:100%;height:100vh;pointer-events:none;z-index:0;margin-bottom:-100vh;display:block;';
-      faq.insertBefore(svg, faq.firstChild);
-
-      /* ── Path formula 1:1 from FloatingPaths component ─── */
-      function buildPaths(position) {
-        var arr = [];
-        for (var i = 0; i < 18; i++) {   /* 18 per group × 2 = 36 total (was 72) */
-          var a = 380 - i * 5 * position, b = 189 + i * 6;
-          var c = 312 - i * 5 * position, d = 216 - i * 6;
-          var e = 152 - i * 5 * position, f = 343 - i * 6;
-          var g = 616 - i * 5 * position, h = 470 - i * 6;
-          var k = 684 - i * 5 * position, m = 875 - i * 6;
-          arr.push({
-            d: 'M' + (-a) + ' ' + (-b) + 'C' + (-a) + ' ' + (-b) + ' ' + (-c) + ' ' + d + ' ' + e + ' ' + f + 'C' + g + ' ' + h + ' ' + k + ' ' + m + ' ' + k + ' ' + m,
-            opacity: 0.1 + i * 0.03,
-            width: 0.5 + i * 0.03,
-            dur: (20 + Math.random() * 10).toFixed(2),
-            begin: (-(Math.random() * 25)).toFixed(2)
-          });
-        }
-        return arr;
-      }
-
-      var allPaths = buildPaths(1).concat(buildPaths(-1));
-
-      allPaths.forEach(function (p, idx) {
-        var stroke = idx % 4 === 0 ? 'rgba(201,168,76,0.65)'
-          : idx % 7 === 0 ? 'rgba(91,155,245,0.55)'
-            : 'rgba(255,255,255,0.70)';
-
-        var el = document.createElementNS(NS, 'path');
-        el.setAttribute('d', p.d);
-        el.setAttribute('stroke', stroke);
-        el.setAttribute('stroke-width', p.width);
-        el.setAttribute('fill', 'none');
-        el.setAttribute('stroke-dasharray', '600 2400');
-        el.setAttribute('stroke-dashoffset', '0');
-
-        /* SMIL 1 — flow dash along path (unitless SVG values, no CSS unit mismatch) */
-        var aDash = document.createElementNS(NS, 'animate');
-        aDash.setAttribute('attributeName', 'stroke-dashoffset');
-        aDash.setAttribute('from', '0');
-        aDash.setAttribute('to', '-3000');
-        aDash.setAttribute('dur', p.dur + 's');
-        aDash.setAttribute('begin', p.begin + 's');
-        aDash.setAttribute('repeatCount', 'indefinite');
-        aDash.setAttribute('calcMode', 'linear');
-        el.appendChild(aDash);
-
-        /* SMIL 2 — opacity pulse */
-        var opL = (p.opacity * 0.45).toFixed(3);
-        var opH = p.opacity.toFixed(3);
-        var aOp = document.createElementNS(NS, 'animate');
-        aOp.setAttribute('attributeName', 'opacity');
-        aOp.setAttribute('values', opL + ';' + opH + ';' + opL);
-        aOp.setAttribute('dur', p.dur + 's');
-        aOp.setAttribute('begin', p.begin + 's');
-        aOp.setAttribute('repeatCount', 'indefinite');
-        aOp.setAttribute('calcMode', 'linear');
-        el.appendChild(aOp);
-
-        svg.appendChild(el);
-      });
-
-      /* ensure content sits above SVG */
-      var content = faq.querySelector('.max-w-3xl');
-      if (content) { content.style.position = 'relative'; content.style.zIndex = '2'; }
-
-    })();
-  </script>
 
   <!-- ══ GLOBAL: Scroll-reveal + Animation pause/resume ══ -->
   <script>
@@ -3225,26 +3138,104 @@
         if (el) pauseObs.observe(el);
       });
 
-      /* ── 3. SMIL optimisation — pause FAQ paths when off-screen ─
+      /* ── 2.5 Dynamic Background Paths Injection ────────────────
+         Generates 72 animated lines matching the BackgroundPaths component
+         and injects them as subtle backgrounds in FAQ and Footer.     */
+      (function () {
+        var configs = [
+          { id: 'faq', opacity: 0.15 },
+          { id: 'footer-section', opacity: 0.12 }
+        ];
+
+        configs.forEach(function (cfg) {
+          var container = document.getElementById(cfg.id);
+          if (!container) return;
+
+          // Create wrapper div
+          var wrapper = document.createElement('div');
+          wrapper.className = 'absolute inset-0 pointer-events-none overflow-hidden';
+          wrapper.style.zIndex = '0';
+
+          var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+          svg.setAttribute('class', 'w-full h-full text-white');
+          svg.setAttribute('viewBox', '0 0 696 316');
+          svg.setAttribute('fill', 'none');
+          svg.style.position = 'absolute';
+          svg.style.inset = '0';
+          svg.style.opacity = cfg.opacity;
+
+          var title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+          title.textContent = 'Background Paths';
+          svg.appendChild(title);
+
+          [1, -1].forEach(function (pos) {
+            for (var i = 0; i < 36; i++) {
+              var d = 'M-' + (380 - i * 5 * pos) + ' -' + (189 + i * 6) +
+                      'C-' + (380 - i * 5 * pos) + ' -' + (189 + i * 6) +
+                      ' -' + (312 - i * 5 * pos) + ' ' + (216 - i * 6) +
+                      ' ' + (152 - i * 5 * pos) + ' ' + (343 - i * 6) +
+                      'C' + (616 - i * 5 * pos) + ' ' + (470 - i * 6) +
+                      ' ' + (684 - i * 5 * pos) + ' ' + (875 - i * 6) +
+                      ' ' + (684 - i * 5 * pos) + ' ' + (875 - i * 6);
+
+              var width = 0.5 + i * 0.03;
+              var baseOpacity = 0.1 + i * 0.03;
+
+              var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+              path.setAttribute('d', d);
+              path.setAttribute('stroke', 'currentColor');
+              path.setAttribute('stroke-width', width.toString());
+              path.setAttribute('stroke-opacity', baseOpacity.toString());
+              path.setAttribute('pathLength', '1');
+              path.setAttribute('stroke-dasharray', '0.3 0.7');
+
+              var animOffset = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+              animOffset.setAttribute('attributeName', 'stroke-dashoffset');
+              animOffset.setAttribute('values', '0; -1');
+              animOffset.setAttribute('dur', (20 + Math.random() * 15) + 's');
+              animOffset.setAttribute('repeatCount', 'indefinite');
+              path.appendChild(animOffset);
+
+              var animOpacity = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+              animOpacity.setAttribute('attributeName', 'stroke-opacity');
+              animOpacity.setAttribute('values', (baseOpacity * 0.3) + '; ' + baseOpacity + '; ' + (baseOpacity * 0.3));
+              animOpacity.setAttribute('dur', (15 + Math.random() * 15) + 's');
+              animOpacity.setAttribute('repeatCount', 'indefinite');
+              path.appendChild(animOpacity);
+
+              svg.appendChild(path);
+            }
+          });
+
+          wrapper.appendChild(svg);
+          container.insertBefore(wrapper, container.firstChild);
+        });
+      })();
+
+      /* ── 3. SMIL optimisation — pause background paths when off-screen ─
          SMIL can't be paused via CSS, so we suspend/unsuspend
-         the SVG document directly                                    */
-      var faqSVG = document.querySelector('#faq svg');
-      if (faqSVG) {
-        var faqObs = new IntersectionObserver(function (entries) {
+         the SVG documents directly                                    */
+      ['faq', 'footer-section'].forEach(function (id) {
+        var container = document.getElementById(id);
+        if (!container) return;
+        var svg = container.querySelector('svg');
+        if (!svg) return;
+
+        var obs = new IntersectionObserver(function (entries) {
           var vis = entries[0].isIntersecting;
           try {
             if (vis) {
-              if (faqSVG.unpauseAnimations) faqSVG.unpauseAnimations();
+              if (svg.unpauseAnimations) svg.unpauseAnimations();
             } else {
-              if (faqSVG.pauseAnimations) faqSVG.pauseAnimations();
+              if (svg.pauseAnimations) svg.pauseAnimations();
             }
           } catch (e) { }
         }, { threshold: 0.0, rootMargin: '100px' });
 
         /* start paused — resume when first visible */
-        try { if (faqSVG.pauseAnimations) faqSVG.pauseAnimations(); } catch (e) { }
-        faqObs.observe(document.getElementById('faq'));
-      }
+        try { if (svg.pauseAnimations) svg.pauseAnimations(); } catch (e) { }
+        obs.observe(container);
+      });
 
       /* ── 4. Smooth ticker stop on non-visible ─────────────────── */
       var ticker = document.querySelector('.ticker-wrap');
@@ -3262,8 +3253,8 @@
   <!-- ═══════════════════════════════════════════
      FOOTER
 ═══════════════════════════════════════════ -->
-  <footer class="pt-16 pb-6" style="background:#050508;">
-    <div class="max-w-7xl mx-auto px-4">
+  <footer id="footer-section" class="pt-16 pb-6" style="position:relative; background:#050508; overflow:hidden;">
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-12">
 
         <!-- Col 1: About -->
