@@ -1112,6 +1112,7 @@
       #horizontal-scroll-container {
         position: relative;
         height: 400vh; /* 4 panels * 100vh */
+        direction: ltr;
       }
 
       #horizontal-sticky {
@@ -1132,6 +1133,7 @@
       }
 
       .horizontal-panel {
+        direction: rtl;
         width: 100vw;
         height: 100vh;
         flex-shrink: 0;
@@ -1170,6 +1172,7 @@
     @media (max-width: 768px) {
       #horizontal-scroll-container {
         height: auto !important;
+        direction: rtl !important;
       }
 
       #horizontal-sticky {
@@ -3779,7 +3782,7 @@
           var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
           var relativeScroll = scrollTop - hzOffsetTop;
           var progress = Math.max(0, Math.min(1, relativeScroll / hzScrollRange));
-          hzTargetX = progress * 300; // 4 panels -> 0 to 300vw translation
+          hzTargetX = -progress * 300; // 4 panels -> 0 to -300vw translation
         }
 
         /* Keep header completely transparent */
