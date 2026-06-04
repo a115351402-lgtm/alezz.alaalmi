@@ -1142,6 +1142,8 @@
         width: 400%; /* 4 panels */
         height: 100vh;
         will-change: transform;
+        position: relative;
+        z-index: 2;
       }
 
       .horizontal-panel {
@@ -2431,7 +2433,9 @@
   <!-- ═══════════════════════════════════════════
      SOCIAL PROOF
 ═══════════════════════════════════════════ -->
-  <section id="success" class="py-20 bg-sky-light section-fade" style="position:relative; overflow:hidden;">
+  <!-- Panel 4: Success -->
+  <div class="horizontal-panel">
+    <section id="success" class="py-20 bg-sky-light section-fade" style="position:relative; overflow:hidden;">
     <style>
       .route-group {
         transition: opacity 0.5s ease;
