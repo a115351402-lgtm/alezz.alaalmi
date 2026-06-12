@@ -14,7 +14,12 @@ const BASE_URL = process.env.CARAPIS_URL || 'https://api.carapis.com/apix/catalo
 // Whitelist — only these query params are forwarded upstream.
 const ALLOWED_PARAMS = [
   'page', 'page_size', 'available_only', 'search', 'ordering',
-  'brand', 'model', 'year_min', 'year_max', 'price_min', 'price_max',
+  'brand', 'brand_slug', 'model', 'model_slug',
+  'year_min', 'year_max', 'price_min', 'price_max',
+  'price_usd_min', 'price_usd_max', 'mileage_min', 'mileage_max',
+  'transmission', 'fuel_type', 'body_type', 'color', 'interior_color',
+  'seats', 'seats_min', 'seats_max', 'is_new_vehicle', 'condition',
+  'source_code', 'region', 'id', 'listing_id', 'source_id',
 ];
 
 export default async function handler(req, res) {
