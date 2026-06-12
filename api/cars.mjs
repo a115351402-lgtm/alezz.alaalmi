@@ -67,9 +67,9 @@ export default async function handler(req, res) {
       });
     }
 
-    // Cache at Vercel's edge for 5 min (+10 min stale) — keeps
-    // upstream request count tiny regardless of visitor traffic.
-    res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600');
+    // Aggressive edge caching — upstream daily quota is very small,
+    // so every successful response is reused for 6h (+24h stale).
+    res.setHeader('Cache-Control', 's-maxage=21600, stale-while-revalidate=86400');
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
     return res.status(200).send(body);
   } catch (err) {
