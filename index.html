@@ -1838,18 +1838,32 @@
 
       moreBtn.addEventListener('click', function () { load(false); });
 
-      // Lazy init: fetch only when the section approaches the viewport
+      // Lazy init: fetch when the section approaches the viewport.
+      // Multiple triggers (IO + first scroll + timeout) — whichever fires
+      // first wins; ensures data loads even in quirky WebViews.
+      var started = false;
+      function ensureLoaded() {
+        if (started) return;
+        started = true;
+        load(true);
+      }
+
       if ('IntersectionObserver' in window) {
         var io = new IntersectionObserver(function (entries) {
           if (entries[0].isIntersecting) {
             io.disconnect();
-            load(true);
+            ensureLoaded();
           }
         }, { rootMargin: '600px' });
         io.observe(document.getElementById('live-cars'));
-      } else {
-        load(true);
       }
+      window.addEventListener('scroll', function onSc() {
+        if (window.scrollY > 300) {
+          window.removeEventListener('scroll', onSc);
+          ensureLoaded();
+        }
+      }, { passive: true });
+      setTimeout(ensureLoaded, 4000);
     })();
   </script>
 
