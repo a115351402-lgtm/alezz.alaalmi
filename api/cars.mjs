@@ -18,6 +18,9 @@ const ALLOWED_PARAMS = [
 ];
 
 export default async function handler(req, res) {
+  // Public catalog data — allow local dev page (vite) to call the prod API
+  res.setHeader('Access-Control-Allow-Origin', '*');
+
   const apiKey = (process.env.CARAPIS_API_KEY || process.env.AUTO_API_KEY || '').trim();
 
   // Safe diagnostics: /api/cars?diag=1 — never reveals the key itself
