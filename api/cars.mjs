@@ -42,8 +42,16 @@ export default async function handler(req, res) {
     res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600');
     return res.status(200).json(offers);
   } catch (err) {
-    // Never leak the key or upstream URL details to the client
-    console.error('auto-api error:', err && err.message);
-    return res.status(502).json({ error: 'Upstream API request failed. Try again shortly.' });
+    console.error('auto-api error:', err && err.name, err && err.message);
+    // Surface sanitized diagnostics (never the key itself):
+    // SDK errors carry statusCode + upstream message; network errors carry name/message.
+    const message = String((err && err.message) || 'unknown')
+      .replace(/api_key=[^&\s]+/gi, 'api_key=***');
+    return res.status(502).json({
+      error: 'Upstream API request failed.',
+      upstream_status: (err && err.statusCode) || null,
+      upstream_error: (err && err.name) || 'Error',
+      detail: message.slice(0, 300),
+    });
   }
 }
