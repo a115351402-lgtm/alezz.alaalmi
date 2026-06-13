@@ -1277,6 +1277,10 @@
       }
     }
   </style>
+
+  <!-- Trilingual (ع / EN / 한) + multi-currency engines — load before body scripts -->
+  <script src="i18n.js"></script>
+  <script src="currency.js"></script>
 </head>
 
 <body class="bg-sky-light" style="background:#09090F;">
@@ -1327,7 +1331,27 @@
       </div>
 
       <!-- CTA + Hamburger -->
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2 sm:gap-3">
+
+        <!-- ── Language + Currency selector ── -->
+        <div id="locale-ctrl" data-no-i18n class="flex items-center gap-1.5">
+          <div class="loc-wrap">
+            <button id="lang-btn" class="loc-btn" aria-label="Language / اللغة">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 2.5 16 0 18M12 3c-2.5 2.5-2.5 16 0 18"/></svg>
+              <span id="lang-cur">ع</span>
+              <svg class="loc-chev" viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+            </button>
+            <div id="lang-menu" class="loc-menu"></div>
+          </div>
+          <div class="loc-wrap">
+            <button id="cur-btn" class="loc-btn" aria-label="Currency / العملة">
+              <span id="cur-cur">SAR</span>
+              <svg class="loc-chev" viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+            </button>
+            <div id="cur-menu" class="loc-menu loc-menu-cur"></div>
+          </div>
+        </div>
+
         <a href="https://wa.me/966550112411"
           class="btn-gold hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm shadow-md">
           <span>تواصل معنا</span>
@@ -1364,6 +1388,98 @@
       </div>
     </div>
   </nav>
+
+  <!-- ── Language / Currency selector: styles + behaviour ── -->
+  <style>
+    .loc-wrap { position: relative; }
+    .loc-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 0.78rem;
+      color: #E7D9A8; background: rgba(201,168,76,0.10);
+      border: 1px solid rgba(201,168,76,0.30); border-radius: 999px;
+      padding: 0.34rem 0.6rem; cursor: pointer; line-height: 1;
+      transition: background .2s, border-color .2s, color .2s; white-space: nowrap;
+    }
+    .loc-btn:hover { background: rgba(201,168,76,0.18); border-color: rgba(201,168,76,0.55); color: #F0D98A; }
+    .loc-btn .sar-symbol { width: .85em; height: .85em; }
+    .loc-chev { opacity: .65; }
+    .loc-menu {
+      position: absolute; top: calc(100% + 8px); inset-inline-end: 0;
+      background: #11131F; border: 1px solid rgba(201,168,76,0.25);
+      border-radius: 14px; padding: 6px; min-width: 150px;
+      box-shadow: 0 18px 50px rgba(0,0,0,0.55); z-index: 80;
+      opacity: 0; visibility: hidden; transform: translateY(-6px);
+      transition: opacity .18s, transform .18s, visibility .18s;
+      max-height: 60vh; overflow-y: auto;
+    }
+    .loc-menu.open { opacity: 1; visibility: visible; transform: translateY(0); }
+    .loc-opt {
+      display: flex; align-items: center; gap: 8px; width: 100%;
+      font-family: 'Tajawal', sans-serif; font-size: 0.82rem; font-weight: 500;
+      color: #C8D8F0; background: none; border: 0; border-radius: 9px;
+      padding: 0.5rem 0.6rem; cursor: pointer; text-align: start;
+      transition: background .15s, color .15s;
+    }
+    .loc-opt:hover { background: rgba(201,168,76,0.12); color: #F0D98A; }
+    .loc-opt.active { background: rgba(201,168,76,0.18); color: #F0D98A; }
+    .loc-opt .loc-sym { min-width: 22px; font-weight: 800; color: #C9A84C; display: inline-flex; justify-content: center; }
+    .loc-opt .loc-sym .sar-symbol { width: 1em; height: 1em; }
+    .loc-opt .loc-code { margin-inline-start: auto; font-size: 0.7rem; opacity: 0.55; font-weight: 700; }
+  </style>
+  <script>
+    (function () {
+      function ready(fn) { document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', fn) : fn(); }
+      ready(function () {
+        if (!window.I18N || !window.CUR) return;
+        var langBtn = document.getElementById('lang-btn'), langMenu = document.getElementById('lang-menu');
+        var curBtn = document.getElementById('cur-btn'), curMenu = document.getElementById('cur-menu');
+        var langCur = document.getElementById('lang-cur'), curCur = document.getElementById('cur-cur');
+
+        // Build language options
+        Object.keys(I18N.langs).forEach(function (code) {
+          var b = document.createElement('button');
+          b.className = 'loc-opt'; b.type = 'button';
+          b.innerHTML = '<span class="loc-sym">' + I18N.short[code] + '</span><span>' + I18N.langs[code] + '</span>';
+          b.addEventListener('click', function () { I18N.set(code); closeAll(); });
+          b.dataset.code = code;
+          langMenu.appendChild(b);
+        });
+        // Build currency options
+        CUR.list.forEach(function (c) {
+          var b = document.createElement('button');
+          b.className = 'loc-opt'; b.type = 'button';
+          var name = c[I18N.lang] || c.en;
+          b.innerHTML = '<span class="loc-sym">' + (c.svg ? c.sym : c.sym) + '</span><span class="loc-name">' + name + '</span><span class="loc-code">' + c.code + '</span>';
+          b.addEventListener('click', function () { CUR.set(c.code); closeAll(); });
+          b.dataset.code = c.code;
+          curMenu.appendChild(b);
+        });
+
+        function syncLang() {
+          langCur.textContent = I18N.short[I18N.lang];
+          langMenu.querySelectorAll('.loc-opt').forEach(function (o) { o.classList.toggle('active', o.dataset.code === I18N.lang); });
+          // refresh currency names into the active language
+          curMenu.querySelectorAll('.loc-opt').forEach(function (o) {
+            var c = CUR.byCode[o.dataset.code]; if (c) { var n = o.querySelector('.loc-name'); if (n) n.textContent = c[I18N.lang] || c.en; }
+          });
+        }
+        function syncCur() {
+          var c = CUR.byCode[CUR.code];
+          curCur.innerHTML = (c.svg ? c.sym : '<span style="color:#C9A84C;font-weight:800">' + c.sym + '</span>') + ' ' + c.code;
+          curMenu.querySelectorAll('.loc-opt').forEach(function (o) { o.classList.toggle('active', o.dataset.code === CUR.code); });
+        }
+        function closeAll() { langMenu.classList.remove('open'); curMenu.classList.remove('open'); }
+
+        langBtn.addEventListener('click', function (e) { e.stopPropagation(); curMenu.classList.remove('open'); langMenu.classList.toggle('open'); });
+        curBtn.addEventListener('click', function (e) { e.stopPropagation(); langMenu.classList.remove('open'); curMenu.classList.toggle('open'); });
+        document.addEventListener('click', closeAll);
+
+        I18N.onChange(function () { syncLang(); });
+        CUR.onChange(function () { syncCur(); });
+        syncLang(); syncCur();
+      });
+    })();
+  </script>
 
   <!-- ═══════════════════════════════════════════
      HERO SECTION — CINEMATIC VIDEO
@@ -1707,12 +1823,16 @@
 
       var state = { page: 1, q: '', loading: false, done: false };
 
-      var FUEL_AR = {
-        diesel: 'ديزل', gasoline: 'بنزين', petrol: 'بنزين', hybrid: 'هايبرد',
-        electric: 'كهربائية', lpg: 'غاز', gas: 'غاز'
+      var FUEL_KEY = {
+        diesel: 'fuel_diesel', gasoline: 'fuel_gasoline', petrol: 'fuel_gasoline', hybrid: 'fuel_hybrid',
+        electric: 'fuel_electric', lpg: 'fuel_lpg', gas: 'fuel_lpg'
       };
-      var TRANS_AR = { auto: 'أوتوماتيك', automatic: 'أوتوماتيك', manual: 'عادي' };
+      var TRANS_KEY = { auto: 'trans_auto', automatic: 'trans_auto', manual: 'trans_manual' };
       var SRC_LABEL = { encar: 'Encar', kbchachacha: 'KB차차차' };
+
+      var T = function (k, vars) { return window.I18N ? I18N.t(k, vars) : k; };
+      var money = function (usd) { return window.CUR ? CUR.format(usd) : Math.round(usd * 3.75) + ' ريال'; };
+      var moneyText = function (usd) { return window.CUR ? CUR.formatText(usd) : Math.round(usd * 3.75) + ' SAR'; };
 
       function fmt(n) { return Number(n).toLocaleString('en-US'); }
 
@@ -1724,12 +1844,12 @@
         return u;
       }
 
-      function waLink(v, priceSar) {
-        var msg = 'مرحباً، أهتم بهذه السيارة المعروضة في موقعكم:\n'
+      function waLink(v) {
+        var msg = T('wa_greeting') + '\n'
           + '🚗 ' + (v.brand_name || '') + ' ' + (v.model_name || '') + (v.trim ? ' ' + v.trim : '') + '\n'
-          + '📅 الموديل: ' + (v.year || '-') + '\n'
-          + '💰 السعر: $' + fmt(v.price_usd || 0) + ' (≈ ' + fmt(priceSar) + ' ريال)\n'
-          + '🔖 رقم المرجع: ' + (v.id || '').slice(0, 8);
+          + '📅 ' + T('wa_year') + ': ' + (v.year || '-') + '\n'
+          + '💰 ' + T('wa_price') + ': ' + moneyText(v.price_usd || 0) + '\n'
+          + '🔖 ' + T('wa_ref') + ': ' + (v.id || '').slice(0, 8);
         return 'https://wa.me/' + WA_PHONE + '?text=' + encodeURIComponent(msg);
       }
 
@@ -1739,20 +1859,19 @@
       }
 
       function cardHTML(v, idx) {
-        var priceSar = Math.round((v.price_usd || 0) * SAR_RATE);
         var img = photoUrl(v);
-        var fuel = FUEL_AR[(v.fuel_type || '').toLowerCase()] || v.fuel_type || '—';
-        var trans = TRANS_AR[(v.transmission || '').toLowerCase()] || v.transmission || '—';
-        var src = SRC_LABEL[v.source_code] || 'كوريا';
+        var fuel = FUEL_KEY[(v.fuel_type || '').toLowerCase()] ? T(FUEL_KEY[(v.fuel_type || '').toLowerCase()]) : (v.fuel_type || '—');
+        var trans = TRANS_KEY[(v.transmission || '').toLowerCase()] ? T(TRANS_KEY[(v.transmission || '').toLowerCase()]) : (v.transmission || '—');
+        var src = SRC_LABEL[v.source_code] || T('src_korea');
 
         return '<div class="lc-card" style="animation-delay:' + (idx % PAGE_SIZE) * 0.06 + 's;cursor:pointer;" onclick="location.href=\'car.html?id=' + v.id + '\'">'
           + '<div class="lc-photo">'
-          +   (isNew(v) ? '<span class="lc-badge lc-badge-new">وصل حديثاً</span>' : '')
+          +   (isNew(v) ? '<span class="lc-badge lc-badge-new">' + T('lc_new') + '</span>' : '')
           +   '<span class="lc-badge lc-badge-src">' + src + '</span>'
           +   (img ? '<img src="' + img + '" alt="' + (v.brand_name || '') + ' ' + (v.model_name || '') + '" loading="lazy" onerror="this.style.display=\'none\'">' : '')
           +   '<div class="lc-price-row">'
           +     '<div>'
-          +       '<p class="font-cairo font-900 text-white" style="font-size:1.25rem;line-height:1;">' + fmt(priceSar) + ' <span style="font-size:0.72rem;color:#F0D98A;">ريال</span></p>'
+          +       '<p class="font-cairo font-900 text-white" style="font-size:1.25rem;line-height:1;">' + money(v.price_usd || 0) + '</p>'
           +     '</div>'
           +     '<span class="font-cairo font-700" style="font-size:0.8rem;color:#fff;background:rgba(26,77,184,0.65);padding:0.2rem 0.6rem;border-radius:8px;backdrop-filter:blur(6px);">' + (v.year || '') + '</span>'
           +   '</div>'
@@ -1767,12 +1886,12 @@
           +   '<div class="flex flex-wrap gap-1.5" style="margin-bottom:0.85rem;">'
           +     '<span class="lc-spec">⚙️ ' + trans + '</span>'
           +     '<span class="lc-spec">⛽ ' + fuel + '</span>'
-          +     '<span class="lc-spec">🛣️ ' + fmt(v.mileage || 0) + ' كم</span>'
+          +     '<span class="lc-spec">🛣️ ' + fmt(v.mileage || 0) + ' ' + T('unit_km') + '</span>'
           +     (v.region ? '<span class="lc-spec">📍 ' + v.region + '</span>' : '')
           +   '</div>'
-          +   '<a href="' + waLink(v, priceSar) + '" target="_blank" rel="noopener" class="lc-wa" onclick="event.stopPropagation()">'
+          +   '<a href="' + waLink(v) + '" target="_blank" rel="noopener" class="lc-wa" onclick="event.stopPropagation()">'
           +     '<svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>'
-          +     '<span>اسأل عن هذه السيارة</span>'
+          +     '<span>' + T('lc_ask') + '</span>'
           +   '</a>'
           + '</div>'
           + '</div>';
@@ -1793,6 +1912,22 @@
         return s;
       }
 
+      var lastItems = null, lastCount = 0;
+
+      function render() {
+        if (!lastItems) return;
+        if (!lastItems.length) {
+          grid.innerHTML = '<p class="font-tajawal text-center" style="grid-column:1/-1;color:rgba(200,216,240,0.5);padding:2rem 0;">' + T('lc_no_results') + '</p>';
+        } else {
+          var html = '';
+          lastItems.forEach(function (v, i) { html += cardHTML(v, i); });
+          grid.innerHTML = html;
+        }
+        if (lastCount && subEl) {
+          subEl.innerHTML = T('lc_browse_n', { n: '<strong style="color:#F0D98A;">' + fmt(lastCount) + '</strong>' });
+        }
+      }
+
       function load() {
         if (state.loading) return;
         state.loading = true;
@@ -1804,28 +1939,22 @@
         fetch(url)
           .then(function (r) { return r.json(); })
           .then(function (data) {
-            var items = data.results || [];
-            var html = '';
-            items.forEach(function (v, i) { html += cardHTML(v, i); });
-            grid.innerHTML = html;
-
-            if (!items.length) {
-              grid.innerHTML = '<p class="font-tajawal text-center" style="grid-column:1/-1;color:rgba(200,216,240,0.5);padding:2rem 0;">لا توجد نتائج لهذا البحث حالياً</p>';
-            }
-
-            if (data.count && subEl) {
-              subEl.innerHTML = 'تصفح <strong style="color:#F0D98A;">' + fmt(data.count)
-                + '</strong> سيارة بأسعار وصور حقيقية — محدّثة لحظياً من كوريا';
-            }
+            lastItems = data.results || [];
+            lastCount = data.count || 0;
+            render();
           })
           .catch(function () {
             grid.innerHTML = '<p class="font-tajawal text-center" style="grid-column:1/-1;color:rgba(200,216,240,0.5);padding:2rem 0;">'
-              + 'تعذّر تحميل السيارات مؤقتاً — <button onclick="window.lcReload()" style="color:#F0D98A;text-decoration:underline;cursor:pointer;background:none;border:none;font-family:Tajawal,sans-serif;">أعد المحاولة</button></p>';
+              + T('lc_load_fail') + ' <button onclick="window.lcReload()" style="color:#F0D98A;text-decoration:underline;cursor:pointer;background:none;border:none;font-family:Tajawal,sans-serif;">' + T('lc_retry') + '</button></p>';
           })
           .finally(function () { state.loading = false; });
       }
 
       window.lcReload = function () { load(); };
+
+      // Re-render the loaded cards (no re-fetch) when language or currency changes
+      window.addEventListener('langchange', render);
+      window.addEventListener('currencychange', render);
 
       // Filter chips
       document.querySelectorAll('#lc-filters .lc-chip').forEach(function (chip) {
@@ -2503,16 +2632,16 @@
             <div class="flex justify-between items-center mb-3">
               <div>
                 <p class="font-tajawal text-xs mb-0.5" style="color:rgba(200,216,240,0.5);">السعر الحالي في المزاد</p>
-                <p class="font-cairo font-800 text-xl" style="color:#5B9BF5;">82,000 ريال</p>
+                <p class="font-cairo font-800 text-xl" style="color:#5B9BF5;" data-sar="82000"></p>
               </div>
               <div class="text-left">
                 <p class="font-tajawal text-xs mb-0.5" style="color:rgba(200,216,240,0.5);">سعر الشركة التقديري</p>
-                <p class="font-cairo font-800 text-emerald-400 text-xl">98,000 ريال</p>
+                <p class="font-cairo font-800 text-emerald-400 text-xl" data-sar="98000"></p>
               </div>
             </div>
             <div
               style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);border-radius:12px;padding:8px 12px;margin-bottom:16px;text-align:center;">
-              <p class="font-cairo font-700 text-emerald-400 text-sm">توفيرك المتوقع: 16,000 ريال</p>
+              <p class="font-cairo font-700 text-emerald-400 text-sm"><span>توفيرك المتوقع:</span> <span data-sar="16000"></span></p>
             </div>
             <a href="https://wa.me/966550112411?text=أريد%20المزايدة%20على%20جينيسس%202025"
               class="btn-gold w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm">
@@ -2542,16 +2671,16 @@
             <div class="flex justify-between items-center mb-3">
               <div>
                 <p class="font-tajawal text-xs mb-0.5" style="color:rgba(200,216,240,0.5);">السعر الحالي في المزاد</p>
-                <p class="font-cairo font-800 text-xl" style="color:#5B9BF5;">95,000 ريال</p>
+                <p class="font-cairo font-800 text-xl" style="color:#5B9BF5;" data-sar="95000"></p>
               </div>
               <div class="text-left">
                 <p class="font-tajawal text-xs mb-0.5" style="color:rgba(200,216,240,0.5);">سعر الشركة التقديري</p>
-                <p class="font-cairo font-800 text-emerald-400 text-xl">116,000 ريال</p>
+                <p class="font-cairo font-800 text-emerald-400 text-xl" data-sar="116000"></p>
               </div>
             </div>
             <div
               style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);border-radius:12px;padding:8px 12px;margin-bottom:16px;text-align:center;">
-              <p class="font-cairo font-700 text-emerald-400 text-sm">توفيرك المتوقع: 21,000 ريال</p>
+              <p class="font-cairo font-700 text-emerald-400 text-sm"><span>توفيرك المتوقع:</span> <span data-sar="21000"></span></p>
             </div>
             <a href="https://wa.me/966550112411?text=أريد%20المزايدة%20على%20هونداي%20ازيرا%202025"
               class="btn-gold w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm">
@@ -2581,16 +2710,16 @@
             <div class="flex justify-between items-center mb-3">
               <div>
                 <p class="font-tajawal text-xs mb-0.5" style="color:rgba(200,216,240,0.5);">السعر الحالي في المزاد</p>
-                <p class="font-cairo font-800 text-xl" style="color:#5B9BF5;">88,500 ريال</p>
+                <p class="font-cairo font-800 text-xl" style="color:#5B9BF5;" data-sar="88500"></p>
               </div>
               <div class="text-left">
                 <p class="font-tajawal text-xs mb-0.5" style="color:rgba(200,216,240,0.5);">سعر الشركة التقديري</p>
-                <p class="font-cairo font-800 text-emerald-400 text-xl">108,000 ريال</p>
+                <p class="font-cairo font-800 text-emerald-400 text-xl" data-sar="108000"></p>
               </div>
             </div>
             <div
               style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);border-radius:12px;padding:8px 12px;margin-bottom:16px;text-align:center;">
-              <p class="font-cairo font-700 text-emerald-400 text-sm">توفيرك المتوقع: 19,500 ريال</p>
+              <p class="font-cairo font-700 text-emerald-400 text-sm"><span>توفيرك المتوقع:</span> <span data-sar="19500"></span></p>
             </div>
             <a href="https://wa.me/966550112411?text=أريد%20المزايدة%20على%20كيا%20كي%208"
               class="btn-gold w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm">
@@ -2644,7 +2773,7 @@
                   </svg>
                   قيمة المركبة
                 </span>
-                <span id="car-price-display" class="font-cairo font-900 text-sm" style="color:#C9A84C;">80,000 ريال</span>
+                <span id="car-price-display" class="font-cairo font-900 text-sm" style="color:#C9A84C;" data-no-i18n></span>
               </div>
               <div class="range-wrap">
                 <input id="car-price" class="custom-range" type="range" min="10000" max="300000" step="1000"
@@ -2652,8 +2781,8 @@
               </div>
               <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:0.68rem;"
                 class="font-tajawal text-white/30">
-                <span>10,000 ريال</span>
-                <span>300,000 ريال</span>
+                <span data-sar="10000"></span>
+                <span data-sar="300000"></span>
               </div>
             </div>
 
@@ -2668,7 +2797,7 @@
                   تكلفة الشحن البحري
                 </span>
                 <div class="flex items-baseline justify-between">
-                  <span class="font-cairo font-900 text-sm" style="color:#C9A84C;">٤,٠٠٠ ريال</span>
+                  <span class="font-cairo font-900 text-sm" style="color:#C9A84C;" data-sar="4000"></span>
                   <span class="text-white/40 text-[9px] font-tajawal">ثابت</span>
                 </div>
               </div>
@@ -2696,7 +2825,7 @@
                   قيمة الفائدة
                 </span>
                 <div class="flex items-baseline justify-between">
-                  <span class="font-cairo font-900 text-sm" style="color:#C9A84C;">١,٠٠٠ ريال</span>
+                  <span class="font-cairo font-900 text-sm" style="color:#C9A84C;" data-sar="1000"></span>
                   <span class="text-white/40 text-[9px] font-tajawal">ثابت</span>
                 </div>
               </div>
@@ -2787,7 +2916,9 @@
       }
 
       // ── Interactive Savings Calculator ──
-      function fmt(n) { return Math.round(n).toLocaleString('ar-SA') + ' ريال'; }
+      // Values are modelled in SAR; convert to the chosen currency for display.
+      function fmt(n) { return window.CUR ? CUR.formatSar(n) : Math.round(n).toLocaleString('en-US') + ' ريال'; }
+      var cT = function (k) { return window.I18N ? I18N.t(k) : k; };
 
       function updateSliderFill(input) {
         var min = parseFloat(input.min), max = parseFloat(input.max), val = parseFloat(input.value);
@@ -2804,7 +2935,7 @@
         var interest = 1000; // Fixed interest/profit value (1000 SAR)
 
         // Update display labels
-        document.getElementById('car-price-display').textContent = Math.round(cp).toLocaleString('ar-SA') + ' ريال';
+        document.getElementById('car-price-display').innerHTML = fmt(cp);
 
         // Update slider fill colors
         updateSliderFill(carSlider);
@@ -2815,12 +2946,16 @@
         var saving = dealer - total;
         var savPct = dealer > 0 ? (saving / dealer * 100) : 0;
 
-        document.getElementById('total-cost').textContent = fmt(total);
-        document.getElementById('dealer-price').textContent = fmt(dealer);
-        document.getElementById('saving-amount').textContent = saving > 0 ? fmt(saving) : '—';
-        document.getElementById('saving-pct').textContent = saving > 0 ? savPct.toFixed(1) + '٪ توفير' : '—';
+        document.getElementById('total-cost').innerHTML = fmt(total);
+        document.getElementById('dealer-price').innerHTML = fmt(dealer);
+        document.getElementById('saving-amount').innerHTML = saving > 0 ? fmt(saving) : '—';
+        document.getElementById('saving-pct').textContent = saving > 0 ? savPct.toFixed(1) + '% ' + cT('calc_saving') : '—';
         document.getElementById('saving-bar').style.width = saving > 0 ? Math.min(100, savPct) + '%' : '0%';
       };
+
+      // Re-render calculator when currency or language changes
+      window.addEventListener('currencychange', function () { if (window.updateCalc) updateCalc(); });
+      window.addEventListener('langchange', function () { if (window.updateCalc) updateCalc(); });
 
       // Init on load
       ['car-price'].forEach(function (id) {
