@@ -5,43 +5,33 @@
   "trailingSlash": false,
   "headers": [
     {
-      "source": "/frames/(.*\\.jpg)",
+      "source": "/frames-w/(.*\\.webp)",
       "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        },
-        {
-          "key": "Vary",
-          "value": "Accept-Encoding"
-        }
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
     },
     {
-      "source": "/frames2/(.*\\.jpg)",
+      "source": "/frames2-w/(.*\\.webp)",
       "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        },
-        {
-          "key": "Vary",
-          "value": "Accept-Encoding"
-        }
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
     },
     {
-      "source": "/frames-vid1/(.*\\.jpg)",
+      "source": "/frames-vid1-w/(.*\\.webp)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" },
-        { "key": "Vary", "value": "Accept-Encoding" }
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
     },
     {
-      "source": "/frames-vid2/(.*\\.jpg)",
+      "source": "/frames-vid2-w/(.*\\.webp)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" },
-        { "key": "Vary", "value": "Accept-Encoding" }
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/(.*\\.(webp|jpg))",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=604800, stale-while-revalidate=86400" }
       ]
     },
     {

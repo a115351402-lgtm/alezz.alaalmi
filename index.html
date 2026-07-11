@@ -19,7 +19,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:title" content="معرض العز العالمي | استيراد سيارات فاخرة من كوريا" />
   <meta property="og:description" content="استورد سيارتك الكورية الفاخرة مباشرة من مزادات كوريا مع فحص فني شامل وضمان رضا 100%. شاهد رحلتنا الميدانية واحسب توفيرك الآن." />
-  <meta property="og:image" content="https://alezz-fleet.vercel.app/imported_fleet.png" />
+  <meta property="og:image" content="https://alezz-fleet.vercel.app/imported_fleet_og.jpg" />
   <meta property="og:url" content="https://alezz-fleet.vercel.app/" />
   <meta property="og:site_name" content="معرض العز العالمي" />
 
@@ -27,7 +27,7 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="معرض العز العالمي | استيراد سيارات فاخرة من كوريا" />
   <meta name="twitter:description" content="رحلة استيراد متكاملة وفحص فني لأكثر من 120 نقطة. احسب تكلفة استيراد سيارتك الكورية الفاخرة فوراً." />
-  <meta name="twitter:image" content="https://alezz-fleet.vercel.app/imported_fleet.png" />
+  <meta name="twitter:image" content="https://alezz-fleet.vercel.app/imported_fleet_og.jpg" />
 
   <!-- البيانات المهيكلة لجوجل (JSON-LD Structured Data Schema) -->
   <script type="application/ld+json">
@@ -35,7 +35,7 @@
     "@context": "https://schema.org",
     "@type": "AutoDealer",
     "name": "معرض العز العالمي",
-    "image": "https://alezz-fleet.vercel.app/imported_fleet.png",
+    "image": "https://alezz-fleet.vercel.app/imported_fleet_og.jpg",
     "@id": "https://alezz-fleet.vercel.app/#store",
     "url": "https://alezz-fleet.vercel.app/",
     "telephone": "+966550112411",
@@ -82,7 +82,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&display=swap"
     rel="stylesheet" />
 
   <script>
@@ -307,8 +307,8 @@
     /* ══════════════════════════════════════════
        DUAL CANVAS SEQUENCE SYSTEM
        One sticky wrapper — 12000px scroll travel
-       S1: scrollY 0→6000  (150 frames)
-       S2: scrollY 6000→12000 (120 frames)
+       S1: scrollY 0→6000  (75 frames)
+       S2: scrollY 6000→12000 (60 frames)
     ══════════════════════════════════════════ */
 
     /* Outer wrapper — creates the total scroll distance */
@@ -1487,8 +1487,8 @@
 
   <!-- ═══════════════════════════════════════════════════════
      DUAL CANVAS SEQUENCE  —  12000px total scroll travel
-     S1: 0→6000px  (150 frames / hero)
-     S2: 6000→12000px  (120 frames / journey)
+     S1: 0→6000px  (75 frames / hero)
+     S2: 6000→12000px  (60 frames / journey)
 ═══════════════════════════════════════════════════════ -->
   <div id="canvas-wrap">
     <div id="canvas-sticky">
@@ -2103,8 +2103,8 @@
           position: relative;
         ">
             <!-- Main car image -->
-            <img src="imported_fleet.png"
-              alt="أسطول السيارات الفاخرة المستوردة — معرض العز العالمي" style="
+            <img src="imported_fleet.webp"
+              alt="أسطول السيارات الفاخرة المستوردة — معرض العز العالمي" loading="lazy" style="
               width: 100%;
               height: 100%;
               object-fit: cover;
@@ -2616,7 +2616,7 @@
         <!-- Car 1 — Genesis 2025 -->
         <div class="auction-card-dark rounded-3xl overflow-hidden cursor-pointer">
           <div class="car-photo-card h-52">
-            <img src="genesis_2025_black.png"
+            <img src="genesis_2025_black.webp"
               alt="جينيسس 2025" loading="lazy" />
             <div class="overlay"></div>
             <div class="absolute top-3 right-3 bg-gold rounded-full px-3 py-1 z-10">
@@ -2655,7 +2655,7 @@
         <!-- Car 2 — Hyundai Azera 2025 -->
         <div class="auction-card-dark rounded-3xl overflow-hidden cursor-pointer">
           <div class="car-photo-card h-52">
-            <img src="hyundai_azera_2025_black.png"
+            <img src="hyundai_azera_2025_black.webp"
               alt="هونداي ازيرا 2025" loading="lazy" />
             <div class="overlay"></div>
             <div class="absolute top-3 right-3 rounded-full px-3 py-1 z-10" style="background:#1A4DB8;">
@@ -2694,7 +2694,7 @@
         <!-- Car 3 — Kia K8 -->
         <div class="auction-card-dark rounded-3xl overflow-hidden cursor-pointer">
           <div class="car-photo-card h-52">
-            <img src="kia_k8_black.png"
+            <img src="kia_k8_black.webp"
               alt="كيا كي 8" loading="lazy" />
             <div class="overlay"></div>
             <div class="absolute top-3 right-3 bg-red-600 rounded-full px-3 py-1 z-10">
@@ -3370,7 +3370,7 @@
           <div class="bg-white/5 border border-white/10 rounded-2xl p-4 flex justify-between items-center gap-3 z-10 backdrop-blur-md">
             <div class="flex items-center gap-3">
               <div class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 overflow-hidden flex-shrink-0" id="map-car-image-container">
-                <img id="map-car-image" src="genesis_2025_black.png" alt="السيارة المستوردة" class="w-full h-full object-cover" />
+                <img id="map-car-image" src="genesis_2025_black.webp" alt="السيارة المستوردة" loading="lazy" class="w-full h-full object-cover" />
               </div>
               <div>
                 <p class="font-cairo font-800 text-white text-xs leading-none" id="map-car-name">جينيسس 2025</p>
@@ -3405,7 +3405,7 @@
           eta: "المدة التقريبية: ٣٥ - ٤٥ يوماً",
           car: "جينيسس 2025",
           savings: "وفر للعميل: ٢٢,٠٠٠ ريال",
-          image: "genesis_2025_black.png",
+          image: "genesis_2025_black.webp",
           status: "تم التسليم بنجاح ✓",
           portPin: { top: "175px", left: "82px" },
           portLabel: "ميناء الدمام (التخليص)",
@@ -3423,7 +3423,7 @@
           eta: "المدة التقريبية: ٣٠ - ٣٨ يوماً",
           car: "هونداي ازيرا 2025",
           savings: "وفر للعميل: ٢١,٠٠٠ ريال",
-          image: "hyundai_azera_2025_black.png",
+          image: "hyundai_azera_2025_black.webp",
           status: "تم التسليم بنجاح ✓",
           portPin: { top: "210px", left: "40px" },
           portLabel: "ميناء جدة الإسلامي",
@@ -3441,7 +3441,7 @@
           eta: "المدة التقريبية: ٣٢ - ٤٠ يوماً",
           car: "كيا كي 8",
           savings: "وفر للعميل: ١٩,٥٠٠ ريال",
-          image: "kia_k8_black.png",
+          image: "kia_k8_black.webp",
           status: "تم التسليم بنجاح ✓",
           portPin: { top: "167px", left: "75px" },
           portLabel: "ميناء الملك عبدالعزيز",
@@ -3983,8 +3983,8 @@
 
       // ── Config ──────────────────────────────────────────────
       var IS_MOBILE = window.innerWidth <= 768;
-      var S1_COUNT = IS_MOBILE ? 59 : 150;
-      var S2_COUNT = IS_MOBILE ? 60 : 120;
+      var S1_COUNT = IS_MOBILE ? 30 : 75;
+      var S2_COUNT = IS_MOBILE ? 30 : 60;
       var TOTAL = S1_COUNT + S2_COUNT;
       var S1_SCROLL = IS_MOBILE ? 3000 : 6000;
       var S2_SCROLL = IS_MOBILE ? 3000 : 6000;
@@ -4035,16 +4035,39 @@
         window.visualViewport.addEventListener('resize', sizeCanvas, { passive: true });
       }
 
-      // ── Image loading ─────────────────────────────────────────
+      // ── Image loading (progressive, non-blocking) ────────────
+      // Pass 0 (every 8th frame + last) reveals the page after only
+      // ~1MB; later passes (4 → 2 → 1) fill in the remaining frames
+      // in the background with limited concurrency. doDraw falls
+      // back to the nearest loaded frame until the exact one lands.
       var frames1 = [];
       var frames2 = [];
       var isReady = false;
 
+      function imgFor(idx) { return idx < S1_COUNT ? frames1[idx] : frames2[idx - S1_COUNT]; }
+
       {
         var loadedCount = 0;
-        var totalLoad = S1_COUNT + S2_COUNT;
-        var dir1 = IS_MOBILE ? 'frames-vid1' : 'frames';
-        var dir2 = IS_MOBILE ? 'frames-vid2' : 'frames2';
+        var dir1 = IS_MOBILE ? 'frames-vid1-w' : 'frames-w';
+        var dir2 = IS_MOBILE ? 'frames-vid2-w' : 'frames2-w';
+
+        for (var f1 = 0; f1 < S1_COUNT; f1++) frames1.push(new Image());
+        for (var f2 = 0; f2 < S2_COUNT; f2++) frames2.push(new Image());
+
+        // Prioritized order: stride 8 (pass 0) → 4 → 2 → 1
+        var order = [];
+        var seen = {};
+        var pass0Total = 0;
+        [8, 4, 2, 1].forEach(function (stride) {
+          for (var k = 0; k < TOTAL; k += stride) {
+            if (!seen[k]) { seen[k] = 1; order.push(k); }
+          }
+          if (stride === 8) {
+            if (!seen[TOTAL - 1]) { seen[TOTAL - 1] = 1; order.push(TOTAL - 1); }
+            pass0Total = order.length;
+          }
+        });
+        var totalLoad = pass0Total; // loader UI measures pass 0 only
 
         // Loader UI (same for mobile and desktop) - Option 1: Premium Portal
         var loaderEl = document.createElement('div');
@@ -4124,65 +4147,79 @@
         var ldStatus = document.getElementById('ld-status');
         var ldPct = document.getElementById('ld-pct');
 
+        var revealed = false;
+
         var onSettle = function () {
           loadedCount++;
-          var progressPercent = Math.round(loadedCount / totalLoad * 100);
 
-          // Update circular progress stroke offset
-          if (ldCircle) {
-            var offset = 314 - (progressPercent / 100 * 314);
-            ldCircle.style.strokeDashoffset = offset;
-          }
+          if (!revealed) {
+            var progressPercent = Math.min(100, Math.round(loadedCount / totalLoad * 100));
 
-          // Update percentage number text
-          if (ldPctNum) {
-            ldPctNum.textContent = progressPercent + '%';
-          }
-
-          // Update status message dynamically without flickering
-          if (ldStatus) {
-            var msgIdx = Math.min(statusMessages.length - 1, Math.floor((loadedCount / totalLoad) * statusMessages.length));
-            var newMsg = statusMessages[msgIdx];
-            if (ldStatus.textContent !== newMsg) {
-              ldStatus.style.opacity = '0';
-              (function (msg) {
-                setTimeout(function () {
-                  if (ldStatus) {
-                    ldStatus.textContent = msg;
-                    ldStatus.style.opacity = '1';
-                  }
-                }, 150);
-              })(newMsg);
+            // Update circular progress stroke offset
+            if (ldCircle) {
+              var offset = 314 - (progressPercent / 100 * 314);
+              ldCircle.style.strokeDashoffset = offset;
             }
-          }
 
-          if (ldPct) ldPct.textContent = loadedCount + ' / ' + totalLoad;
-
-          if (loadedCount === totalLoad) {
-            isReady = true;
-            sizeCanvas();
-            doDraw(0);
-            if (loaderEl) {
-              loaderEl.style.opacity = '0';
-              setTimeout(function () { if (loaderEl.parentNode) loaderEl.parentNode.removeChild(loaderEl); }, 800);
+            // Update percentage number text
+            if (ldPctNum) {
+              ldPctNum.textContent = progressPercent + '%';
             }
+
+            // Update status message dynamically without flickering
+            if (ldStatus) {
+              var msgIdx = Math.min(statusMessages.length - 1, Math.floor((loadedCount / totalLoad) * statusMessages.length));
+              var newMsg = statusMessages[msgIdx];
+              if (ldStatus.textContent !== newMsg) {
+                ldStatus.style.opacity = '0';
+                (function (msg) {
+                  setTimeout(function () {
+                    if (ldStatus) {
+                      ldStatus.textContent = msg;
+                      ldStatus.style.opacity = '1';
+                    }
+                  }, 150);
+                })(newMsg);
+              }
+            }
+
+            if (ldPct) ldPct.textContent = Math.min(loadedCount, totalLoad) + ' / ' + totalLoad;
+
+            if (loadedCount >= totalLoad) {
+              revealed = true;
+              isReady = true;
+              sizeCanvas();
+              doDraw(0);
+              if (loaderEl) {
+                loaderEl.style.opacity = '0';
+                setTimeout(function () { if (loaderEl.parentNode) loaderEl.parentNode.removeChild(loaderEl); }, 800);
+              }
+            }
+          } else {
+            // A background frame arrived — let the RAF loop redraw
+            // with the (possibly better) exact frame.
+            lastDrawn = -1;
           }
         };
 
         var pad4 = function (n) { return ('0000' + n).slice(-4); };
 
-        for (var i = 0; i < S1_COUNT; i++) {
-          var img1 = new Image();
-          img1.onload = img1.onerror = onSettle;
-          img1.src = dir1 + '/frame' + pad4(i + 1) + '.jpg';
-          frames1.push(img1);
-        }
-        for (var j = 0; j < S2_COUNT; j++) {
-          var img2 = new Image();
-          img2.onload = img2.onerror = onSettle;
-          img2.src = dir2 + '/frame' + pad4(j + 1) + '.jpg';
-          frames2.push(img2);
-        }
+        var srcFor = function (idx) {
+          return idx < S1_COUNT
+            ? dir1 + '/frame' + pad4(idx + 1) + '.webp'
+            : dir2 + '/frame' + pad4(idx - S1_COUNT + 1) + '.webp';
+        };
+
+        // Limited-concurrency workers walking the prioritized order
+        var nextInOrder = 0;
+        var loadNext = function () {
+          if (nextInOrder >= order.length) return;
+          var idx = order[nextInOrder++];
+          var img = imgFor(idx);
+          img.onload = img.onerror = function () { onSettle(); loadNext(); };
+          img.src = srcFor(idx);
+        };
+        for (var w = 0; w < 6; w++) loadNext();
       }
 
       // ── Draw — object-fit:cover (all screen sizes) ────────────
@@ -4193,14 +4230,24 @@
       // Why no "طولية" (stretch): we use the image's natural aspect
       // ratio to calculate the crop — never squish or stretch pixels.
       //
-      // vIdx 0-149   → frames1[0-149]   (S1)
-      // vIdx 150-269 → frames2[0-119]   (S2)
+      // vIdx 0-74    → frames1[0-74]    (S1)
+      // vIdx 75-134  → frames2[0-59]    (S2)
+      // Nearest already-loaded frame to i (frames stream in progressively)
+      function nearestLoaded(i) {
+        for (var d = 0; d < TOTAL; d++) {
+          var lo = i - d, hi = i + d;
+          if (lo >= 0) { var a = imgFor(lo); if (a && a.complete && a.naturalWidth) return lo; }
+          if (d && hi < TOTAL) { var b = imgFor(hi); if (b && b.complete && b.naturalWidth) return hi; }
+        }
+        return -1;
+      }
+
       function doDraw(vIdx) {
-        var i = Math.max(0, Math.min(TOTAL - 1, Math.round(vIdx)));
-        if (i === lastDrawn) return;
+        var want = Math.max(0, Math.min(TOTAL - 1, Math.round(vIdx)));
+        var i = nearestLoaded(want);
+        if (i < 0 || i === lastDrawn) return;
         lastDrawn = i;
-        var img = i < S1_COUNT ? frames1[i] : frames2[i - S1_COUNT];
-        if (!img || !img.complete || !img.naturalWidth) return;
+        var img = imgFor(i);
 
         var iW = img.naturalWidth;    // 1920
         var iH = img.naturalHeight;   // 1080
