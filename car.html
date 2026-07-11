@@ -196,6 +196,7 @@
   var SELLER = { dealer:{ar:'معرض',en:'Dealer',ko:'딜러'}, private:{ar:'مالك خاص',en:'Private owner',ko:'개인'} };
 
   var current = null; // last loaded vehicle (for re-render on lang/currency change)
+  var descCache = {}; // vehicleId+lang → translated description (avoid re-fetch on lang toggle)
 
   if (!/^[0-9a-zA-Z_-]{4,64}$/.test(id)) { showError(); }
   else {
@@ -214,6 +215,36 @@
   function showError() {
     el('loading').style.display = 'none';
     el('error').style.display = '';
+  }
+
+  function mdToHtml(text) {
+    return String(text)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/^### (.*)$/gm, '<h3>$1</h3>')
+      .replace(/^## (.*)$/gm, '<h3>$1</h3>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong style="color:#fff;">$1</strong>')
+      .replace(/^- (.*)$/gm, '<li>$1</li>')
+      .split(/\n{2,}/).map(function (b) {
+        return /<h3>|<li>/.test(b) ? b.replace(/\n/g, '') : '<p>' + b.replace(/\n/g, '<br>') + '</p>';
+      }).join('');
+  }
+
+  // Swap the English description for a translated one (ar/ko).
+  // English stays visible while translating and on any failure.
+  function translateDesc(v) {
+    var tl = lang();
+    if (tl === 'en') return;
+    var key = v.id + ':' + tl;
+    if (descCache[key]) { el('desc').innerHTML = mdToHtml(descCache[key]); return; }
+    fetch(API + '/translate?tl=' + tl + '&q=' + encodeURIComponent(String(v.description).slice(0, 9000)))
+      .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function (d) {
+        if (!d || !d.text) return;
+        descCache[key] = d.text;
+        // ignore stale responses (user switched language or car meanwhile)
+        if (current === v && lang() === tl) el('desc').innerHTML = mdToHtml(d.text);
+      })
+      .catch(function () {});
   }
 
   function photoSrc(p) {
@@ -341,19 +372,11 @@
       el('pa-body').innerHTML = '<p style="color:rgba(200,216,240,0.45);font-size:0.85rem;padding:1rem 0;">' + T('mk_none') + '</p>';
     }
 
-    /* Description (light markdown) */
+    /* Description (light markdown) — API text is English; translate for ar/ko */
     if (v.description) {
-      var md = String(v.description)
-        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-        .replace(/^### (.*)$/gm, '<h3>$1</h3>')
-        .replace(/^## (.*)$/gm, '<h3>$1</h3>')
-        .replace(/\*\*(.+?)\*\*/g, '<strong style="color:#fff;">$1</strong>')
-        .replace(/^- (.*)$/gm, '<li>$1</li>')
-        .split(/\n{2,}/).map(function (b) {
-          return /<h3>|<li>/.test(b) ? b.replace(/\n/g, '') : '<p>' + b.replace(/\n/g, '<br>') + '</p>';
-        }).join('');
-      el('desc').innerHTML = md;
+      el('desc').innerHTML = mdToHtml(v.description);
       el('desc-panel').style.display = '';
+      translateDesc(v);
     }
 
     /* Features */
