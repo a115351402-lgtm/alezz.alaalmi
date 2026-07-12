@@ -73,7 +73,9 @@
     ]
   }
   </script>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="tailwind.css" />
+  <link rel="preload" as="image" href="frames-w/frame0001.webp" media="(min-width: 769px)" />
+  <link rel="preload" as="image" href="frames-vid1-w/frame0001.webp" media="(max-width: 768px)" />
   <script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
   <script>
     window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
@@ -84,29 +86,6 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&display=swap"
     rel="stylesheet" />
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            sky: '#1A4DB8',      /* deep navy-blue (was bright #1A8FE3) */
-            'sky-light': '#09090F',      /* near-black page bg */
-            'sky-mid': '#0F1125',      /* dark section bg */
-            'sky-glow': '#5B9BF5',      /* visible accent blue for text on dark */
-            gold: '#C9A84C',
-            'gold-light': '#F0D98A',
-            'gold-dark': '#A0802A',
-            ink: '#C8D8F0',      /* light text on dark bg */
-          },
-          fontFamily: {
-            cairo: ['Cairo', 'sans-serif'],
-            tajawal: ['Tajawal', 'sans-serif'],
-          },
-        },
-      },
-    }
-  </script>
 
   <style>
     * {
@@ -4035,11 +4014,12 @@
         window.visualViewport.addEventListener('resize', sizeCanvas, { passive: true });
       }
 
-      // ── Image loading (progressive, non-blocking) ────────────
-      // Pass 0 (every 8th frame + last) reveals the page after only
-      // ~1MB; later passes (4 → 2 → 1) fill in the remaining frames
-      // in the background with limited concurrency. doDraw falls
-      // back to the nearest loaded frame until the exact one lands.
+      // ── Image loading (progressive, non-blocking, S1-first) ──
+      // S1 (hero) loads in prioritized passes (8 → 4 → 2 → 1); the
+      // page is revealed after S1's first pass (~10 frames). S2 only
+      // starts once S1 is complete — or immediately when the visitor
+      // scrolls toward it — so a hero-only visit never downloads S2.
+      // doDraw falls back to the nearest loaded frame meanwhile.
       var frames1 = [];
       var frames2 = [];
       var isReady = false;
@@ -4054,20 +4034,24 @@
         for (var f1 = 0; f1 < S1_COUNT; f1++) frames1.push(new Image());
         for (var f2 = 0; f2 < S2_COUNT; f2++) frames2.push(new Image());
 
-        // Prioritized order: stride 8 (pass 0) → 4 → 2 → 1
-        var order = [];
-        var seen = {};
+        // Per-segment prioritized order: strides 8 → 4 → 2 → 1
+        function buildOrder(start, count) {
+          var out = [], seen = {};
+          [8, 4, 2, 1].forEach(function (stride) {
+            for (var k = 0; k < count; k += stride) {
+              if (!seen[k]) { seen[k] = 1; out.push(start + k); }
+            }
+            if (stride === 8 && !seen[count - 1]) { seen[count - 1] = 1; out.push(start + count - 1); }
+          });
+          return out;
+        }
+        var orderS1 = buildOrder(0, S1_COUNT);
+        var orderS2 = buildOrder(S1_COUNT, S2_COUNT);
+
         var pass0Total = 0;
-        [8, 4, 2, 1].forEach(function (stride) {
-          for (var k = 0; k < TOTAL; k += stride) {
-            if (!seen[k]) { seen[k] = 1; order.push(k); }
-          }
-          if (stride === 8) {
-            if (!seen[TOTAL - 1]) { seen[TOTAL - 1] = 1; order.push(TOTAL - 1); }
-            pass0Total = order.length;
-          }
-        });
-        var totalLoad = pass0Total; // loader UI measures pass 0 only
+        for (var p0 = 0; p0 < S1_COUNT; p0 += 8) pass0Total++;
+        if ((S1_COUNT - 1) % 8 !== 0) pass0Total++;
+        var totalLoad = pass0Total; // loader UI measures S1's first pass only
 
         // Loader UI (same for mobile and desktop) - Option 1: Premium Portal
         var loaderEl = document.createElement('div');
@@ -4210,16 +4194,38 @@
             : dir2 + '/frame' + pad4(idx - S1_COUNT + 1) + '.webp';
         };
 
-        // Limited-concurrency workers walking the prioritized order
-        var nextInOrder = 0;
+        // Limited-concurrency workers. S1 drains first; S2 stays
+        // completely on hold until the visitor scrolls toward it —
+        // a hero-only visit never downloads S2 at all.
+        var nextS1 = 0;
+        var nextS2 = 0;
+        var s2Unlocked = false;
+        var takeIdx = function () {
+          if (nextS1 < orderS1.length) return orderS1[nextS1++];
+          if (s2Unlocked && nextS2 < orderS2.length) return orderS2[nextS2++];
+          return -1;
+        };
         var loadNext = function () {
-          if (nextInOrder >= order.length) return;
-          var idx = order[nextInOrder++];
+          var idx = takeIdx();
+          if (idx < 0) return;
           var img = imgFor(idx);
           img.onload = img.onerror = function () { onSettle(); loadNext(); };
           img.src = srcFor(idx);
         };
         for (var w = 0; w < 6; w++) loadNext();
+
+        var unlockS2 = function () {
+          if (s2Unlocked) return;
+          s2Unlocked = true;
+          // restart the worker pool (it dies when both queues are gated)
+          for (var w2 = 0; w2 < 6; w2++) loadNext();
+        };
+        window.addEventListener('scroll', function onEarlyScroll() {
+          if (currentScroll > S1_SCROLL * 0.25) {
+            unlockS2();
+            window.removeEventListener('scroll', onEarlyScroll);
+          }
+        }, { passive: true });
       }
 
       // ── Draw — object-fit:cover (all screen sizes) ────────────
