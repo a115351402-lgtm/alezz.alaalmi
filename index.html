@@ -79,6 +79,18 @@
   <script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
   <script>
     window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+    // Pause decorative work (RAF loops / CSS animations) while its
+    // section is off-screen. Falls back to always-on without IO.
+    window.__onVisible = function (el, onEnter, onExit, margin) {
+      if (!el) return;
+      if (!('IntersectionObserver' in window)) { onEnter(); return; }
+      new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          // edge-touching boxes report isIntersecting with ratio 0 — treat as exit
+          (en.isIntersecting && en.intersectionRatio > 0 ? onEnter : onExit)();
+        });
+      }, { rootMargin: margin || '100px' }).observe(el);
+    };
   </script>
   <script defer src="/_vercel/speed-insights/script.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -100,6 +112,12 @@
 
     html::-webkit-scrollbar {
       display: none; /* Chrome, Safari, Opera */
+    }
+
+    /* Decorative CSS animations freeze while their section is off-screen
+       (class toggled by an IntersectionObserver; transitions unaffected) */
+    .anim-off, .anim-off * {
+      animation-play-state: paused !important;
     }
 
     body {
@@ -2298,13 +2316,17 @@
         // Initial paint
         updateS3();
 
-        // Loop for canvas rendering
+        // Loop for canvas rendering — runs only while the section is on-screen
+        var particlesVisible = false;
         function loop() {
+          if (!particlesVisible) return;
           updateParticles();
           requestAnimationFrame(loop);
         }
         if (canvas) {
-          requestAnimationFrame(loop);
+          window.__onVisible(canvas,
+            function () { if (!particlesVisible) { particlesVisible = true; requestAnimationFrame(loop); } },
+            function () { particlesVisible = false; });
         }
 
         // Also run on next frame to catch any layout shift
@@ -2555,14 +2577,22 @@
       gl.clearColor(0.035, 0.035, 0.065, 1.0);
 
       var t0 = Date.now();
+      var glVisible = false;
       function frame() {
+        if (!glVisible) return; // loop dies off-screen, restarts on re-entry
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.uniform2f(uR, sc.width, sc.height);
         gl.uniform1f(uT, (Date.now() - t0) / 1000);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         requestAnimationFrame(frame);
       }
-      requestAnimationFrame(frame);
+      // Negative margin: the sticky canvas bleeds ~90px under the next
+      // section (margin-bottom:-100vh), which would keep the GPU loop
+      // alive forever — require a meaningful slice on screen instead.
+      window.__onVisible(sc,
+        function () { if (!glVisible) { glVisible = true; requestAnimationFrame(frame); } },
+        function () { glVisible = false; },
+        '-120px 0px -120px 0px');
 
     })();
   </script>
@@ -2883,14 +2913,28 @@
           tgY = e.clientY - rect.top;
         });
 
-        (function movePointer() {
+        // Runs only while the section is on-screen, and lets the RAF
+        // die once the pointer has settled on its target.
+        var ptrVisible = false;
+        function movePointer() {
+          if (!ptrVisible) return;
           curX += (tgX - curX) / 20;
           curY += (tgY - curY) / 20;
-          if (pointer) {
-            pointer.style.transform = 'translate(' + Math.round(curX) + 'px, ' + Math.round(curY) + 'px)';
+          pointer.style.transform = 'translate(' + Math.round(curX) + 'px, ' + Math.round(curY) + 'px)';
+          if (Math.abs(tgX - curX) > 0.1 || Math.abs(tgY - curY) > 0.1) {
+            requestAnimationFrame(movePointer);
+          } else {
+            ptrRunning = false;
           }
-          requestAnimationFrame(movePointer);
-        })();
+        }
+        var ptrRunning = false;
+        function wakePointer() {
+          if (ptrVisible && !ptrRunning) { ptrRunning = true; requestAnimationFrame(movePointer); }
+        }
+        section.addEventListener('mousemove', wakePointer);
+        window.__onVisible(section,
+          function () { ptrVisible = true; wakePointer(); },
+          function () { ptrVisible = false; ptrRunning = false; });
       }
 
       // ── Interactive Savings Calculator ──
@@ -2968,8 +3012,6 @@
         transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         position: relative;
         z-index: 10;
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
       }
       .testimonial-card.active-card {
         border-color: #C9A84C !important;
@@ -3795,11 +3837,11 @@
               path.setAttribute('pathLength', '1');
               path.setAttribute('stroke-dasharray', '0.3 0.7');
 
-              var durDash = (20 + Math.random() * 15).toFixed(2);
-              var durOpacity = (15 + Math.random() * 15).toFixed(2);
-              path.style.setProperty('--min-opacity', (baseOpacity * 0.3).toFixed(3));
-              path.style.setProperty('--max-opacity', baseOpacity.toFixed(3));
-              path.style.animation = 'pathDashOffset ' + durDash + 's linear infinite, pathOpacity ' + durOpacity + 's ease-in-out infinite';
+              // Static decoration: the 144 SVG dash/opacity animations
+              // these lines used to run are main-thread work and made
+              // the FAQ/footer area feel heavy. The dashed texture at
+              // 0.10-0.15 opacity reads the same without animating.
+              path.setAttribute('stroke-dashoffset', (Math.random()).toFixed(2));
 
               svg.appendChild(path);
             }
@@ -4351,20 +4393,25 @@
       function raf() {
         requestAnimationFrame(raf);
         if (!isReady) return;
-        var tgt = getTarget();
-        lerpIdx += (tgt - lerpIdx) * LERP;
 
-        doDraw(lerpIdx);
+        // Canvas + progress bar only while inside the animation range
+        if (currentScroll <= S1_SCROLL + S2_SCROLL + 800) {
+          var tgt = getTarget();
+          lerpIdx += (tgt - lerpIdx) * LERP;
 
-        if (bar) {
-          var pct = lerpIdx < S1_COUNT
-            ? lerpIdx / (S1_COUNT - 1) * 100
-            : (lerpIdx - S1_COUNT) / (S2_COUNT - 1) * 100;
-          bar.style.width = Math.max(0, Math.min(100, pct)) + '%';
+          doDraw(lerpIdx);
+
+          if (bar) {
+            var pct = lerpIdx < S1_COUNT
+              ? lerpIdx / (S1_COUNT - 1) * 100
+              : (lerpIdx - S1_COUNT) / (S2_COUNT - 1) * 100;
+            bar.style.width = Math.max(0, Math.min(100, pct)) + '%';
+          }
         }
 
-        // Apply smooth horizontal translation on desktop
-        if (window.innerWidth > 768 && hzTrack) {
+        // Smooth horizontal translation on desktop — skip the style
+        // write once the lerp has settled on its target
+        if (window.innerWidth > 768 && hzTrack && Math.abs(hzTargetX - hzCurrentX) > 0.01) {
           hzCurrentX += (hzTargetX - hzCurrentX) * 0.12;
           var translateX = Math.round(hzCurrentX * 100) / 100;
           hzTrack.style.transform = 'translate3d(' + translateX + 'vw, 0px, 0px)';
@@ -4410,6 +4457,20 @@
       });
 
       // ── FAQ ──────────────────────────────────────────────────
+      // ── Freeze decorative CSS animations while off-screen ──
+      // rootMargin 0: pause the instant the element leaves the viewport.
+      // The tracking map is observed separately — its ~144 SVG dash
+      // animations are main-thread work and must stop even while a
+      // sliver of the surrounding section is still visible.
+      ['success', 'auctions', 's3-section', 'success-map-wrapper', 'success-glow-bg'].forEach(function (id) {
+        var sec = document.getElementById(id);
+        if (!sec) return;
+        window.__onVisible(sec,
+          function () { sec.classList.remove('anim-off'); },
+          function () { sec.classList.add('anim-off'); },
+          '0px');
+      });
+
       window.toggleFaq = function (btn) {
         var ans = btn.nextElementSibling;
         var chv = btn.querySelector('.faq-chevron');

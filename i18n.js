@@ -253,6 +253,12 @@
     'كم تستغرق مدة الشحن من كوريا إلى الرياض؟': { en: 'How long does shipping take from Korea to Riyadh?', ko: '한국에서 리야드까지 배송은 얼마나 걸리나요?' },
     'ما هي إجراءات الجمارك والتخليص؟': { en: 'What are the customs and clearance procedures?', ko: '관세 및 통관 절차는 어떻게 되나요?' },
     'هل يمكنني مرافقتكم شخصياً إلى كوريا؟': { en: 'Can I personally accompany you to Korea?', ko: '한국에 직접 동행할 수 있나요?' },
+    // FAQ answers (Q3 is split into 3 text nodes by the <strong> tag)
+    'متوسط مدة الشحن البحري من إنتشون إلى ميناء جدة أو الدمام': { en: 'Average sea shipping time from Incheon to Jeddah or Dammam port is', ko: '인천에서 제다 또는 담맘 항구까지의 평균 해상 운송 기간은' },
+    '30–40 يوماً': { en: '30–40 days', ko: '30–40일' },
+    '. بعد وصول السيارة يتم استيفاء إجراءات الجمارك خلال 3–7 أيام عمل ثم التسليم في الرياض.': { en: '. After the car arrives, customs is cleared within 3–7 business days, then it is delivered in Riyadh.', ko: '입니다. 차량 도착 후 3–7 영업일 내에 통관이 완료되며 이후 리야드에서 인도됩니다.' },
+    'نتولى كامل عملية التخليص الجمركي نيابةً عنك. تشمل: شهادة المنشأ، فاتورة الشراء، وثائق الشحن، وتسديد الرسوم الجمركية (5% + ضريبة القيمة المضافة). لا تحتاج لأي تدخل شخصي.': { en: 'We handle the entire customs clearance process on your behalf, including: certificate of origin, purchase invoice, shipping documents, and payment of customs duties (5% + VAT). No personal involvement is needed.', ko: '통관 절차 전체를 대행해 드립니다. 원산지 증명서, 구매 송장, 선적 서류, 관세 납부(5% + 부가가치세)가 포함되며 개인적인 개입이 전혀 필요 없습니다.' },
+    'نعم، هذه خدمتنا الأكثر تميزاً! نوفر لك رحلة ميدانية كاملة: استقبال في مطار إنتشون، إقامة فندقية، جولة على المزادات، والتفاوض بالنيابة عنك. تواصل معنا لحجز موعد الرحلة القادمة.': { en: 'Yes — this is our signature service! We provide a complete field trip: pickup at Incheon Airport, hotel accommodation, auction tours, and negotiation on your behalf. Contact us to book the next trip.', ko: '네, 저희의 가장 특별한 서비스입니다! 인천공항 영접, 호텔 숙박, 경매장 투어, 대리 협상까지 완전한 현장 여행을 제공합니다. 다음 여행 예약은 문의해 주세요.' },
 
     // Footer
     'شركة متخصصة في استيراد السيارات الكورية الفاخرة منذ عام 2019. نقدم خدمة مرافقة ميدانية متكاملة من لحظة البحث عن السيارة في كوريا حتى تسليمها بيدك في الرياض.': { en: 'A company specialized in importing premium Korean cars since 2019. We provide a complete field accompaniment service — from finding the car in Korea to handing it to you in Riyadh.', ko: '2019년부터 프리미엄 한국 차량 수입을 전문으로 하는 회사입니다. 한국에서 차량을 찾는 순간부터 리야드에서 인도하기까지 완벽한 현장 동행 서비스를 제공합니다.' },
