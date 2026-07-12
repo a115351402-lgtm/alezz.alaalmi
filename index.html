@@ -1165,25 +1165,6 @@
       }
     }
 
-    /* SVG Path animations */
-    @keyframes pathDashOffset {
-      from {
-        stroke-dashoffset: 0;
-      }
-      to {
-        stroke-dashoffset: -1;
-      }
-    }
-
-    @keyframes pathOpacity {
-      0%, 100% {
-        stroke-opacity: var(--min-opacity, 0.1);
-      }
-      50% {
-        stroke-opacity: var(--max-opacity, 0.4);
-      }
-    }
-
     /* ══ HORIZONTAL STICKY SCROLL SYSTEM (Desktop) ════════════════ */
     @media (min-width: 769px) {
       #horizontal-scroll-container {
@@ -2291,10 +2272,24 @@
         }, { passive: true });
         // --- END SPEED LINES CANVAS ENGINE ---
 
+        // Cached absolute bounds so the every-scroll handler can bail
+        // out without a layout read while the section is far away.
+        var s3Top = 0, s3Bottom = 0;
+        function cacheS3Bounds() {
+          var r = container.getBoundingClientRect();
+          s3Top = r.top + window.pageYOffset;
+          s3Bottom = s3Top + r.height;
+        }
+        cacheS3Bounds();
+        window.addEventListener('load', cacheS3Bounds, { passive: true });
+
         function updateS3() {
+          var y = window.pageYOffset;
+          if (y + window.innerHeight < s3Top - 300 || y > s3Bottom + 300) return;
           var rect = container.getBoundingClientRect();
           var viewH = window.innerHeight;
           var H = rect.height;
+          s3Top = rect.top + y; s3Bottom = s3Top + H; // keep cache fresh while active
 
           var scrolled = viewH - rect.top;
           var total = viewH + H;
@@ -2311,7 +2306,7 @@
 
         // Run on scroll and resize
         window.addEventListener('scroll', updateS3, { passive: true });
-        window.addEventListener('resize', updateS3, { passive: true });
+        window.addEventListener('resize', function () { cacheS3Bounds(); updateS3(); }, { passive: true });
 
         // Initial paint
         updateS3();
@@ -3785,72 +3780,6 @@
         var el = document.getElementById(id);
         if (el) pauseObs.observe(el);
       });
-
-      /* ── 2.5 Dynamic Background Paths Injection ────────────────
-         Generates 72 animated lines matching the BackgroundPaths component
-         and injects them as subtle backgrounds in FAQ and Footer.     */
-      (function () {
-        var configs = [
-          { id: 'faq', opacity: 0.15 },
-          { id: 'footer-section', opacity: 0.12 }
-        ];
-
-        configs.forEach(function (cfg) {
-          var container = document.getElementById(cfg.id);
-          if (!container) return;
-
-          // Create wrapper div
-          var wrapper = document.createElement('div');
-          wrapper.className = 'absolute inset-0 pointer-events-none overflow-hidden';
-          wrapper.style.zIndex = '0';
-
-          var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-          svg.setAttribute('class', 'w-full h-full text-white');
-          svg.setAttribute('viewBox', '0 0 696 316');
-          svg.setAttribute('fill', 'none');
-          svg.style.position = 'absolute';
-          svg.style.inset = '0';
-          svg.style.opacity = cfg.opacity;
-
-          var title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
-          title.textContent = 'Background Paths';
-          svg.appendChild(title);
-
-          [1, -1].forEach(function (pos) {
-            for (var i = 0; i < 36; i++) {
-              var d = 'M-' + (380 - i * 5 * pos) + ' -' + (189 + i * 6) +
-                      'C-' + (380 - i * 5 * pos) + ' -' + (189 + i * 6) +
-                      ' -' + (312 - i * 5 * pos) + ' ' + (216 - i * 6) +
-                      ' ' + (152 - i * 5 * pos) + ' ' + (343 - i * 6) +
-                      'C' + (616 - i * 5 * pos) + ' ' + (470 - i * 6) +
-                      ' ' + (684 - i * 5 * pos) + ' ' + (875 - i * 6) +
-                      ' ' + (684 - i * 5 * pos) + ' ' + (875 - i * 6);
-
-              var width = 0.5 + i * 0.03;
-              var baseOpacity = 0.1 + i * 0.03;
-
-              var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-              path.setAttribute('d', d);
-              path.setAttribute('stroke', 'currentColor');
-              path.setAttribute('stroke-width', width.toString());
-              path.setAttribute('stroke-opacity', baseOpacity.toString());
-              path.setAttribute('pathLength', '1');
-              path.setAttribute('stroke-dasharray', '0.3 0.7');
-
-              // Static decoration: the 144 SVG dash/opacity animations
-              // these lines used to run are main-thread work and made
-              // the FAQ/footer area feel heavy. The dashed texture at
-              // 0.10-0.15 opacity reads the same without animating.
-              path.setAttribute('stroke-dashoffset', (Math.random()).toFixed(2));
-
-              svg.appendChild(path);
-            }
-          });
-
-          wrapper.appendChild(svg);
-          container.insertBefore(wrapper, container.firstChild);
-        });
-      })();
 
       /* ── 4. Smooth ticker stop on non-visible ─────────────────── */
       var ticker = document.querySelector('.ticker-wrap');
