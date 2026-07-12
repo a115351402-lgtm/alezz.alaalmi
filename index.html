@@ -2471,6 +2471,15 @@
       var sect = document.getElementById('features');
       if (!sc || !sect) return;
 
+      // No WebGL on mobile: the stacked (non-sticky) layout keeps the
+      // canvas overlapping later sections, so it kept rendering even at
+      // the FAQ — measured at ~63% of the CPU there. The dark overlay
+      // and gradients behind the section carry the look on their own.
+      if (window.innerWidth <= 768) {
+        sc.style.display = 'none';
+        return;
+      }
+
       var glOpts = {
         alpha: false,
         antialias: false,               // faster on mobile
@@ -3043,11 +3052,20 @@
         }
       }
 
+      /* mix-blend-mode removed: it forced continuous re-blending of a
+         huge region (~31% CPU at the FAQ) and these translucent radial
+         gradients look the same on the dark background without it. */
       .success-blob {
         position: absolute;
         border-radius: 50%;
-        mix-blend-mode: screen;
         will-change: transform;
+      }
+      @media (max-width: 768px) {
+        .success-blob, .grad-blob { display: none !important; }
+        /* Static hologram map + no pulsing dots on phones: these
+           decorative loops kept repainting layers full-time and were
+           the last measurable CPU burn around the FAQ on mobile. */
+        #success-map-wrapper *, .animate-pulse { animation: none !important; }
       }
       
       @media (max-width: 768px) {
