@@ -3667,7 +3667,10 @@
         <h2 class="font-cairo font-900 text-white" style="font-size:clamp(1.8rem,4vw,2.8rem);">الأسئلة الشائعة</h2>
       </div>
 
-      <div class="flex flex-col gap-4 reveal-child" id="faq-list">
+      <!-- No entrance animation here: the reveal transitions ran while
+           scrolling into the section, and the stagger rules only cover
+           4 children — the 5th question was never revealed at all. -->
+      <div class="flex flex-col gap-4" id="faq-list">
 
         <!-- Q1 -->
         <div class="faq-item bg-white/10 border border-white/20 rounded-2xl overflow-hidden">
@@ -3782,7 +3785,7 @@
       /* ── 2. Pause/resume CSS animations for off-screen sections ─
          Gradient blobs in #auctions and ticker pause when not visible
          — saves GPU/CPU when user is elsewhere on the page           */
-      var pauseTargets = ['auctions', 'features', 'calculator-section', 'success', 'faq', 'footer-section'];
+      var pauseTargets = ['auctions', 'features', 'calculator-section', 'success', 'footer-section'];
 
       var pauseObs = new IntersectionObserver(function (entries) {
         entries.forEach(function (e) {
