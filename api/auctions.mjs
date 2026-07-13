@@ -14,7 +14,18 @@
 // the auctions section never breaks.
 // ═══════════════════════════════════════════════════════════
 
-import fallback from '../auctions.json' with { type: 'json' };
+// Curated fallback, inlined so the function has zero file dependencies
+// (a JSON import attribute broke the Vercel build → 404 on the route).
+// Keep in sync with /auctions.json, which documents the schema.
+const fallback = {
+  updated: '2026-07-13',
+  source: 'fallback',
+  cars: [
+    { house: 'glovis', title: 'جينيسس 2025', year: 2025, mileage_km: 1200, price_sar: 82000, est_dealer_price_sar: 98000, image: 'genesis_2025_black.webp', status: 'available' },
+    { house: 'lotte', title: 'هونداي ازيرا 2025', year: 2025, mileage_km: 3200, price_sar: 95000, est_dealer_price_sar: 116000, image: 'hyundai_azera_2025_black.webp', status: 'hot' },
+    { house: 'glovis', title: 'كيا كي 8', year: 2025, mileage_km: 4500, price_sar: 88000, est_dealer_price_sar: 104000, image: 'kia_k8_black.webp', status: 'ending' },
+  ],
+};
 
 const KRW_TO_SAR = 0.0026; // approximate; prices are indicative anyway
 
