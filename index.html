@@ -2623,126 +2623,10 @@
           قبل فوات الأوان</p>
       </div>
 
-      <!-- Auction cards — dark glass style -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16 reveal-child">
+      <!-- Auction cards — rendered from /api/auctions (Glovis + Lotte
+           public export platforms, 6h edge cache, curated fallback) -->
+      <div id="auction-cards" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16"></div>
 
-        <!-- Car 1 — Genesis 2025 -->
-        <div class="auction-card-dark rounded-3xl overflow-hidden cursor-pointer">
-          <div class="car-photo-card h-52">
-            <img src="genesis_2025_black.webp"
-              alt="جينيسس 2025" loading="lazy" />
-            <div class="overlay"></div>
-            <div class="absolute top-3 right-3 bg-gold rounded-full px-3 py-1 z-10">
-              <span class="font-cairo font-700 text-white text-xs">متاح الآن</span>
-            </div>
-            <div class="absolute bottom-3 right-3 z-10">
-              <p class="font-cairo font-900 text-white text-lg leading-none">جينيسس 2025</p>
-              <p class="font-tajawal text-white/70 text-xs">2025 — 1,200 كم</p>
-            </div>
-          </div>
-          <div class="p-5">
-            <div class="flex justify-between items-center mb-3">
-              <div>
-                <p class="font-tajawal text-xs mb-0.5" style="color:rgba(200,216,240,0.5);">السعر الحالي في المزاد</p>
-                <p class="font-cairo font-800 text-xl" style="color:#5B9BF5;" data-sar="82000"></p>
-              </div>
-              <div class="text-left">
-                <p class="font-tajawal text-xs mb-0.5" style="color:rgba(200,216,240,0.5);">سعر الشركة التقديري</p>
-                <p class="font-cairo font-800 text-emerald-400 text-xl" data-sar="98000"></p>
-              </div>
-            </div>
-            <div
-              style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);border-radius:12px;padding:8px 12px;margin-bottom:16px;text-align:center;">
-              <p class="font-cairo font-700 text-emerald-400 text-sm"><span>توفيرك المتوقع:</span> <span data-sar="16000"></span></p>
-            </div>
-            <a href="https://wa.me/966550112411?text=أريد%20المزايدة%20على%20جينيسس%202025"
-              class="btn-gold w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm">
-              <span>زايد الآن</span>
-              <svg viewBox="0 0 24 24" fill="white" width="16" height="16">
-                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
-              </svg>
-            </a>
-          </div>
-        </div>
-
-        <!-- Car 2 — Hyundai Azera 2025 -->
-        <div class="auction-card-dark rounded-3xl overflow-hidden cursor-pointer">
-          <div class="car-photo-card h-52">
-            <img src="hyundai_azera_2025_black.webp"
-              alt="هونداي ازيرا 2025" loading="lazy" />
-            <div class="overlay"></div>
-            <div class="absolute top-3 right-3 rounded-full px-3 py-1 z-10" style="background:#1A4DB8;">
-              <span class="font-cairo font-700 text-white text-xs">مزاد حار</span>
-            </div>
-            <div class="absolute bottom-3 right-3 z-10">
-              <p class="font-cairo font-900 text-white text-lg leading-none">هونداي ازيرا 2025</p>
-              <p class="font-tajawal text-white/70 text-xs">2025 — 3,200 كم</p>
-            </div>
-          </div>
-          <div class="p-5">
-            <div class="flex justify-between items-center mb-3">
-              <div>
-                <p class="font-tajawal text-xs mb-0.5" style="color:rgba(200,216,240,0.5);">السعر الحالي في المزاد</p>
-                <p class="font-cairo font-800 text-xl" style="color:#5B9BF5;" data-sar="95000"></p>
-              </div>
-              <div class="text-left">
-                <p class="font-tajawal text-xs mb-0.5" style="color:rgba(200,216,240,0.5);">سعر الشركة التقديري</p>
-                <p class="font-cairo font-800 text-emerald-400 text-xl" data-sar="116000"></p>
-              </div>
-            </div>
-            <div
-              style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);border-radius:12px;padding:8px 12px;margin-bottom:16px;text-align:center;">
-              <p class="font-cairo font-700 text-emerald-400 text-sm"><span>توفيرك المتوقع:</span> <span data-sar="21000"></span></p>
-            </div>
-            <a href="https://wa.me/966550112411?text=أريد%20المزايدة%20على%20هونداي%20ازيرا%202025"
-              class="btn-gold w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm">
-              <span>زايد الآن</span>
-              <svg viewBox="0 0 24 24" fill="white" width="16" height="16">
-                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
-              </svg>
-            </a>
-          </div>
-        </div>
-
-        <!-- Car 3 — Kia K8 -->
-        <div class="auction-card-dark rounded-3xl overflow-hidden cursor-pointer">
-          <div class="car-photo-card h-52">
-            <img src="kia_k8_black.webp"
-              alt="كيا كي 8" loading="lazy" />
-            <div class="overlay"></div>
-            <div class="absolute top-3 right-3 bg-red-600 rounded-full px-3 py-1 z-10">
-              <span class="font-cairo font-700 text-white text-xs">ينتهي قريباً</span>
-            </div>
-            <div class="absolute bottom-3 right-3 z-10">
-              <p class="font-cairo font-900 text-white text-lg leading-none">كيا كي 8</p>
-              <p class="font-tajawal text-white/70 text-xs">2025 — 4,500 كم</p>
-            </div>
-          </div>
-          <div class="p-5">
-            <div class="flex justify-between items-center mb-3">
-              <div>
-                <p class="font-tajawal text-xs mb-0.5" style="color:rgba(200,216,240,0.5);">السعر الحالي في المزاد</p>
-                <p class="font-cairo font-800 text-xl" style="color:#5B9BF5;" data-sar="88500"></p>
-              </div>
-              <div class="text-left">
-                <p class="font-tajawal text-xs mb-0.5" style="color:rgba(200,216,240,0.5);">سعر الشركة التقديري</p>
-                <p class="font-cairo font-800 text-emerald-400 text-xl" data-sar="108000"></p>
-              </div>
-            </div>
-            <div
-              style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);border-radius:12px;padding:8px 12px;margin-bottom:16px;text-align:center;">
-              <p class="font-cairo font-700 text-emerald-400 text-sm"><span>توفيرك المتوقع:</span> <span data-sar="19500"></span></p>
-            </div>
-            <a href="https://wa.me/966550112411?text=أريد%20المزايدة%20على%20كيا%20كي%208"
-              class="btn-gold w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm">
-              <span>زايد الآن</span>
-              <svg viewBox="0 0 24 24" fill="white" width="16" height="16">
-                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
-              </svg>
-            </a>
-          </div>
-        </div>
-      </div>
     </section>
         </div><!-- /panel 2 -->
 
@@ -4405,6 +4289,83 @@
           document.getElementById('mobile-menu').classList.remove('open');
         });
       });
+
+      // ── Auction cars — fed by /api/auctions (Glovis + Lotte) ──
+      (function () {
+        var grid = document.getElementById('auction-cards');
+        var section = document.getElementById('auctions');
+        if (!grid || !section) return;
+
+        var HOUSES = {
+          glovis: { label: 'HYUNDAI GLOVIS', color: '#0A2972' },
+          lotte: { label: 'LOTTE AUCTION', color: '#7A1310' }
+        };
+        var BADGES = {
+          available: { text: 'متاح الآن', style: 'background:#C9A84C;' },
+          hot: { text: 'مزاد حار', style: 'background:#1A4DB8;' },
+          ending: { text: 'ينتهي قريباً', style: 'background:#dc2626;' }
+        };
+
+        function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
+
+        function cardHTML(c) {
+          var house = HOUSES[c.house] || HOUSES.glovis;
+          var badge = BADGES[c.status] || BADGES.available;
+          var kmTxt = c.mileage_km ? Number(c.mileage_km).toLocaleString('en-US') + ' ' + (window.I18N ? I18N.t('unit_km') : 'كم') : null;
+          var meta = [c.year, kmTxt].filter(Boolean).join(' — ');
+          var img = c.image
+            ? '<img src="' + esc(c.image) + '" alt="' + esc(c.title) + '" loading="lazy" />'
+            : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0F1125,#1A2340);"><span class="font-cairo font-900" style="color:rgba(255,255,255,0.25);font-size:1.3rem;" data-no-i18n>' + house.label + '</span></div>';
+          var wa = 'https://wa.me/966550112411?text=' + encodeURIComponent('أريد المزايدة على ' + (c.title || '') + ' في مزاد ' + house.label);
+          var saving = (c.est_dealer_price_sar && c.price_sar) ? (c.est_dealer_price_sar - c.price_sar) : 0;
+          return '<div class="auction-card-dark rounded-3xl overflow-hidden cursor-pointer">' +
+            '<div class="car-photo-card h-52">' + img +
+            '<div class="overlay"></div>' +
+            '<div class="absolute top-3 right-3 rounded-full px-3 py-1 z-10" style="' + badge.style + '"><span class="font-cairo font-700 text-white text-xs">' + badge.text + '</span></div>' +
+            '<div class="absolute top-3 left-3 rounded-md px-2.5 py-1 z-10" style="background:' + house.color + ';border:1px solid rgba(255,255,255,0.25);"><span class="font-cairo font-700 text-white" style="font-size:0.62rem;letter-spacing:0.06em;" data-no-i18n>' + house.label + '</span></div>' +
+            '<div class="absolute bottom-3 right-3 z-10">' +
+            '<p class="font-cairo font-900 text-white text-lg leading-none">' + esc(c.title) + '</p>' +
+            (meta ? '<p class="font-tajawal text-white/70 text-xs" data-no-i18n>' + meta + '</p>' : '') +
+            '</div>' +
+            '</div>' +
+            '<div class="p-5">' +
+            '<div class="flex justify-between items-center mb-3">' +
+            '<div><p class="font-tajawal text-xs mb-0.5" style="color:rgba(200,216,240,0.5);">السعر الحالي في المزاد</p>' +
+            '<p class="font-cairo font-800 text-xl" style="color:#5B9BF5;" data-sar="' + Number(c.price_sar || 0) + '"></p></div>' +
+            (c.est_dealer_price_sar ? '<div class="text-left"><p class="font-tajawal text-xs mb-0.5" style="color:rgba(200,216,240,0.5);">سعر الشركة التقديري</p><p class="font-cairo font-800 text-emerald-400 text-xl" data-sar="' + Number(c.est_dealer_price_sar) + '"></p></div>' : '') +
+            '</div>' +
+            (saving > 0 ? '<div style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);border-radius:12px;padding:8px 12px;margin-bottom:16px;text-align:center;"><p class="font-cairo font-700 text-emerald-400 text-sm"><span>توفيرك المتوقع:</span> <span data-sar="' + saving + '"></span></p></div>' : '') +
+            '<a href="' + wa + '" target="_blank" rel="noopener" class="btn-gold w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm"><span>زايد الآن</span>' +
+            '<svg viewBox="0 0 24 24" fill="white" width="16" height="16"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" /></svg></a>' +
+            '</div>' +
+            '</div>';
+        }
+
+        var lastCars = null;
+        function renderCars(cars) {
+          grid.innerHTML = cars.map(cardHTML).join('');
+          if (window.I18N) I18N.apply(grid);
+          if (window.CUR) CUR.refreshDom();
+        }
+
+        var auctionsLoaded = false;
+        function loadAuctions() {
+          if (auctionsLoaded) return;
+          auctionsLoaded = true;
+          fetch('/api/auctions')
+            .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+            .then(function (d) {
+              var cars = (d && d.cars) || [];
+              if (!cars.length) return;
+              lastCars = cars;
+              renderCars(cars);
+            })
+            .catch(function () {}); // grid stays empty; the section header remains
+        }
+
+        window.__onVisible(section, loadAuctions, function () {}, '600px');
+        window.addEventListener('langchange', function () { if (lastCars) renderCars(lastCars); });
+      })();
 
       // ── FAQ ──────────────────────────────────────────────────
       // ── Freeze decorative CSS animations while off-screen ──
