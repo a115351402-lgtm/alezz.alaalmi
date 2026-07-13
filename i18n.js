@@ -215,6 +215,7 @@
     'المزايا والتجهيزات': { en: 'Features & Equipment', ko: '옵션 및 사양' },
     'تقرير الحالة': { en: 'Condition Report', ko: '상태 보고서' },
     'بنود خاصة': { en: 'Special notes', ko: '특이사항' },
+    'مخطط حالة الهيكل — تقرير الفحص الرسمي': { en: 'Body condition map — official inspection report', ko: '차체 상태도 — 공식 검사 보고서' },
     '* السعر لا يشمل الشحن والجمارك': { en: '* Price excludes shipping and customs', ko: '* 가격은 배송 및 통관 비용 제외' },
     'الأحدث إضافة': { en: 'Recently added', ko: '최근 등록순' },
     'السعر: من الأقل': { en: 'Price: low to high', ko: '가격 낮은순' },

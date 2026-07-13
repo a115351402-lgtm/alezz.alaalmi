@@ -18,6 +18,10 @@
 //                                  specs, options, inspection results
 //                                  (parsed from the server-rendered
 //                                  detail page /car/gd/BY/<gdId>/)
+//   /api/auctions?insp=<gdId>    → proxies the official inspection
+//                                  sheet image (damage/repair map) —
+//                                  upstream serves it with a generic
+//                                  content type, so we set image/jpeg
 //   /api/auctions?diag=1         → upstream status + raw sample
 //
 // Edge-cached 6h. On any failure the bundled fallback below is
@@ -113,8 +117,9 @@ function toCar(item) {
     mileage_km: Number(item.drgMil) || undefined,
     price_sar: priceSar,
     est_dealer_price_sar: roundSar(priceSar * DEALER_MARKUP),
-    // /dims/... is Lotte's own image proxy — resized webp, ~30KB a card
-    image: item.imgPath1 ? IMG_BASE + item.imgPath1 + '/dims/format/webp/resize/480x!/quality/85' : undefined,
+    // /dims/... is Lotte's own image proxy — 800px covers 3-col cards
+    // on high-DPI screens without going blurry
+    image: item.imgPath1 ? IMG_BASE + item.imgPath1 + '/dims/format/webp/resize/800x!/quality/88' : undefined,
     status: item.hotYn === 'Y' || Number(item.interestCnt) >= 3 ? 'hot' : 'available',
     // Extra context the current cards don't use yet, but costs nothing
     detail_url: item.gdId ? DETAIL_BASE + item.gdId + '/' : undefined,
@@ -225,7 +230,8 @@ async function fetchLotteDetail(gdId) {
   // Gallery: every /goods/ image sharing the og:image directory
   // (excludes "similar cars" thumbnails further down the page)
   const ogM = html.match(/property="og:image" content="https?:\/\/[^/"]+(\/goods\/[^"]+?\.(?:jpe?g|png|webp))/i);
-  let images = [];
+  const images = [];
+  const thumbs = [];
   if (ogM) {
     const dir = ogM[1].replace(/\/{2,}/g, '/').replace(/\/[^/]*$/, '/');
     const seen = {};
@@ -235,9 +241,14 @@ async function fetchLotteDetail(gdId) {
       const path = im[1].replace(/\/{2,}/g, '/');
       if (!path.startsWith(dir) || seen[path]) continue;
       seen[path] = 1;
-      images.push(IMG_BASE + path + '/dims/format/webp/resize/1024x!/quality/85');
+      images.push(IMG_BASE + path + '/dims/format/webp/resize/1600x!/quality/90');
+      thumbs.push(IMG_BASE + path + '/dims/format/webp/resize/360x!/quality/80');
     }
   }
+
+  // Official inspection sheet (damage/repair diagram) — not every car
+  // has one; the frontend hides the block if the proxy 404s
+  const hasInsp = html.includes('loadMode=inspFile');
 
   const titleEn = (html.match(/property="og:title" content="Buy Used ([^"]+?)\s*- LOTTE AUTOGLOBAL"/) || [])[1]
     || [fields.year, fields.maker, fields.model].filter(Boolean).join(' ');
@@ -262,6 +273,8 @@ async function fetchLotteDetail(gdId) {
     displacement_cc: Number(String(fields.displacement_cc || '').replace(/[^\d]/g, '')) || undefined,
     vin: fields.vin,
     images,
+    thumbs,
+    inspection_sheet: hasInsp ? '/api/auctions?insp=' + gdId : undefined,
     options,
     evaluation: {
       grade: fields.grade, engine: fields.engine, powertrain: fields.powertrain,
@@ -274,6 +287,30 @@ async function fetchLotteDetail(gdId) {
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
+
+  // Inspection-sheet image proxy (upstream sends octet-stream, which
+  // browsers may refuse to render — re-serve it as image/jpeg)
+  if (req.query.insp) {
+    try {
+      const gdId = String(req.query.insp).replace(/[^\d]/g, '');
+      const up = await fetch(
+        'https://www.lotte-autoglobal.net/co/comnFile/doLoadImage.do?loadMode=inspFile&gdId=' + gdId,
+        { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(20000) },
+      );
+      const buf = Buffer.from(await up.arrayBuffer());
+      // a missing sheet comes back as a tiny placeholder / error body
+      if (!up.ok || buf.length < 2000 || buf[0] !== 0xff) {
+        return res.status(404).json({ error: 'No inspection sheet for this car.' });
+      }
+      res.setHeader('Content-Type', 'image/jpeg');
+      res.setHeader('Cache-Control', 's-maxage=86400, stale-while-revalidate=604800');
+      return res.status(200).send(buf);
+    } catch (err) {
+      console.error('inspection sheet failed:', err && err.message);
+      return res.status(404).json({ error: 'No inspection sheet for this car.' });
+    }
+  }
+
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
 
   // Single-car detail mode
