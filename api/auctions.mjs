@@ -1,17 +1,23 @@
 // ═══════════════════════════════════════════════════════════
-// Auction cars feed — Hyundai Glovis (Autobell Global) + Lotte
-// Auto Global. Neither auction house offers a public API, so this
-// reads their PUBLIC export-facing listing pages server-side and
-// normalises the result. Edge-cached 6h, so upstream traffic is a
-// handful of requests per day.
+// Auction cars feed — LOTTE Auto Global (lotte-autoglobal.net).
 //
-//   /api/auctions          → { updated, source, cars: [...] }
-//   /api/auctions?diag=1   → fetch statuses + response snippets
-//                            (used to tune the extractors against
-//                             the real markup via Vercel logs)
+// Lotte has no public API, but its export listing page is fed by
+// an open JSON endpoint (the same one the page's own JS calls):
 //
-// On any failure the bundled auctions.json is served instead, so
-// the auctions section never breaks.
+//   POST /by/buy/selectGdListAjax.do   (form-urlencoded)
+//     pageIndex=1&perPage=12[&search_mcmpCd=<maker code>]
+//
+// It returns { paginationInfo, resultList: [...] } with prices in
+// USD and image paths served from img.lotte-autoglobal.net (which
+// also offers on-the-fly webp resizing via /dims/...).
+//
+//   /api/auctions                → { updated, source, cars: [...] }
+//   /api/auctions?page=2
+//   /api/auctions?make=genesis   → filter by maker
+//   /api/auctions?diag=1         → upstream status + raw sample
+//
+// Edge-cached 6h. On any failure the bundled fallback below is
+// served instead, so the auctions section never breaks.
 // ═══════════════════════════════════════════════════════════
 
 // Curated fallback, inlined so the function has zero file dependencies
@@ -27,147 +33,166 @@ const fallback = {
   ],
 };
 
-const KRW_TO_SAR = 0.0026; // approximate; prices are indicative anyway
+const LIST_URL = 'https://www.lotte-autoglobal.net/by/buy/selectGdListAjax.do';
+const IMG_BASE = 'https://img.lotte-autoglobal.net';
+const DETAIL_BASE = 'https://www.lotte-autoglobal.net/car/gd/BY/';
 
-const SOURCES = [
-  {
-    house: 'glovis',
-    // Autobell Global — Glovis' public export platform
-    urls: ['https://www.autobellglobal.com/car/list', 'https://www.autobellglobal.com/'],
-  },
-  {
-    house: 'lotte',
-    // Lotte Auto Global — Lotte's public export platform
-    urls: ['https://www.lotte-autoglobal.net/car/list', 'https://www.lotte-autoglobal.net/'],
-  },
-];
+const USD_TO_SAR = 3.75;          // SAR is pegged to USD
+const DEALER_MARKUP = 1.2;        // estimated Saudi showroom price vs auction
+
+// Maker codes from the site's own filter form (?make=<key>)
+const MAKER_CODES = {
+  hyundai: '1052', kia: '1053', genesis: '1072', bmw: '1012',
+  benz: '1014', mercedes: '1014', audi: '1018', volkswagen: '1017',
+  volvo: '1039', porsche: '1040', ford: '1035', ssangyong: '1056',
+  chevrolet: '1054', renault: '1055', tesla: '1068', toyota: '1004',
+  lexus: '1051', honda: '1005', nissan: '1009', jeep: '1073',
+  landrover: '1059', mini: '10001', jaguar: '1028', peugeot: '1036',
+  lincoln: '1045', infiniti: '1064', cadillac: '1022',
+};
+
+// Arabic display names — makers as returned in mcmpNm
+const MAKER_AR = {
+  'HYUNDAI': 'هيونداي', 'KIA': 'كيا', 'GENESIS': 'جينيسيس',
+  'BENZ': 'مرسيدس', 'BMW': 'بي إم دبليو', 'AUDI': 'أودي',
+  'VOLKSWAGEN': 'فولكس واجن', 'VOLVO': 'فولفو', 'FORD': 'فورد',
+  'CHEVROLET': 'شفروليه', 'CHEVROLET(GM)': 'شفروليه',
+  'SSANGYONG': 'سانغ يونغ', 'RENAULT KOREA': 'رينو', 'RENAULT': 'رينو',
+  'PORSCHE': 'بورشه', 'LEXUS': 'لكزس', 'TOYOTA': 'تويوتا',
+  'HONDA': 'هوندا', 'NISSAN': 'نيسان', 'JEEP': 'جيب', 'TESLA': 'تسلا',
+  'LAND ROVER': 'لاند روفر', 'MINI': 'ميني', 'PEUGEOT': 'بيجو',
+  'JAGUAR': 'جاغوار', 'LINCOLN': 'لينكولن', 'INFINITI': 'إنفينيتي',
+  'CADILLAC': 'كاديلاك',
+};
+
+// Arabic model names for the Korean models that dominate the feed;
+// anything unmapped keeps its English name (renders fine in the card)
+const MODEL_AR = {
+  'TUCSON': 'توسان', 'SONATA': 'سوناتا', 'AVANTE': 'أفانتي',
+  'GRANDEUR': 'جراندير', 'SANTA FE': 'سانتافي', 'PALISADE': 'باليسيد',
+  'CASPER': 'كاسبر', 'KONA': 'كونا', 'VENUE': 'فينيو', 'IONIQ': 'أيونيك',
+  'SORENTO': 'سورينتو', 'SPORTAGE': 'سبورتاج', 'CARNIVAL': 'كرنفال',
+  'MORNING': 'مورنينج', 'RAY': 'راي', 'SELTOS': 'سيلتوس', 'NIRO': 'نيرو',
+  'STINGER': 'ستينجر', 'K3': 'كي 3', 'K5': 'كي 5', 'K7': 'كي 7',
+  'K8': 'كي 8', 'K9': 'كي 9', 'EV6': 'إي في 6', 'EV9': 'إي في 9',
+  'G70': 'جي 70', 'G80': 'جي 80', 'G90': 'جي 90',
+  'GV60': 'جي في 60', 'GV70': 'جي في 70', 'GV80': 'جي في 80',
+};
+
+// sortOpt values from the site's own sort dropdown (?sort=<key>)
+const SORT_OPTS = {
+  recent: 'RecentAdded', price_asc: 'LowPrice', price_desc: 'HighPrice',
+  newest: 'New', oldest: 'Old',
+};
 
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36';
 
-async function fetchText(url) {
-  const res = await fetch(url, {
-    headers: { 'User-Agent': UA, 'Accept': 'text/html,application/json;q=0.9,*/*;q=0.8' },
-    signal: AbortSignal.timeout(20000),
-    redirect: 'follow',
+function roundSar(n) {
+  return Math.round(n / 100) * 100;
+}
+
+function toCar(item) {
+  const usd = Number(item.dcCarAmt || item.carAmt || item.searchCarAmt);
+  if (!usd || usd <= 0) return null;
+
+  const makerEn = String(item.mcmpNm || '').trim().toUpperCase();
+  const modelEn = String(item.modelNm || '').trim().toUpperCase();
+  const maker = MAKER_AR[makerEn] || item.mcmpNm || '';
+  const model = MODEL_AR[modelEn] || item.modelNm || '';
+  const priceSar = roundSar(usd * USD_TO_SAR);
+
+  return {
+    house: 'lotte',
+    title: (maker + ' ' + model).trim() || String(item.carNm || '').trim(),
+    year: Number(item.mnfYear || item.modelYear) || undefined,
+    mileage_km: Number(item.drgMil) || undefined,
+    price_sar: priceSar,
+    est_dealer_price_sar: roundSar(priceSar * DEALER_MARKUP),
+    // /dims/... is Lotte's own image proxy — resized webp, ~30KB a card
+    image: item.imgPath1 ? IMG_BASE + item.imgPath1 + '/dims/format/webp/resize/480x!/quality/85' : undefined,
+    status: item.hotYn === 'Y' || Number(item.interestCnt) >= 3 ? 'hot' : 'available',
+    // Extra context the current cards don't use yet, but costs nothing
+    detail_url: item.gdId ? DETAIL_BASE + item.gdId + '/' : undefined,
+    fuel: item.gasSeNm || undefined,
+    body: item.mocaCdNm || undefined,
+    inspected: item.inspYn === 'Y' || undefined,
+  };
+}
+
+async function fetchLotte(query) {
+  const page = Math.max(1, Number(query.page) || 1);
+  const perPage = Math.min(24, Math.max(1, Number(query.page_size || query.limit) || 12));
+
+  const form = new URLSearchParams({
+    pageIndex: String(page),
+    perPage: String(perPage),
+    // sortVal must be PRESENT (even empty) or the server ignores
+    // sortOpt and returns the oldest inventory first
+    sortVal: '',
+    sortOpt: SORT_OPTS[String(query.sort || '').toLowerCase()] || 'RecentAdded',
   });
-  const body = await res.text();
-  return { status: res.status, type: res.headers.get('content-type') || '', body };
-}
+  const makerCd = MAKER_CODES[String(query.make || '').toLowerCase().replace(/[\s_-]/g, '')];
+  if (makerCd) form.set('search_mcmpCd', makerCd);
+  if (/^\d{4}$/.test(query.year_min || '')) form.set('search_mnfYearSt', query.year_min);
+  if (/^\d{4}$/.test(query.year_max || '')) form.set('search_mnfYearEd', query.year_max);
 
-// Best-effort extractors. These are tuned iteratively against the
-// real responses (see ?diag=1); until they match, we fall back.
-function extractCars(house, body) {
-  const cars = [];
+  const res = await fetch(LIST_URL, {
+    method: 'POST',
+    headers: {
+      'User-Agent': UA,
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      'Accept': 'application/json, text/javascript, */*; q=0.01',
+      'X-Requested-With': 'XMLHttpRequest',
+    },
+    body: form.toString(),
+    signal: AbortSignal.timeout(20000),
+  });
 
-  // 1) Embedded JSON (Nuxt/Next state or API payloads) — most reliable.
-  // Arrays of flat objects first, then standalone objects.
-  const jsonBlobs = [
-    ...(body.match(/\[\s*\{[^\[\]]{80,60000}?\}\s*\]/g) || []),
-    ...(body.match(/\{"[^"]{2,40}":[\s\S]{100,50000}?\}(?=\s*[;<,\]])/g) || []),
-  ];
-  for (const blob of jsonBlobs) {
-    if (cars.length >= 12) break;
-    if (!/price|model|vehicle|car/i.test(blob)) continue;
-    try {
-      const data = JSON.parse(blob);
-      collectFromJson(data, house, cars);
-    } catch (e) { /* not valid JSON — skip */ }
-  }
-  if (cars.length) return cars.slice(0, 12);
-
-  // 2) Listing-card HTML pattern: <img …> near a title + price
-  const cardRe = /<img[^>]+src="([^"]+)"[^>]*>[\s\S]{0,600}?(?:alt="([^"]{3,60})"|<(?:h\d|strong|p)[^>]*>([^<]{3,60})<)[\s\S]{0,400}?([\d,]{4,12})\s*(?:KRW|원|won)/gi;
-  let m;
-  while ((m = cardRe.exec(body)) && cars.length < 12) {
-    const krw = Number((m[4] || '').replace(/,/g, ''));
-    if (!krw || krw < 100000) continue;
-    cars.push({
-      house,
-      title: (m[2] || m[3] || '').trim(),
-      price_sar: Math.round(krw * KRW_TO_SAR / 100) * 100,
-      image: absolutize(m[1], house),
-      status: 'available',
-    });
-  }
-  return cars;
-}
-
-function collectFromJson(node, house, out, depth) {
-  depth = depth || 0;
-  if (!node || depth > 6 || out.length >= 12) return;
-  if (Array.isArray(node)) {
-    for (const item of node) collectFromJson(item, house, out, depth + 1);
-    return;
-  }
-  if (typeof node !== 'object') return;
-  const title = node.modelName || node.carName || node.vehicleName || node.title || node.name;
-  const price = node.price || node.startPrice || node.bidPrice || node.salePrice;
-  const image = node.imageUrl || node.image || node.thumbUrl || node.photo || node.mainImage;
-  if (title && price && Number(price) > 100000) {
-    out.push({
-      house,
-      title: String(title).trim(),
-      year: node.year || node.modelYear || undefined,
-      mileage_km: node.mileage || node.km || undefined,
-      price_sar: Math.round(Number(price) * KRW_TO_SAR / 100) * 100,
-      image: image ? absolutize(String(image), house) : undefined,
-      status: 'available',
-    });
-    return;
-  }
-  for (const key of Object.keys(node)) collectFromJson(node[key], house, out, depth + 1);
-}
-
-function absolutize(src, house) {
-  if (/^https?:\/\//.test(src)) return src;
-  const base = house === 'glovis' ? 'https://www.autobellglobal.com' : 'https://www.lotte-autoglobal.net';
-  return src.startsWith('/') ? base + src : base + '/' + src;
+  if (!res.ok) throw new Error('lotte upstream ' + res.status);
+  const data = await res.json();
+  const list = Array.isArray(data.resultList) ? data.resultList : [];
+  return {
+    total: Number(data.paginationInfo && data.paginationInfo.totalRecordCount) || list.length,
+    cars: list.map(toCar).filter(Boolean),
+    raw: list,
+  };
 }
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
 
-  const diag = req.query.diag === '1';
-  const diagInfo = [];
-  const cars = [];
+  try {
+    const result = await fetchLotte(req.query || {});
 
-  for (const source of SOURCES) {
-    for (const url of source.urls) {
-      try {
-        const r = await fetchText(url);
-        if (diag) {
-          diagInfo.push({ url, status: r.status, type: r.type, snippet: r.body.slice(0, 600) });
-          console.log('auctions diag:', url, r.status, r.type, r.body.slice(0, 400));
-        }
-        if (r.status !== 200) continue;
-        const found = extractCars(source.house, r.body);
-        if (found.length) { cars.push(...found); break; }
-      } catch (err) {
-        if (diag) diagInfo.push({ url, error: String(err && err.message) });
-        console.error('auctions fetch failed:', url, err && err.message);
-      }
+    if (req.query.diag === '1') {
+      return res.status(200).json({
+        upstream: LIST_URL,
+        total: result.total,
+        extracted: result.cars.length,
+        cars: result.cars.slice(0, 2),
+        raw_sample: result.raw.slice(0, 1),
+      });
+    }
+
+    if (result.cars.length) {
+      res.setHeader('Cache-Control', 's-maxage=21600, stale-while-revalidate=86400');
+      return res.status(200).json({
+        updated: new Date().toISOString().slice(0, 10),
+        source: 'lotte-autoglobal',
+        total: result.total,
+        cars: result.cars,
+      });
+    }
+  } catch (err) {
+    console.error('auctions fetch failed:', err && err.message);
+    if (req.query.diag === '1') {
+      return res.status(200).json({ upstream: LIST_URL, error: String(err && err.message) });
     }
   }
 
-  if (diag) {
-    return res.status(200).json({ extracted: cars.length, cars: cars.slice(0, 4), fetches: diagInfo });
-  }
-
-  if (cars.length) {
-    const seen = {};
-    const unique = cars.filter((c) => {
-      const key = c.title + '|' + c.price_sar;
-      if (seen[key]) return false;
-      seen[key] = 1;
-      return true;
-    });
-    res.setHeader('Cache-Control', 's-maxage=21600, stale-while-revalidate=86400');
-    return res.status(200).json({ updated: new Date().toISOString().slice(0, 10), source: 'live', cars: unique.slice(0, 24) });
-  }
-
-  // Nothing extracted — serve the curated fallback (short cache so a
-  // fixed extractor takes effect quickly)
+  // Upstream down or empty — serve the curated fallback (short cache
+  // so recovery takes effect quickly)
   res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400');
   return res.status(200).json(fallback);
 }
