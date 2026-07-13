@@ -1173,7 +1173,7 @@
     @media (min-width: 769px) {
       #horizontal-scroll-container {
         position: relative;
-        height: 400vh; /* 4 panels * 100vh */
+        height: 300vh; /* 3 panels * 100vh */
         direction: ltr;
       }
 
@@ -1189,7 +1189,7 @@
       #horizontal-track {
         display: flex;
         flex-direction: row;
-        width: 400%; /* 4 panels */
+        width: 300%; /* 3 panels */
         height: 100vh;
         will-change: transform;
         position: relative;
@@ -1226,9 +1226,6 @@
       }
       #success-map-wrapper #hologram-map {
         transform: rotateX(55deg) rotateZ(-22deg) scale(0.85) !important;
-      }
-      #auctions .mb-16 {
-        margin-bottom: 2rem !important;
       }
     }
 
@@ -1299,12 +1296,15 @@
       <div class="hidden md:flex items-center gap-6 font-cairo font-600 text-sm" style="color:#C8D8F0;">
         <a href="#features" class="hover:text-gold transition-colors duration-200 cursor-pointer"
           style="color:#C8D8F0;">مميزاتنا</a>
-        <a href="#auctions" class="hover:text-gold transition-colors duration-200 cursor-pointer"
-          style="color:#C8D8F0;">المزادات</a>
         <a href="#success" class="hover:text-gold transition-colors duration-200 cursor-pointer"
           style="color:#C8D8F0;">قصص النجاح</a>
         <a href="#faq" class="hover:text-gold transition-colors duration-200 cursor-pointer"
           style="color:#C8D8F0;">الأسئلة الشائعة</a>
+        <a href="auctions.html" class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full font-cairo font-700 text-sm transition-all duration-200 hover:scale-105"
+          style="background:rgba(201,168,76,0.12);border:1.5px solid rgba(201,168,76,0.6);color:#F0D98A;">
+          <span class="w-1.5 h-1.5 rounded-full bg-red-600 inline-block animate-pulse"></span>
+          المزادات
+        </a>
         <a href="cars.html" class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full font-cairo font-700 text-sm transition-all duration-200 hover:scale-105"
           style="background:linear-gradient(135deg,#C9A84C,#F0D98A);color:#09090F;box-shadow:0 2px 12px rgba(201,168,76,0.35);">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
@@ -1355,10 +1355,14 @@
     <div id="mobile-menu" class="md:hidden mt-3 pb-3 border-t border-white/10 pt-3">
       <div class="flex flex-col gap-3 px-2 font-cairo font-600 text-ink">
         <a href="#features" class="hover:text-gold transition-colors duration-200">مميزاتنا</a>
-        <a href="#auctions" class="hover:text-gold transition-colors duration-200">المزادات</a>
         <a href="#success" class="hover:text-gold transition-colors duration-200">قصص النجاح</a>
         <a href="#faq" class="hover:text-gold transition-colors duration-200">الأسئلة الشائعة</a>
-        <a href="cars.html" class="inline-flex items-center gap-2 px-5 py-2 rounded-full font-cairo font-700 text-sm"
+        <a href="auctions.html" class="inline-flex items-center gap-2 px-5 py-2 rounded-full font-cairo font-700 text-sm w-fit"
+          style="background:rgba(201,168,76,0.12);border:1.5px solid rgba(201,168,76,0.6);color:#F0D98A;">
+          <span class="w-1.5 h-1.5 rounded-full bg-red-600 inline-block animate-pulse"></span>
+          المزادات
+        </a>
+        <a href="cars.html" class="inline-flex items-center gap-2 px-5 py-2 rounded-full font-cairo font-700 text-sm w-fit"
           style="background:linear-gradient(135deg,#C9A84C,#F0D98A);color:#09090F;">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
           السيارات المتاحة
@@ -2334,10 +2338,50 @@
   </script>
 
   <!-- ═══════════════════════════════════════════
+     AUCTIONS — standalone section, directly below
+     the "3000 luxury cars" visual. Cards rendered
+     from /api/auctions (Lotte Auto Global live feed,
+     6h edge cache, curated fallback).
+═══════════════════════════════════════════ -->
+  <section id="auctions" class="section-fade" style="position:relative; padding:5rem 0; z-index:10; overflow:hidden; background:#09090F;">
+
+    <!-- Soft static glows — decorative, zero animation cost -->
+    <div aria-hidden="true" style="position:absolute; inset:0; pointer-events:none;
+      background:
+        radial-gradient(640px 340px at 85% 0%, rgba(26,77,184,0.16), transparent 70%),
+        radial-gradient(540px 300px at 10% 100%, rgba(201,168,76,0.10), transparent 70%);"></div>
+
+    <div class="max-w-7xl mx-auto px-4" style="position:relative;z-index:10;">
+
+      <!-- Title -->
+      <div class="text-center mb-14">
+        <p class="font-tajawal text-gold font-700 text-sm uppercase mb-2">فرص حصرية</p>
+        <h2 class="font-cairo font-900 text-white" style="font-size:clamp(1.8rem,4vw,2.8rem);">
+          مزادات كوريا <span class="text-gold-gradient">اليوم</span>
+        </h2>
+        <p class="font-tajawal text-white/75 mt-4 max-w-xl mx-auto">أسعار المزادات محدَّثة — تواصل معنا فوراً للتزايد
+          قبل فوات الأوان</p>
+      </div>
+
+      <!-- Auction cards -->
+      <div id="auction-cards" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10"></div>
+
+      <!-- Dedicated auctions page -->
+      <div class="text-center">
+        <a href="auctions.html" class="btn-gold inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-sm">
+          <span>عرض جميع سيارات المزاد</span>
+          <svg viewBox="0 0 24 24" fill="white" width="16" height="16"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" /></svg>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
      FEATURES SECTION
 ═══════════════════════════════════════════ -->
   <!-- ═══ ShaderBackground — WebGL plasma waves ═══ -->
-  <!-- ═══ Horizontal Scroll Wrapper — Sticky 400vh on Desktop ═══ -->
+  <!-- ═══ Horizontal Scroll Wrapper — Sticky 300vh on Desktop ═══ -->
   <div id="horizontal-scroll-container" class="section-fade">
     <div id="horizontal-sticky">
       <!-- WebGL canvas — sticky so always fills viewport while both sections scroll -->
@@ -2606,35 +2650,7 @@
   </script>
         </div><!-- /panel 1 -->
 
-        <!-- Panel 2: Auctions -->
-        <div class="horizontal-panel">
-          <!-- ═══════════════════════════════════════════
-             AUCTIONS + COST CALCULATOR
-          ═══════════════════════════════════════════ -->
-          <!-- ═══ BackgroundGradientAnimation — Auctions + Calculator ═══ -->
-          <section id="auctions" style="position:relative; padding:5rem 0; z-index:10;">
-
-    <!-- ② Content sits above sticky gradient -->
-    <div class="max-w-7xl mx-auto px-4" style="position:relative;z-index:10;">
-
-      <!-- Title -->
-      <div class="text-center mb-14">
-        <p class="font-tajawal text-gold font-700 text-sm uppercase mb-2">فرص حصرية</p>
-        <h2 class="font-cairo font-900 text-white" style="font-size:clamp(1.8rem,4vw,2.8rem);">
-          مزادات كوريا <span class="text-gold-gradient">اليوم</span>
-        </h2>
-        <p class="font-tajawal text-white/75 mt-4 max-w-xl mx-auto">أسعار المزادات محدَّثة — تواصل معنا فوراً للتزايد
-          قبل فوات الأوان</p>
-      </div>
-
-      <!-- Auction cards — rendered from /api/auctions (Glovis + Lotte
-           public export platforms, 6h edge cache, curated fallback) -->
-      <div id="auction-cards" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16"></div>
-
-    </section>
-        </div><!-- /panel 2 -->
-
-        <!-- Panel 3: Calculator -->
+        <!-- Panel 2: Calculator -->
         <div class="horizontal-panel">
           <section id="calculator-section" style="position:relative; width:100%; z-index:10;">
             <div class="max-w-7xl mx-auto px-4" style="position:relative;z-index:10;">
@@ -2883,7 +2899,7 @@
   <!-- ═══════════════════════════════════════════
      SOCIAL PROOF
 ═══════════════════════════════════════════ -->
-  <!-- Panel 4: Success -->
+  <!-- Panel 3: Success -->
   <div class="horizontal-panel">
     <section id="success" class="py-20 bg-sky-light section-fade" style="position:relative; overflow:hidden;">
     <style>
@@ -4275,7 +4291,7 @@
           var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
           var relativeScroll = scrollTop - hzOffsetTop;
           var progress = Math.max(0, Math.min(1, relativeScroll / hzScrollRange));
-          hzTargetX = -progress * 300; // 4 panels -> 0 to -300vw translation
+          hzTargetX = -progress * 200; // 3 panels -> 0 to -200vw translation
         }
 
         /* Keep header completely transparent */
