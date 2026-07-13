@@ -237,7 +237,7 @@ async function fetchLotteDetail(gdId) {
     const seen = {};
     let im;
     const imgRe = /img\.lotte-autoglobal\.net(\/goods\/[^"'\s)]+?\.(?:jpe?g|png|webp))/gi;
-    while ((im = imgRe.exec(html)) && images.length < 24) {
+    while ((im = imgRe.exec(html)) && images.length < 40) {
       const path = im[1].replace(/\/{2,}/g, '/');
       if (!path.startsWith(dir) || seen[path]) continue;
       seen[path] = 1;

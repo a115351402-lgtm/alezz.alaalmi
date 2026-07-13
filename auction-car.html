@@ -389,6 +389,17 @@
         </div>
         <div id="insp-legend" class="flex flex-wrap gap-2" style="margin-top:10px;"></div>
       </div>
+
+      <!-- Auction publishes no sheet for this car -->
+      <p id="insp-missing" class="font-tajawal text-sm" style="display:none;margin-top:14px;color:rgba(200,216,240,0.55);">لا يوفر المزاد مخطط فحص رسمي لهذه السيارة.</p>
+
+      <!-- Auction publishes no condition data at all → offer to inspect -->
+      <div id="eval-empty" style="display:none;background:rgba(91,155,245,0.07);border:1px solid rgba(91,155,245,0.2);border-radius:14px;padding:16px;text-align:center;">
+        <p class="font-tajawal text-sm mb-3" style="color:rgba(200,216,240,0.8);">لم ينشر المزاد تقرير حالة لهذه السيارة بعد — فريقنا في كوريا يفحصها لك ميدانياً قبل المزايدة.</p>
+        <a id="eval-ask" href="#" target="_blank" rel="noopener" class="btn-gold inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm">
+          <span>اطلب تقرير الفحص عبر واتساب</span>
+        </a>
+      </div>
     </div>
 
   </div>
@@ -546,9 +557,20 @@
       var label = EVAL_LABELS[k][L] || EVAL_LABELS[k].ar;
       return '<div class="ev-row"><span class="ev-k" data-no-i18n>' + esc(label) + '</span><span class="ev-v ' + (ok ? 'ev-ok' : 'ev-warn') + '" data-no-i18n>' + esc(trEval(ev[k])) + '</span></div>';
     }).join('');
-    if (rows || ev.notes || c.inspection_sheet) {
-      document.getElementById('eval-panel').style.display = '';
-      document.getElementById('eval-rows').innerHTML = rows;
+    // The condition panel is always shown; what fills it depends on
+    // what the auction publishes for this particular car
+    document.getElementById('eval-panel').style.display = '';
+    document.getElementById('eval-rows').innerHTML = rows;
+    document.getElementById('insp-missing').style.display = 'none';
+    document.getElementById('eval-empty').style.display = 'none';
+    if (!rows && !ev.notes && !c.inspection_sheet) {
+      document.getElementById('eval-empty').style.display = '';
+      var askMsg = 'أريد تقرير فحص لهذه السيارة قبل المزايدة:'
+        + '\n🚗 ' + (c.title || c.title_en || '') + (c.year ? ' ' + c.year : '')
+        + '\n🔗 ' + location.origin + '/auction-car?id=' + encodeURIComponent(c.id);
+      document.getElementById('eval-ask').href = 'https://wa.me/' + WA + '?text=' + encodeURIComponent(askMsg);
+    } else if (!c.inspection_sheet) {
+      document.getElementById('insp-missing').style.display = '';
     }
 
     // Official inspection sheet (accident / repair map)
