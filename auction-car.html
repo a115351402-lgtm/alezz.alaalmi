@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#09090F" />
+  <title>تفاصيل سيارة المزاد — العز العالمي</title>
+  <meta name="description" content="صور ومواصفات وتقرير حالة سيارة المزاد من كوريا — معرض العز العالمي." />
+  <link rel="stylesheet" href="tailwind.css" />
+  <script>
+    window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Tajawal', sans-serif; background: #09090F; color: #C8D8F0; }
+    h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; }
+    .text-gold-gradient {
+      background: linear-gradient(135deg, #C9A84C 0%, #F0D98A 50%, #A0802A 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .navbar-glass {
+      background: rgba(9,9,15,0.55); backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .btn-gold {
+      background: linear-gradient(135deg, #C9A84C 0%, #F0D98A 50%, #A0802A 100%);
+      color: #fff; font-family: 'Cairo', sans-serif; font-weight: 700;
+      cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,168,76,0.45); }
+    .panel {
+      background: rgba(12,13,26,0.85); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px; backdrop-filter: blur(12px);
+    }
+    /* Gallery */
+    .g-main {
+      position: relative; border-radius: 18px; overflow: hidden;
+      aspect-ratio: 4/3; background: #131426; border: 1px solid rgba(255,255,255,0.08);
+    }
+    .g-main img { width: 100%; height: 100%; object-fit: cover; }
+    .g-thumbs {
+      display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 8px;
+    }
+    @media (max-width: 640px) { .g-thumbs { grid-template-columns: repeat(4, 1fr); } }
+    .g-thumb {
+      border-radius: 10px; overflow: hidden; aspect-ratio: 4/3; cursor: pointer;
+      border: 2px solid transparent; background: #131426; transition: border-color .2s, opacity .2s;
+      opacity: .75;
+    }
+    .g-thumb:hover { opacity: 1; }
+    .g-thumb.on { border-color: #C9A84C; opacity: 1; }
+    .g-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    /* Specs */
+    .spec-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    @media (min-width: 1024px) { .spec-grid { grid-template-columns: repeat(3, 1fr); } }
+    .spec-item {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px; padding: 0.7rem 0.9rem;
+    }
+    .spec-item .k { font-size: 0.7rem; color: rgba(200,216,240,0.5); margin-bottom: 2px; font-family: 'Tajawal', sans-serif; }
+    .spec-item .v { font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 0.9rem; color: #fff; }
+    /* Options */
+    .opt-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'Cairo', sans-serif; font-weight: 600; font-size: 0.76rem;
+      color: #C8D8F0; background: rgba(16,185,129,0.10);
+      border: 1px solid rgba(16,185,129,0.25); border-radius: 999px;
+      padding: 0.35rem 0.8rem;
+    }
+    .opt-chip svg { flex-shrink: 0; }
+    /* Evaluation */
+    .ev-row { display: flex; justify-content: space-between; align-items: center; padding: 0.55rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .ev-row:last-child { border-bottom: 0; }
+    .ev-k { font-size: 0.82rem; color: rgba(200,216,240,0.7); }
+    .ev-v { font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 0.82rem; }
+    .ev-ok { color: #34d399; }
+    .ev-warn { color: #fbbf24; }
+    .badge {
+      font-family:'Cairo',sans-serif; font-weight:700; font-size:0.7rem;
+      color:#fff; padding:0.26rem 0.75rem; border-radius:999px; display:inline-block;
+    }
+    .skel { position:relative; overflow:hidden; background:rgba(255,255,255,0.05); border-radius: 12px; }
+    .skel::after { content:''; position:absolute; inset:0; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent); animation:shimmer 1.4s infinite; }
+    @keyframes shimmer { 0%{transform:translateX(100%);} 100%{transform:translateX(-100%);} }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.35); border-radius: 4px; }
+    #mobile-menu { display: none; }
+    #mobile-menu.open { display: block; }
+  </style>
+
+  <!-- Trilingual + multi-currency engines (shared with homepage; honour saved choice) -->
+  <script src="i18n.js"></script>
+  <script src="currency.js"></script>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar-glass fixed top-0 right-0 left-0 z-50 px-4 py-3">
+  <div class="max-w-7xl mx-auto flex items-center justify-between">
+
+    <!-- Logo -->
+    <a href="index.html" class="flex items-center gap-2">
+      <div class="flex items-center justify-center">
+        <svg viewBox="0 0 24 24" fill="#C9A84C" width="26" height="26" style="filter:drop-shadow(0 2px 8px rgba(201,168,76,0.35));">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+        </svg>
+      </div>
+      <div>
+        <p class="font-cairo font-black leading-none text-lg" style="color:#fff;">معرض العز العالمي</p>
+        <p class="text-xs" style="color:#C9A84C;">استيراد سيارات كورية فاخرة</p>
+      </div>
+    </a>
+
+    <!-- Desktop Links -->
+    <div class="hidden md:flex items-center gap-6 font-cairo text-sm" style="color:#C8D8F0;font-weight:600;">
+      <a href="index.html#features" class="hover:text-gold transition-colors duration-200" style="color:#C8D8F0;">مميزاتنا</a>
+      <a href="index.html#success" class="hover:text-gold transition-colors duration-200" style="color:#C8D8F0;">قصص النجاح</a>
+      <a href="index.html#faq" class="hover:text-gold transition-colors duration-200" style="color:#C8D8F0;">الأسئلة الشائعة</a>
+      <a href="auctions.html" class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full font-cairo text-sm transition-all duration-200 hover:scale-105"
+        style="font-weight:700;background:rgba(201,168,76,0.12);border:1.5px solid rgba(201,168,76,0.6);color:#F0D98A;">
+        <span class="w-1.5 h-1.5 rounded-full bg-red-600 inline-block animate-pulse"></span>
+        المزادات
+      </a>
+      <a href="cars.html" class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full font-cairo text-sm transition-all duration-200 hover:scale-105"
+        style="font-weight:700;background:linear-gradient(135deg,#C9A84C,#F0D98A);color:#09090F;box-shadow:0 2px 12px rgba(201,168,76,0.35);">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
+        السيارات المتاحة
+      </a>
+    </div>
+
+    <!-- CTA + Hamburger -->
+    <div class="flex items-center gap-2 sm:gap-3">
+
+      <!-- Language + Currency selector -->
+      <div id="locale-ctrl" data-no-i18n class="flex items-center gap-1.5">
+        <div class="loc-wrap">
+          <button id="lang-btn" class="loc-btn" aria-label="Language / اللغة">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 2.5 16 0 18M12 3c-2.5 2.5-2.5 16 0 18"/></svg>
+            <span id="lang-cur">ع</span>
+            <svg class="loc-chev" viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+          </button>
+          <div id="lang-menu" class="loc-menu"></div>
+        </div>
+        <div class="loc-wrap">
+          <button id="cur-btn" class="loc-btn" aria-label="Currency / العملة">
+            <span id="cur-cur">SAR</span>
+            <svg class="loc-chev" viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+          </button>
+          <div id="cur-menu" class="loc-menu loc-menu-cur"></div>
+        </div>
+      </div>
+
+      <a href="https://wa.me/966550112411"
+        class="btn-gold hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm shadow-md">
+        <span>تواصل معنا</span>
+        <svg viewBox="0 0 24 24" fill="white" width="16" height="16"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      </a>
+
+      <button id="hamburger" class="md:hidden p-2 rounded-lg hover:bg-white/10 transition-colors cursor-pointer" aria-label="القائمة">
+        <svg viewBox="0 0 24 24" fill="#C9A84C" width="24" height="24">
+          <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="md:hidden mt-3 pb-3 border-t border-white/10 pt-3">
+    <div class="flex flex-col gap-3 px-2 font-cairo" style="font-weight:600;">
+      <a href="index.html#features" class="hover:text-gold transition-colors duration-200" style="color:#C8D8F0;">مميزاتنا</a>
+      <a href="index.html#success" class="hover:text-gold transition-colors duration-200" style="color:#C8D8F0;">قصص النجاح</a>
+      <a href="index.html#faq" class="hover:text-gold transition-colors duration-200" style="color:#C8D8F0;">الأسئلة الشائعة</a>
+      <a href="auctions.html" class="inline-flex items-center gap-2 px-5 py-2 rounded-full font-cairo text-sm w-fit"
+        style="font-weight:700;background:rgba(201,168,76,0.12);border:1.5px solid rgba(201,168,76,0.6);color:#F0D98A;">
+        <span class="w-1.5 h-1.5 rounded-full bg-red-600 inline-block animate-pulse"></span>
+        المزادات
+      </a>
+      <a href="cars.html" class="inline-flex items-center gap-2 px-5 py-2 rounded-full font-cairo text-sm w-fit"
+        style="font-weight:700;background:linear-gradient(135deg,#C9A84C,#F0D98A);color:#09090F;">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
+        السيارات المتاحة
+      </a>
+      <a href="https://wa.me/966550112411"
+        class="btn-gold inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-sm">
+        <span>تواصل معنا الآن</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Language / Currency selector: styles + behaviour ── -->
+<style>
+  .loc-wrap { position: relative; }
+  .loc-btn {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 0.78rem;
+    color: #E7D9A8; background: rgba(201,168,76,0.10);
+    border: 1px solid rgba(201,168,76,0.30); border-radius: 999px;
+    padding: 0.34rem 0.6rem; cursor: pointer; line-height: 1;
+    transition: background .2s, border-color .2s, color .2s; white-space: nowrap;
+  }
+  .loc-btn:hover { background: rgba(201,168,76,0.18); border-color: rgba(201,168,76,0.55); color: #F0D98A; }
+  .loc-btn .sar-symbol { width: .85em; height: .85em; }
+  .loc-chev { opacity: .65; }
+  .loc-menu {
+    position: absolute; top: calc(100% + 8px); inset-inline-end: 0;
+    background: #11131F; border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 14px; padding: 6px; min-width: 150px;
+    box-shadow: 0 18px 50px rgba(0,0,0,0.55); z-index: 80;
+    opacity: 0; visibility: hidden; transform: translateY(-6px);
+    transition: opacity .18s, transform .18s, visibility .18s;
+    max-height: 60vh; overflow-y: auto;
+  }
+  .loc-menu.open { opacity: 1; visibility: visible; transform: translateY(0); }
+  .loc-opt {
+    display: flex; align-items: center; gap: 8px; width: 100%;
+    font-family: 'Tajawal', sans-serif; font-size: 0.82rem; font-weight: 500;
+    color: #C8D8F0; background: none; border: 0; border-radius: 9px;
+    padding: 0.5rem 0.6rem; cursor: pointer; text-align: start;
+    transition: background .15s, color .15s;
+  }
+  .loc-opt:hover { background: rgba(201,168,76,0.12); color: #F0D98A; }
+  .loc-opt.active { background: rgba(201,168,76,0.18); color: #F0D98A; }
+  .loc-opt .loc-sym { min-width: 22px; font-weight: 800; color: #C9A84C; display: inline-flex; justify-content: center; }
+  .loc-opt .loc-sym .sar-symbol { width: 1em; height: 1em; }
+  .loc-opt .loc-code { margin-inline-start: auto; font-size: 0.7rem; opacity: 0.55; font-weight: 700; }
+</style>
+<script>
+  (function () {
+    function ready(fn) { document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', fn) : fn(); }
+    ready(function () {
+      if (!window.I18N || !window.CUR) return;
+      var langBtn = document.getElementById('lang-btn'), langMenu = document.getElementById('lang-menu');
+      var curBtn  = document.getElementById('cur-btn'),  curMenu  = document.getElementById('cur-menu');
+      var langCur = document.getElementById('lang-cur'), curCur  = document.getElementById('cur-cur');
+
+      Object.keys(I18N.langs).forEach(function (code) {
+        var b = document.createElement('button');
+        b.className = 'loc-opt'; b.type = 'button';
+        b.innerHTML = '<span class="loc-sym">' + I18N.short[code] + '</span><span>' + I18N.langs[code] + '</span>';
+        b.addEventListener('click', function () { I18N.set(code); closeAll(); });
+        b.dataset.code = code;
+        langMenu.appendChild(b);
+      });
+      CUR.list.forEach(function (c) {
+        var b = document.createElement('button');
+        b.className = 'loc-opt'; b.type = 'button';
+        var name = c[I18N.lang] || c.en;
+        b.innerHTML = '<span class="loc-sym">' + c.sym + '</span><span class="loc-name">' + name + '</span><span class="loc-code">' + c.code + '</span>';
+        b.addEventListener('click', function () { CUR.set(c.code); closeAll(); });
+        b.dataset.code = c.code;
+        curMenu.appendChild(b);
+      });
+
+      function syncLang() {
+        langCur.textContent = I18N.short[I18N.lang];
+        langMenu.querySelectorAll('.loc-opt').forEach(function (b) { b.classList.toggle('active', b.dataset.code === I18N.lang); });
+        curMenu.querySelectorAll('.loc-opt .loc-name').forEach(function (el, i) {
+          var c = CUR.list[i]; if (c) el.textContent = c[I18N.lang] || c.en;
+        });
+      }
+      function syncCur() {
+        curCur.innerHTML = CUR.code;
+        curMenu.querySelectorAll('.loc-opt').forEach(function (b) { b.classList.toggle('active', b.dataset.code === CUR.code); });
+      }
+      function closeAll() { langMenu.classList.remove('open'); curMenu.classList.remove('open'); }
+
+      langBtn.addEventListener('click', function (e) { e.stopPropagation(); curMenu.classList.remove('open'); langMenu.classList.toggle('open'); });
+      curBtn.addEventListener('click', function (e) { e.stopPropagation(); langMenu.classList.remove('open'); curMenu.classList.toggle('open'); });
+      document.addEventListener('click', closeAll);
+
+      document.getElementById('hamburger').addEventListener('click', function () {
+        document.getElementById('mobile-menu').classList.toggle('open');
+      });
+      document.querySelectorAll('#mobile-menu a').forEach(function (a) {
+        a.addEventListener('click', function () {
+          document.getElementById('mobile-menu').classList.remove('open');
+        });
+      });
+
+      I18N.onChange(function () { syncLang(); });
+      CUR.onChange(function () { syncCur(); });
+      syncLang(); syncCur();
+    });
+  })();
+</script>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 pt-24 pb-16">
+
+  <!-- Back -->
+  <a href="auctions.html" id="back-link" class="inline-flex items-center gap-1 font-cairo font-bold text-sm mb-5" style="color:#F0D98A;">← رجوع إلى المزادات</a>
+
+  <!-- Loading -->
+  <div id="loading">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="skel" style="aspect-ratio:4/3;"></div>
+      <div>
+        <div class="skel" style="height:34px;width:60%;margin-bottom:14px;"></div>
+        <div class="skel" style="height:18px;width:40%;margin-bottom:26px;"></div>
+        <div class="skel" style="height:110px;margin-bottom:14px;"></div>
+        <div class="skel" style="height:52px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Not found -->
+  <div id="notfound" class="text-center" style="display:none;padding:5rem 0;">
+    <h2 class="font-cairo font-black text-white text-2xl mb-3">تعذّر العثور على السيارة</h2>
+    <p class="font-tajawal mb-6" style="color:rgba(200,216,240,0.6);">ربما بيعت السيارة أو انتهى عرضها في المزاد. تصفح سيارات مزاد أخرى متاحة.</p>
+    <a href="auctions.html" class="btn-gold inline-flex items-center gap-2 px-8 py-3 rounded-full text-sm">عرض جميع سيارات المزاد</a>
+  </div>
+
+  <!-- Content -->
+  <div id="content" style="display:none;">
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 items-start">
+
+      <!-- Gallery -->
+      <div>
+        <div class="g-main"><img id="g-main-img" src="" alt="" /></div>
+        <div id="g-thumbs" class="g-thumbs"></div>
+      </div>
+
+      <!-- Info panel -->
+      <div class="panel p-6">
+        <div class="flex items-center gap-2 mb-3" id="badges"></div>
+        <h1 id="car-title" class="font-black text-white leading-tight mb-1" style="font-size:clamp(1.4rem,3vw,2rem);"></h1>
+        <p id="car-sub" class="font-tajawal text-sm mb-5" style="color:rgba(200,216,240,0.55);" data-no-i18n></p>
+
+        <div class="grid grid-cols-2 gap-3 mb-4">
+          <div style="background:rgba(91,155,245,0.08);border:1px solid rgba(91,155,245,0.2);border-radius:14px;padding:0.9rem 1rem;">
+            <p class="font-tajawal text-xs mb-1" style="color:rgba(200,216,240,0.5);">السعر الحالي في المزاد</p>
+            <p id="price-now" class="font-cairo font-black text-2xl" style="color:#5B9BF5;"></p>
+          </div>
+          <div style="background:rgba(16,185,129,0.07);border:1px solid rgba(16,185,129,0.2);border-radius:14px;padding:0.9rem 1rem;">
+            <p class="font-tajawal text-xs mb-1" style="color:rgba(200,216,240,0.5);">سعر الشركة التقديري</p>
+            <p id="price-est" class="font-cairo font-black text-emerald-400 text-2xl"></p>
+          </div>
+        </div>
+
+        <div id="save-strip" class="au-save mb-5" style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);border-radius:12px;padding:10px 12px;text-align:center;display:none;">
+          <p class="font-cairo font-bold text-emerald-400 text-sm"><span>توفيرك المتوقع:</span> <span id="save-amt"></span></p>
+        </div>
+
+        <a id="wa-cta" href="#" target="_blank" rel="noopener" class="btn-gold w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm mb-3">
+          <span>زايد الآن</span>
+          <svg viewBox="0 0 24 24" fill="white" width="16" height="16"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+        </a>
+        <p class="font-tajawal text-center text-xs" style="color:rgba(200,216,240,0.4);">* السعر لا يشمل الشحن والجمارك</p>
+      </div>
+    </div>
+
+    <!-- Specs -->
+    <div class="panel p-6 mb-6">
+      <h3 class="font-cairo font-black text-white text-lg mb-4">المواصفات</h3>
+      <div id="specs" class="spec-grid"></div>
+    </div>
+
+    <!-- Options -->
+    <div class="panel p-6 mb-6" id="options-panel" style="display:none;">
+      <h3 class="font-cairo font-black text-white text-lg mb-4">المزايا والتجهيزات</h3>
+      <div id="options" class="flex flex-wrap gap-2"></div>
+    </div>
+
+    <!-- Condition report -->
+    <div class="panel p-6" id="eval-panel" style="display:none;">
+      <h3 class="font-cairo font-black text-white text-lg mb-4">تقرير الحالة</h3>
+      <div id="eval-rows"></div>
+      <div id="eval-notes" style="display:none;margin-top:14px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);border-radius:12px;padding:12px 14px;">
+        <p class="font-cairo font-bold text-sm mb-1" style="color:#fbbf24;">بنود خاصة</p>
+        <p id="eval-notes-text" class="font-tajawal text-sm" style="color:rgba(200,216,240,0.85);"></p>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  var API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+    ? 'https://alezz-alaalmi.vercel.app/api' : '/api';
+  var WA = '966550112411';
+  var id = new URLSearchParams(location.search).get('id') || '';
+
+  function T(key, vars) { return window.I18N ? I18N.t(key, vars) : key; }
+  function fmt(n) { return Number(n || 0).toLocaleString('en-US'); }
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
+  function lang() { return window.I18N ? I18N.lang : 'ar'; }
+
+  /* ── Arabic value maps (English shown as-is for en/ko) ── */
+  var COLORS_AR = {
+    WHITE:'أبيض', BLACK:'أسود', GRAY:'رمادي', GREY:'رمادي', SILVER:'فضي',
+    BLUE:'أزرق', RED:'أحمر', BROWN:'بني', GREEN:'أخضر', GOLD:'ذهبي',
+    YELLOW:'أصفر', ORANGE:'برتقالي', PURPLE:'بنفسجي', BEIGE:'بيج', NAVY:'كحلي', PINK:'وردي'
+  };
+  var OPTIONS_AR = {
+    'Sun Roof':'فتحة سقف', 'Chrome Wheel':'جنوط كروم', 'Leather Seat':'مقاعد جلد',
+    "Driver's Power Seat":'مقعد كهربائي للسائق', 'Front Seat Heater':'تدفئة المقاعد الأمامية',
+    'Rear Seat Heater':'تدفئة المقاعد الخلفية', 'Seat Cooler':'تهوية المقاعد',
+    'Back Camera':'كاميرا خلفية', 'Air Condition':'مكيف هواء', 'Smart Key':'مفتاح ذكي',
+    'Navigation':'شاشة ملاحة', 'Aluminum Wheel':'جنوط ألمنيوم', 'Cruise Control':'مثبت سرعة',
+    'Parking Sensor':'حساسات ركن', 'HID Lamp':'إضاءة HID', 'LED Lamp':'إضاءة LED',
+    'Blackbox':'كاميرا داش', 'ABS':'فرامل ABS', 'Airbag':'وسائد هوائية',
+    'Power Steering':'مقود كهربائي', 'Auto Folding Side Mirror':'مرايا قابلة للطي كهربائياً',
+    'Heating Steering Wheel':'مقود مدفّأ', 'Electronic Parking Brake':'فرملة يد إلكترونية'
+  };
+  var EVAL_AR = { Normal:'سليم', Good:'جيد', Poor:'ضعيف', Bad:'سيئ', Leak:'تسريب', Noise:'ضجيج' };
+  var EVAL_LABELS = {
+    grade:   { ar:'نقاط التقييم',  en:'Grade',         ko:'평가점' },
+    engine:  { ar:'المحرك',        en:'Engine',        ko:'엔진' },
+    powertrain:{ ar:'ناقل الطاقة', en:'Powertrain',    ko:'동력전달' },
+    gearbox: { ar:'ناقل الحركة',   en:'Transmission',  ko:'미션' },
+    ac:      { ar:'التكييف',       en:'A/C',           ko:'공조' },
+    brakes:  { ar:'المكابح',       en:'Brakes',        ko:'제동' },
+    steering:{ ar:'نظام التوجيه',  en:'Steering',      ko:'조향' },
+    electrics:{ ar:'الكهرباء',     en:'Electrics',     ko:'전기' }
+  };
+  var FUEL_KEYS = {
+    GASOLINE:'fuel_gasoline', DIESEL:'fuel_diesel', HYBRID:'fuel_hybrid',
+    ELECTRICITY:'fuel_electric', LPG:'fuel_lpg'
+  };
+
+  function trColor(v)  { if (!v) return v; var up = String(v).toUpperCase(); return lang() === 'ar' && COLORS_AR[up] ? COLORS_AR[up] : v; }
+  function trOption(v) { return lang() === 'ar' && OPTIONS_AR[v] ? OPTIONS_AR[v] : v; }
+  function trEval(v)   { return lang() === 'ar' && EVAL_AR[v] ? EVAL_AR[v] : v; }
+  function trFuel(v)   { var k = FUEL_KEYS[String(v || '').toUpperCase()]; return k ? T(k) : v; }
+  function trTrans(v)  { if (v === 'AT') return T('trans_auto'); if (v === 'MT') return T('trans_manual'); return v; }
+
+  var car = null;
+  var mainIdx = 0;
+  var notesTranslations = {}; // lang → translated notes text
+
+  function specItem(label, value) {
+    if (value == null || value === '') return '';
+    return '<div class="spec-item"><p class="k" data-no-i18n>' + esc(label) + '</p><p class="v" data-no-i18n>' + esc(value) + '</p></div>';
+  }
+
+  function render() {
+    if (!car) return;
+    var c = car;
+    var L = lang();
+    var title = L === 'ar' ? (c.title || c.title_en) : (c.title_en || c.title);
+
+    document.title = (title || '') + ' — ' + (L === 'ar' ? 'مزادات كوريا | العز العالمي' : 'Korea Auctions | AL-EZZ');
+    document.getElementById('car-title').textContent = title || '';
+    document.getElementById('car-sub').textContent = [c.year, c.mileage_km ? fmt(c.mileage_km) + ' ' + T('unit_km') : null, 'LOTTE AUCTION'].filter(Boolean).join(' · ');
+
+    // Badges
+    document.getElementById('badges').innerHTML =
+      '<span class="badge" style="background:#7A1310;" data-no-i18n>LOTTE AUCTION</span>'
+      + (c.evaluation && c.evaluation.grade ? '<span class="badge" style="background:rgba(201,168,76,0.9);" data-no-i18n>' + esc(c.evaluation.grade) + '</span>' : '');
+
+    // Prices
+    var pn = document.getElementById('price-now'), pe = document.getElementById('price-est');
+    pn.setAttribute('data-sar', c.price_sar || 0);
+    pe.setAttribute('data-sar', c.est_dealer_price_sar || 0);
+    var saving = (c.est_dealer_price_sar && c.price_sar) ? c.est_dealer_price_sar - c.price_sar : 0;
+    if (saving > 0) {
+      document.getElementById('save-strip').style.display = '';
+      document.getElementById('save-amt').setAttribute('data-sar', saving);
+    }
+
+    // WhatsApp CTA — full details + this page's link
+    var waMsg = 'أريد المزايدة على هذه السيارة:'
+      + '\n🚗 ' + (c.title || c.title_en || '') + (c.year ? ' ' + c.year : '')
+      + (c.mileage_km ? '\n📏 الممشى: ' + fmt(c.mileage_km) + ' كم' : '')
+      + (c.fuel ? '\n⛽ الوقود: ' + trFuel(c.fuel) : '')
+      + (c.price_sar ? '\n💰 السعر الحالي: ' + fmt(c.price_sar) + ' ريال' : '')
+      + (c.vin ? '\n🔢 رقم الهيكل: ' + c.vin : '')
+      + '\n🏷️ مزاد LOTTE AUCTION'
+      + '\n🔗 ' + location.origin + '/auction-car?id=' + encodeURIComponent(c.id);
+    document.getElementById('wa-cta').href = 'https://wa.me/' + WA + '?text=' + encodeURIComponent(waMsg);
+
+    // Gallery
+    var imgs = c.images || [];
+    var mainImg = document.getElementById('g-main-img');
+    if (imgs.length) {
+      if (mainIdx >= imgs.length) mainIdx = 0;
+      mainImg.src = imgs[mainIdx];
+      mainImg.alt = title || '';
+      document.getElementById('g-thumbs').innerHTML = imgs.map(function (u, i) {
+        return '<div class="g-thumb' + (i === mainIdx ? ' on' : '') + '" data-i="' + i + '"><img src="' + esc(u) + '" alt="" loading="lazy" /></div>';
+      }).join('');
+    }
+
+    // Specs (labels via I18N KEYS so they follow the language)
+    document.getElementById('specs').innerHTML =
+        specItem(T('sp_year'), c.year)
+      + specItem(T('sp_mileage'), c.mileage_km ? fmt(c.mileage_km) + ' ' + T('unit_km') : null)
+      + specItem(T('sp_fuel'), trFuel(c.fuel))
+      + specItem(T('sp_trans'), trTrans(c.transmission))
+      + specItem(T('sp_body'), c.body)
+      + specItem(T('sp_color'), trColor(c.color))
+      + specItem(T('sp_engine'), c.displacement_cc ? fmt(c.displacement_cc) + ' ' + T('unit_cc') : null)
+      + specItem(T('sp_drive'), c.drive)
+      + specItem(T('sp_seats'), c.seats ? c.seats + ' ' + T('unit_seats') : null)
+      + specItem(T('rp_vin'), c.vin);
+
+    // Options — enabled only
+    var opts = (c.options || []).filter(function (o) { return o.enabled; });
+    if (opts.length) {
+      document.getElementById('options-panel').style.display = '';
+      document.getElementById('options').innerHTML = opts.map(function (o) {
+        return '<span class="opt-chip" data-no-i18n><svg viewBox="0 0 24 24" fill="#34d399" width="13" height="13"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>' + esc(trOption(o.name)) + '</span>';
+      }).join('');
+    }
+
+    // Evaluation
+    var ev = c.evaluation || {};
+    var rows = Object.keys(EVAL_LABELS).map(function (k) {
+      if (!ev[k]) return '';
+      var ok = /normal|good/i.test(ev[k]);
+      var label = EVAL_LABELS[k][L] || EVAL_LABELS[k].ar;
+      return '<div class="ev-row"><span class="ev-k" data-no-i18n>' + esc(label) + '</span><span class="ev-v ' + (ok ? 'ev-ok' : 'ev-warn') + '" data-no-i18n>' + esc(trEval(ev[k])) + '</span></div>';
+    }).join('');
+    if (rows) {
+      document.getElementById('eval-panel').style.display = '';
+      document.getElementById('eval-rows').innerHTML = rows;
+    }
+    if (ev.notes) {
+      document.getElementById('eval-notes').style.display = '';
+      var notesEl = document.getElementById('eval-notes-text');
+      var cached = notesTranslations[L];
+      notesEl.textContent = cached || ev.notes;
+      notesEl.setAttribute('data-no-i18n', '');
+      // The notes are free English text — translate through our proxy for ar/ko
+      if (!cached && (L === 'ar' || L === 'ko')) {
+        fetch(API + '/translate?tl=' + L + '&q=' + encodeURIComponent(ev.notes))
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            var t = d && (d.text || d.translated || d.result);
+            if (t) { notesTranslations[L] = t; if (lang() === L) notesEl.textContent = t; }
+          })
+          .catch(function () {});
+      }
+    }
+
+    if (window.I18N) I18N.apply(document.getElementById('content'));
+    if (window.CUR) CUR.refreshDom();
+  }
+
+  // Thumb clicks
+  document.getElementById('g-thumbs').addEventListener('click', function (e) {
+    var t = e.target.closest('.g-thumb');
+    if (!t) return;
+    mainIdx = Number(t.getAttribute('data-i')) || 0;
+    document.getElementById('g-main-img').src = car.images[mainIdx];
+    this.querySelectorAll('.g-thumb').forEach(function (el) { el.classList.remove('on'); });
+    t.classList.add('on');
+  });
+
+  function fail() {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('notfound').style.display = '';
+  }
+
+  if (!id) { fail(); }
+  else {
+    fetch(API + '/auctions?id=' + encodeURIComponent(id))
+      .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function (d) {
+        if (!d || !d.car) throw 0;
+        car = d.car;
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('content').style.display = '';
+        render();
+      })
+      .catch(fail);
+  }
+
+  window.addEventListener('langchange', render);
+  window.addEventListener('currencychange', function () { if (window.CUR) CUR.refreshDom(); });
+})();
+</script>
+</body>
+</html>

@@ -407,10 +407,17 @@
     var kmTxt = c.mileage_km ? fmt(c.mileage_km) + ' ' + T('unit_km') : null;
     var meta  = [c.year, kmTxt].filter(Boolean).join(' — ');
     var fuel  = c.fuel && FUEL_KEYS[c.fuel] ? T(FUEL_KEYS[c.fuel]) : null;
-    var wa    = 'https://wa.me/' + WA + '?text=' + encodeURIComponent('أريد المزايدة على ' + (c.title || '') + (c.year ? ' ' + c.year : '') + ' المعروضة في مزادات كوريا');
+    var carUrl = c.id ? (location.origin + '/auction-car?id=' + encodeURIComponent(c.id)) : '';
+    var waMsg = 'أريد المزايدة على هذه السيارة:'
+      + '\n🚗 ' + (c.title || '') + (c.year ? ' ' + c.year : '')
+      + (kmTxt ? '\n📏 الممشى: ' + kmTxt : '')
+      + (c.price_sar ? '\n💰 السعر الحالي: ' + fmt(c.price_sar) + ' ريال' : '')
+      + '\n🏷️ مزاد LOTTE AUCTION'
+      + (carUrl ? '\n🔗 ' + carUrl : '');
+    var wa = 'https://wa.me/' + WA + '?text=' + encodeURIComponent(waMsg);
     var saving = (c.est_dealer_price_sar && c.price_sar) ? (c.est_dealer_price_sar - c.price_sar) : 0;
 
-    return '<div class="au-card">'
+    return '<div class="au-card"' + (carUrl ? ' onclick="location.href=\'auction-car?id=' + encodeURIComponent(c.id) + '\'" style="cursor:pointer;"' : '') + '>'
       + '<div class="au-photo">'
       +   (c.image
             ? '<img src="' + esc(c.image) + '" alt="' + esc(c.title) + '" loading="lazy" />'
@@ -439,7 +446,7 @@
               + (c.body ? '<span class="au-spec" data-no-i18n>' + esc(c.body) + '</span>' : '')
               + '</div>'
             : '')
-      +   '<a href="' + wa + '" target="_blank" rel="noopener" class="btn-gold w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm">'
+      +   '<a href="' + wa + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="btn-gold w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm">'
       +     '<span>زايد الآن</span>'
       +     '<svg viewBox="0 0 24 24" fill="white" width="16" height="16"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>'
       +   '</a>'

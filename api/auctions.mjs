@@ -14,6 +14,10 @@
 //   /api/auctions                → { updated, source, cars: [...] }
 //   /api/auctions?page=2
 //   /api/auctions?make=genesis   → filter by maker
+//   /api/auctions?id=<gdId>      → single car detail: all photos,
+//                                  specs, options, inspection results
+//                                  (parsed from the server-rendered
+//                                  detail page /car/gd/BY/<gdId>/)
 //   /api/auctions?diag=1         → upstream status + raw sample
 //
 // Edge-cached 6h. On any failure the bundled fallback below is
@@ -103,6 +107,7 @@ function toCar(item) {
 
   return {
     house: 'lotte',
+    id: item.gdId || undefined,
     title: (maker + ' ' + model).trim() || String(item.carNm || '').trim(),
     year: Number(item.mnfYear || item.modelYear) || undefined,
     mileage_km: Number(item.drgMil) || undefined,
@@ -158,9 +163,130 @@ async function fetchLotte(query) {
   };
 }
 
+// ── Detail extraction ────────────────────────────────────────
+// The detail page is server-rendered. Spec rows look like
+//   <th>label</th><!-- 제조사 --> <td>value</td>
+// The Korean comments are stable across locales, so they are used
+// as canonical keys.
+const KO_KEYS = {
+  '제조사': 'maker', '모델': 'model', '차종': 'body', '연식': 'year',
+  '차대번호': 'vin', '연료': 'fuel', '주행거리': 'mileage_km',
+  '배기량': 'displacement_cc', '변속기': 'transmission',
+  '구동방식': 'drive', '인승': 'seats', '색상': 'color',
+  '평가점': 'grade', '엔진': 'engine', '동력전달': 'powertrain',
+  '미션': 'gearbox', '공조': 'ac', '제동': 'brakes',
+  '조항': 'steering', '전기': 'electrics', '특이사항': 'notes',
+};
+
+function arabicTitle(makerEn, modelEn) {
+  const maker = MAKER_AR[String(makerEn || '').trim().toUpperCase()] || makerEn || '';
+  const modelUp = String(modelEn || '').toUpperCase();
+  // detail model names carry prefixes ("THE ALL NEW TUCSON") — find a known token
+  let model = '';
+  for (const key of Object.keys(MODEL_AR).sort((a, b) => b.length - a.length)) {
+    if (modelUp.includes(key)) { model = MODEL_AR[key]; break; }
+  }
+  return (maker + ' ' + (model || modelEn || '')).trim();
+}
+
+async function fetchLotteDetail(gdId) {
+  const res = await fetch(DETAIL_BASE + encodeURIComponent(gdId) + '/', {
+    headers: { 'User-Agent': UA, 'Accept': 'text/html' },
+    signal: AbortSignal.timeout(20000),
+    redirect: 'follow',
+  });
+  if (!res.ok) throw new Error('lotte detail ' + res.status);
+  const html = await res.text();
+
+  // Specs + evaluation rows (both tables share the same markup)
+  const fields = {};
+  const rowRe = /<th>([^<]*)<\/th>\s*(?:<!--\s*([^>]*?)\s*-->)?\s*<td[^>]*>([\s\S]*?)<\/td>/g;
+  let m;
+  while ((m = rowRe.exec(html))) {
+    const key = KO_KEYS[(m[2] || '').trim()];
+    if (!key || fields[key] !== undefined) continue;
+    fields[key] = m[3].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+  if (!fields.maker && !fields.model) throw new Error('detail markup not recognized');
+
+  // Options: <span title="Sun Roof" class="cate-2 is-disabled">
+  // (markup repeats for the desktop and mobile layouts — dedupe)
+  const optMap = {};
+  const optRe = /<span title="([^"]+)" class="cate-\d+( is-disabled)?\s*"/g;
+  while ((m = optRe.exec(html))) optMap[m[1]] = optMap[m[1]] || !m[2];
+  const options = Object.keys(optMap).map((name) => ({ name, enabled: optMap[name] }));
+
+  // Price in USD (booking summary is server-rendered with the value)
+  const priceM = html.match(/id="bkRq_dcCarAmt"[^>]*>\s*([\d,]+)\s*</)
+    || html.match(/<span class="unit">USD<\/span>\s*<strong class="commaFmt">([\d,]+)/);
+  const usd = priceM ? Number(priceM[1].replace(/,/g, '')) : 0;
+  const priceSar = usd ? roundSar(usd * USD_TO_SAR) : undefined;
+
+  // Gallery: every /goods/ image sharing the og:image directory
+  // (excludes "similar cars" thumbnails further down the page)
+  const ogM = html.match(/property="og:image" content="https?:\/\/[^/"]+(\/goods\/[^"]+?\.(?:jpe?g|png|webp))/i);
+  let images = [];
+  if (ogM) {
+    const dir = ogM[1].replace(/\/{2,}/g, '/').replace(/\/[^/]*$/, '/');
+    const seen = {};
+    let im;
+    const imgRe = /img\.lotte-autoglobal\.net(\/goods\/[^"'\s)]+?\.(?:jpe?g|png|webp))/gi;
+    while ((im = imgRe.exec(html)) && images.length < 24) {
+      const path = im[1].replace(/\/{2,}/g, '/');
+      if (!path.startsWith(dir) || seen[path]) continue;
+      seen[path] = 1;
+      images.push(IMG_BASE + path + '/dims/format/webp/resize/1024x!/quality/85');
+    }
+  }
+
+  const titleEn = (html.match(/property="og:title" content="Buy Used ([^"]+?)\s*- LOTTE AUTOGLOBAL"/) || [])[1]
+    || [fields.year, fields.maker, fields.model].filter(Boolean).join(' ');
+
+  return {
+    house: 'lotte',
+    id: String(gdId),
+    title: arabicTitle(fields.maker, fields.model),
+    title_en: titleEn,
+    year: Number(fields.year) || undefined,
+    mileage_km: Number(String(fields.mileage_km || '').replace(/[^\d]/g, '')) || undefined,
+    price_sar: priceSar,
+    est_dealer_price_sar: priceSar ? roundSar(priceSar * DEALER_MARKUP) : undefined,
+    maker: fields.maker,
+    model: fields.model,
+    body: fields.body,
+    fuel: fields.fuel,
+    transmission: fields.transmission,
+    drive: fields.drive,
+    seats: Number(fields.seats) || undefined,
+    color: fields.color,
+    displacement_cc: Number(String(fields.displacement_cc || '').replace(/[^\d]/g, '')) || undefined,
+    vin: fields.vin,
+    images,
+    options,
+    evaluation: {
+      grade: fields.grade, engine: fields.engine, powertrain: fields.powertrain,
+      gearbox: fields.gearbox, ac: fields.ac, brakes: fields.brakes,
+      steering: fields.steering, electrics: fields.electrics, notes: fields.notes,
+    },
+    detail_url: DETAIL_BASE + gdId + '/',
+  };
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
+
+  // Single-car detail mode
+  if (req.query.id) {
+    try {
+      const car = await fetchLotteDetail(String(req.query.id).replace(/[^\d]/g, ''));
+      res.setHeader('Cache-Control', 's-maxage=21600, stale-while-revalidate=86400');
+      return res.status(200).json({ source: 'lotte-autoglobal', car });
+    } catch (err) {
+      console.error('auction detail failed:', err && err.message);
+      return res.status(404).json({ error: 'Car not found or no longer listed.' });
+    }
+  }
 
   try {
     const result = await fetchLotte(req.query || {});

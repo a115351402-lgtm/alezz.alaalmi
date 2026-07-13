@@ -4241,6 +4241,13 @@
       window.addEventListener('resize', function () {
         updateHzScrollBounds();
       }, { passive: true });
+      // Sections above the container grow after load (auction cards
+      // are injected async) — recompute bounds on any page-height
+      // change or the translation starts from a stale origin and the
+      // panels are skipped.
+      if (window.ResizeObserver) {
+        new ResizeObserver(function () { updateHzScrollBounds(); }).observe(document.body);
+      }
 
       // ── RAF loop ─────────────────────────────────────────────
       var lerpIdx = 0;
@@ -4336,9 +4343,17 @@
           var img = c.image
             ? '<img src="' + esc(c.image) + '" alt="' + esc(c.title) + '" loading="lazy" />'
             : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0F1125,#1A2340);"><span class="font-cairo font-900" style="color:rgba(255,255,255,0.25);font-size:1.3rem;" data-no-i18n>' + house.label + '</span></div>';
-          var wa = 'https://wa.me/966550112411?text=' + encodeURIComponent('أريد المزايدة على ' + (c.title || '') + ' في مزاد ' + house.label);
+          var carUrl = c.id ? (location.origin + '/auction-car?id=' + encodeURIComponent(c.id)) : '';
+          var waMsg = 'أريد المزايدة على هذه السيارة:'
+            + '\n🚗 ' + (c.title || '') + (c.year ? ' ' + c.year : '')
+            + (c.mileage_km ? '\n📏 الممشى: ' + Number(c.mileage_km).toLocaleString('en-US') + ' كم' : '')
+            + (c.price_sar ? '\n💰 السعر الحالي: ' + Number(c.price_sar).toLocaleString('en-US') + ' ريال' : '')
+            + '\n🏷️ مزاد ' + house.label
+            + (carUrl ? '\n🔗 ' + carUrl : '');
+          var wa = 'https://wa.me/966550112411?text=' + encodeURIComponent(waMsg);
           var saving = (c.est_dealer_price_sar && c.price_sar) ? (c.est_dealer_price_sar - c.price_sar) : 0;
-          return '<div class="auction-card-dark rounded-3xl overflow-hidden cursor-pointer">' +
+          return '<div class="auction-card-dark rounded-3xl overflow-hidden cursor-pointer"'
+            + (carUrl ? ' onclick="location.href=\'auction-car?id=' + encodeURIComponent(c.id) + '\'"' : '') + '>' +
             '<div class="car-photo-card h-52">' + img +
             '<div class="overlay"></div>' +
             '<div class="absolute top-3 right-3 rounded-full px-3 py-1 z-10" style="' + badge.style + '"><span class="font-cairo font-700 text-white text-xs">' + badge.text + '</span></div>' +
@@ -4355,7 +4370,7 @@
             (c.est_dealer_price_sar ? '<div class="text-left"><p class="font-tajawal text-xs mb-0.5" style="color:rgba(200,216,240,0.5);">سعر الشركة التقديري</p><p class="font-cairo font-800 text-emerald-400 text-xl" data-sar="' + Number(c.est_dealer_price_sar) + '"></p></div>' : '') +
             '</div>' +
             (saving > 0 ? '<div style="background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);border-radius:12px;padding:8px 12px;margin-bottom:16px;text-align:center;"><p class="font-cairo font-700 text-emerald-400 text-sm"><span>توفيرك المتوقع:</span> <span data-sar="' + saving + '"></span></p></div>' : '') +
-            '<a href="' + wa + '" target="_blank" rel="noopener" class="btn-gold w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm"><span>زايد الآن</span>' +
+            '<a href="' + wa + '" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="btn-gold w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm"><span>زايد الآن</span>' +
             '<svg viewBox="0 0 24 24" fill="white" width="16" height="16"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" /></svg></a>' +
             '</div>' +
             '</div>';
