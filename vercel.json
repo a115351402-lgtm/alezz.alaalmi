@@ -5,37 +5,37 @@
   "trailingSlash": false,
   "headers": [
     {
-      "source": "/frames-w/(.*\\.webp)",
+      "source": "/frames-w/:path*\\.webp",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
     },
     {
-      "source": "/frames2-w/(.*\\.webp)",
+      "source": "/frames2-w/:path*\\.webp",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
     },
     {
-      "source": "/frames-vid1-w/(.*\\.webp)",
+      "source": "/frames-vid1-w/:path*\\.webp",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
     },
     {
-      "source": "/frames-vid2-w/(.*\\.webp)",
+      "source": "/frames-vid2-w/:path*\\.webp",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
     },
     {
-      "source": "/(.*\\.(webp|jpg))",
+      "source": "/:path*\\.(webp|jpg)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=604800, stale-while-revalidate=86400" }
       ]
     },
     {
-      "source": "/(.*\\.mp4)",
+      "source": "/:path*\\.mp4",
       "headers": [
         {
           "key": "Content-Type",
@@ -52,7 +52,7 @@
       ]
     },
     {
-      "source": "/(.*)",
+      "source": "/:path*",
       "headers": [
         {
           "key": "X-Content-Type-Options",
