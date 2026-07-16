@@ -115,6 +115,9 @@
   <!-- Trilingual + multi-currency engines (shared with homepage; honour saved choice) -->
   <script src="i18n.js"></script>
   <script src="currency.js"></script>
+  <script defer src="vendor/supabase-js-v2.min.js"></script>
+  <script defer src="supabase-client.js"></script>
+  <script defer src="site-auth.js"></script>
 </head>
 <body>
 
@@ -175,6 +178,7 @@
         </div>
       </div>
 
+      <span id="nav-auth" data-no-i18n class="inline-flex items-center gap-2"></span>
       <a href="https://wa.me/966550112411"
         class="btn-gold hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm shadow-md">
         <span>تواصل معنا</span>
@@ -424,6 +428,7 @@
             : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0F1125,#1A2340);"><span class="font-cairo font-black" style="color:rgba(255,255,255,0.25);font-size:1.2rem;" data-no-i18n>LOTTE AUCTION</span></div>')
       +   '<span class="au-badge" style="' + badge.style + '">' + badge.text + '</span>'
       +   '<span class="au-house" data-no-i18n>LOTTE AUCTION</span>'
+      +   (c.id ? '<button class="fav-btn fav-lower" data-fav="auction:' + encodeURIComponent(c.id) + '" aria-label="المفضلة">♡</button>' : '')
       +   '<div class="au-title">'
       +     '<p class="font-cairo font-black text-white text-lg leading-none mb-1">' + esc(c.title) + '</p>'
       +     (meta ? '<p class="font-tajawal text-xs" style="color:rgba(255,255,255,0.7);" data-no-i18n>' + meta + '</p>' : '')

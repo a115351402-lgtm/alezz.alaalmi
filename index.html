@@ -1260,6 +1260,9 @@
   <!-- Trilingual (ع / EN / 한) + multi-currency engines — load before body scripts -->
   <script src="i18n.js"></script>
   <script src="currency.js"></script>
+  <script defer src="vendor/supabase-js-v2.min.js"></script>
+  <script defer src="supabase-client.js"></script>
+  <script defer src="site-auth.js"></script>
 </head>
 
 <body class="bg-sky-light" style="background:#09090F;">
@@ -1334,6 +1337,7 @@
           </div>
         </div>
 
+      <span id="nav-auth" data-no-i18n class="inline-flex items-center gap-2"></span>
         <a href="https://wa.me/966550112411"
           class="btn-gold hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm shadow-md">
           <span>تواصل معنا</span>
@@ -1853,6 +1857,7 @@
           + '<div class="lc-photo">'
           +   (isNew(v) ? '<span class="lc-badge lc-badge-new">' + T('lc_new') + '</span>' : '')
           +   '<span class="lc-badge lc-badge-src">' + src + '</span>'
+          +   '<button class="fav-btn fav-lower" data-fav="encar:' + v.id + '" aria-label="المفضلة">♡</button>'
           +   (img ? '<img src="' + img + '" alt="' + (v.brand_name || '') + ' ' + (v.model_name || '') + '" loading="lazy" onerror="this.style.display=\'none\'">' : '')
           +   '<div class="lc-price-row">'
           +     '<div>'
@@ -4358,6 +4363,7 @@
             '<div class="overlay"></div>' +
             '<div class="absolute top-3 right-3 rounded-full px-3 py-1 z-10" style="' + badge.style + '"><span class="font-cairo font-700 text-white text-xs">' + badge.text + '</span></div>' +
             '<div class="absolute top-3 left-3 rounded-md px-2.5 py-1 z-10" style="background:' + house.color + ';border:1px solid rgba(255,255,255,0.25);"><span class="font-cairo font-700 text-white" style="font-size:0.62rem;letter-spacing:0.06em;" data-no-i18n>' + house.label + '</span></div>' +
+            (c.id ? '<button class="fav-btn fav-lower" data-fav="auction:' + encodeURIComponent(c.id) + '" aria-label="المفضلة">♡</button>' : '') +
             '<div class="absolute bottom-3 right-3 z-10">' +
             '<p class="font-cairo font-900 text-white text-lg leading-none">' + esc(c.title) + '</p>' +
             (meta ? '<p class="font-tajawal text-white/70 text-xs" data-no-i18n>' + meta + '</p>' : '') +

@@ -240,7 +240,26 @@
     adm_grant:        { ar: 'منح دور لمستخدم حالي', en: 'Grant role to existing user', ko: '기존 사용자에게 역할 부여' },
     adm_grant_go:     { ar: 'منح الدور', en: 'Grant role', ko: '역할 부여' },
     adm_role_dup:     { ar: 'هذا المستخدم يحمل الدور بالفعل', en: 'User already has this role', ko: '이미 해당 역할을 보유 중' },
-    adm_confirm_revoke:{ ar: 'سحب هذا الدور من المستخدم؟', en: 'Revoke this role from the user?', ko: '이 역할을 회수하시겠습니까?' }
+    adm_confirm_revoke:{ ar: 'سحب هذا الدور من المستخدم؟', en: 'Revoke this role from the user?', ko: '이 역할을 회수하시겠습니까?' },
+
+    // site-auth.js (public pages wiring)
+    site_fav_login_t:  { ar: 'سجّل الدخول لحفظ المفضلة', en: 'Sign in to save favorites', ko: '즐겨찾기는 로그인 후 이용 가능' },
+    site_fav_login_b:  { ar: 'أنشئ حساباً مجانياً خلال دقيقة لتحفظ سياراتك المفضلة وتتابع طلباتك', en: 'Create a free account in a minute to save cars and track your orders', ko: '1분 만에 무료 계정을 만들어 차량을 저장하고 주문을 추적하세요' },
+    site_fav_added:    { ar: 'أُضيفت للمفضلة ❤', en: 'Added to favorites ❤', ko: '즐겨찾기에 추가됨 ❤' },
+    site_fav_removed:  { ar: 'أُزيلت من المفضلة', en: 'Removed from favorites', ko: '즐겨찾기에서 제거됨' },
+    site_order_btn:    { ar: 'اطلب هذه السيارة الآن', en: 'Order this car now', ko: '지금 이 차량 주문하기' },
+    site_wa_alt:       { ar: 'أو اطلب عبر واتساب', en: 'Or order via WhatsApp', ko: '또는 WhatsApp으로 주문' },
+    site_order_login_t:{ ar: 'خطوة واحدة تفصلك عن طلبك', en: 'One step away from your order', ko: '주문까지 한 단계 남았습니다' },
+    site_order_login_b:{ ar: 'سجّل الدخول ليُسجَّل طلبك باسمك وتتابع كل مراحل الشحن لحظة بلحظة، أو تابع عبر واتساب مباشرة', en: 'Sign in so your order is registered to you with live shipment tracking, or continue via WhatsApp', ko: '로그인하면 주문이 등록되고 실시간 배송 추적이 가능합니다. 또는 WhatsApp으로 진행하세요' },
+    site_order_login_go:{ ar: 'تسجيل الدخول وإتمام الطلب', en: 'Sign in & complete the order', ko: '로그인 후 주문 완료' },
+    site_order_wa:     { ar: 'المتابعة عبر واتساب', en: 'Continue via WhatsApp', ko: 'WhatsApp으로 계속' },
+    site_order_ok_t:   { ar: 'تم استلام طلبك بنجاح', en: 'Your order was received', ko: '주문이 접수되었습니다' },
+    site_order_ok_b:   { ar: 'سيتواصل معك فريقنا قريباً لتأكيد التفاصيل، ويمكنك متابعة كل مراحل الشحن من صفحة طلباتي', en: 'Our team will contact you soon. Track every shipment milestone from My Orders', ko: '팀에서 곧 연락드립니다. 내 주문에서 모든 배송 단계를 추적하세요' },
+    site_order_dup_t:  { ar: 'لديك طلب قائم على هذه السيارة', en: 'You already have an open order for this car', ko: '이 차량에 대한 진행 중인 주문이 있습니다' },
+    site_order_dup_b:  { ar: 'طلبك السابق ما زال قيد المعالجة — تابعه من صفحة طلباتي', en: 'Your previous order is still in progress — track it in My Orders', ko: '이전 주문이 진행 중입니다 — 내 주문에서 확인하세요' },
+    site_order_view:   { ar: 'عرض طلباتي', en: 'View my orders', ko: '내 주문 보기' },
+    site_order_stay:   { ar: 'متابعة التصفح', en: 'Keep browsing', ko: '계속 둘러보기' },
+    site_order_fail:   { ar: 'تعذر تسجيل الطلب — أعد المحاولة أو تواصل عبر واتساب', en: 'Could not place the order — retry or contact us on WhatsApp', ko: '주문 실패 — 다시 시도하거나 WhatsApp으로 문의하세요' }
   };
 
   /* ── TEXT_MAP: static visible text, keyed by normalized Arabic ──
@@ -337,6 +356,7 @@
     'سعر الشركة التقديري': { en: 'Estimated dealer price', ko: '예상 딜러 가격' },
     'توفيرك المتوقع:': { en: 'Your expected savings:', ko: '예상 절감액:' },
     'زايد الآن': { en: 'Bid Now', ko: '지금 입찰' },
+    'زايد الآن عبر واتساب': { en: 'Bid now via WhatsApp', ko: 'WhatsApp으로 지금 입찰' },
     'عرض جميع سيارات المزاد': { en: 'View all auction cars', ko: '모든 경매 차량 보기' },
     'مباشر من مزادات كوريا': { en: 'Live from Korean auctions', ko: '한국 경매 실시간' },
     'سيارات المزاد': { en: 'Auction cars', ko: '경매 차량' },

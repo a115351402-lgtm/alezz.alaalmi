@@ -122,6 +122,9 @@
   <!-- Trilingual + multi-currency engines (shared with homepage; honour saved choice) -->
   <script src="i18n.js"></script>
   <script src="currency.js"></script>
+  <script defer src="vendor/supabase-js-v2.min.js"></script>
+  <script defer src="supabase-client.js"></script>
+  <script defer src="site-auth.js"></script>
 </head>
 <body>
 
@@ -178,6 +181,7 @@
         </div>
       </div>
 
+      <span id="nav-auth" data-no-i18n class="inline-flex items-center gap-2"></span>
       <a href="https://wa.me/966550112411"
         class="btn-gold hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm shadow-md">
         <span>تواصل معنا</span>
@@ -623,6 +627,7 @@
     return '<div class="lc-card" style="animation-delay:'+(idx % PAGE_SIZE)*0.05+'s;" onclick="location.href=\'car.html?id='+v.id+'\'">'
       + '<div class="lc-photo">'
       +   (isNew7d(v) ? '<span class="lc-badge lc-badge-new">'+T('lc_new')+'</span>' : '')
+      +   '<button class="fav-btn" data-fav="encar:'+v.id+'" aria-label="المفضلة">♡</button>'
       +   (img ? '<img src="'+img+'" alt="'+make+' '+model+'" loading="lazy" onerror="this.style.display=\'none\'">' : '')
       +   '<div style="position:absolute;bottom:10px;right:12px;left:12px;z-index:2;display:flex;align-items:flex-end;justify-content:space-between;">'
       +     '<p class="font-cairo font-black text-white" style="font-size:1.2rem;line-height:1;">'+money(priceUsd(v))+'</p>'

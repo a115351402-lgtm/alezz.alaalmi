@@ -101,6 +101,9 @@
   <!-- Trilingual + multi-currency engines (shared with homepage; honour saved choice) -->
   <script src="i18n.js"></script>
   <script src="currency.js"></script>
+  <script defer src="vendor/supabase-js-v2.min.js"></script>
+  <script defer src="supabase-client.js"></script>
+  <script defer src="site-auth.js"></script>
 </head>
 <body>
 
@@ -160,6 +163,7 @@
         </div>
       </div>
 
+      <span id="nav-auth" data-no-i18n class="inline-flex items-center gap-2"></span>
       <a href="https://wa.me/966550112411"
         class="btn-gold hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm shadow-md">
         <span>تواصل معنا</span>
@@ -352,8 +356,16 @@
           <p class="font-cairo font-bold text-emerald-400 text-sm"><span>توفيرك المتوقع:</span> <span id="save-amt"></span></p>
         </div>
 
-        <a id="wa-cta" href="#" target="_blank" rel="noopener" class="btn-gold w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm mb-3">
-          <span>زايد الآن</span>
+        <div class="flex gap-2 mb-3">
+          <button id="order-cta" data-order="auction" style="display:none;"
+             class="btn-gold flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm">
+            <span data-i18n="site_order_btn">اطلب هذه السيارة الآن</span>
+          </button>
+          <button class="fav-btn fav-inline" data-fav-detail="auction" aria-label="المفضلة"
+             style="position:static;display:none;width:54px;height:auto;border-radius:14px;font-size:20px;" data-order-sib>♡</button>
+        </div>
+        <a id="wa-cta" href="#" target="_blank" rel="noopener" class="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm mb-3" style="background:rgba(37,211,102,0.10);border:1px solid rgba(37,211,102,0.4);color:#2ee06f;font-family:'Cairo',sans-serif;font-weight:700;">
+          <span>زايد الآن عبر واتساب</span>
           <svg viewBox="0 0 24 24" fill="white" width="16" height="16"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
         </a>
         <p class="font-tajawal text-center text-xs" style="color:rgba(200,216,240,0.4);">* السعر لا يشمل الشحن والجمارك</p>
