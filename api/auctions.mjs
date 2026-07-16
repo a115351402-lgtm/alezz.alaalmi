@@ -194,7 +194,8 @@ function arabicTitle(makerEn, modelEn) {
   return (maker + ' ' + (model || modelEn || '')).trim();
 }
 
-async function fetchLotteDetail(gdId) {
+// exported for reuse by api/_lib/sources.mjs (vehicle snapshots)
+export async function fetchLotteDetail(gdId) {
   const res = await fetch(DETAIL_BASE + encodeURIComponent(gdId) + '/', {
     headers: { 'User-Agent': UA, 'Accept': 'text/html' },
     signal: AbortSignal.timeout(20000),

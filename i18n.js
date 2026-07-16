@@ -147,7 +147,35 @@
     auth_e_generic:   { ar: 'حدث خطأ غير متوقع — أعد المحاولة', en: 'Something went wrong — please try again', ko: '예상치 못한 오류가 발생했습니다 — 다시 시도하세요' },
     auth_ok_confirm_email:{ ar: 'تم إنشاء حسابك ✓ أرسلنا رابط تفعيل إلى بريدك — افتحه لإكمال التسجيل', en: 'Account created ✓ We sent a confirmation link to your email — open it to finish', ko: '계정이 생성되었습니다 ✓ 이메일로 인증 링크를 보냈습니다' },
     auth_ok_reset_sent:{ ar: 'إن كان البريد مسجلاً لدينا فستصلك رسالة برابط الاستعادة خلال دقائق', en: 'If this email is registered, a reset link is on its way', ko: '등록된 이메일이라면 재설정 링크가 곧 도착합니다' },
-    auth_ok_pass_updated:{ ar: 'تم تحديث كلمة المرور بنجاح ✓', en: 'Password updated successfully ✓', ko: '비밀번호가 변경되었습니다 ✓' }
+    auth_ok_pass_updated:{ ar: 'تم تحديث كلمة المرور بنجاح ✓', en: 'Password updated successfully ✓', ko: '비밀번호가 변경되었습니다 ✓' },
+
+    // account.html (customer area)
+    acc_hello:        { ar: 'مرحباً', en: 'Welcome', ko: '환영합니다' },
+    acc_sub:          { ar: 'تابع طلباتك ومفضلتك وإشعاراتك من هنا', en: 'Track your orders, favorites and notifications here', ko: '주문·즐겨찾기·알림을 여기서 확인하세요' },
+    acc_admin_link:   { ar: 'لوحة التحكم', en: 'Dashboard', ko: '대시보드' },
+    acc_tab_orders:   { ar: 'طلباتي', en: 'My orders', ko: '내 주문' },
+    acc_tab_favs:     { ar: 'المفضلة', en: 'Favorites', ko: '즐겨찾기' },
+    acc_tab_ntfs:     { ar: 'الإشعارات', en: 'Notifications', ko: '알림' },
+    acc_tab_profile:  { ar: 'حسابي', en: 'Profile', ko: '내 정보' },
+    acc_no_orders:    { ar: 'لا توجد طلبات بعد', en: 'No orders yet', ko: '아직 주문이 없습니다' },
+    acc_no_orders_d:  { ar: 'تصفح السيارات واضغط «اطلب هذه السيارة» وسيظهر طلبك هنا مع تتبع مباشر لكل مرحلة', en: 'Browse cars and tap "Order this car" — your order will appear here with live tracking', ko: '차량을 둘러보고 "이 차량 주문하기"를 누르면 실시간 추적과 함께 여기에 표시됩니다' },
+    acc_browse:       { ar: 'تصفح السيارات', en: 'Browse cars', ko: '차량 둘러보기' },
+    acc_no_favs:      { ar: 'مفضلتك فارغة', en: 'No favorites yet', ko: '즐겨찾기가 비어 있습니다' },
+    acc_no_favs_d:    { ar: 'اضغط على القلب في أي سيارة لحفظها هنا', en: 'Tap the heart on any car to save it here', ko: '차량의 하트를 누르면 여기에 저장됩니다' },
+    acc_no_ntfs:      { ar: 'لا توجد إشعارات', en: 'No notifications', ko: '알림이 없습니다' },
+    acc_read_all:     { ar: 'تحديد الكل كمقروء', en: 'Mark all as read', ko: '모두 읽음 처리' },
+    acc_profile_title:{ ar: 'بياناتي', en: 'My details', ko: '내 정보' },
+    acc_pass_title:   { ar: 'تغيير كلمة المرور', en: 'Change password', ko: '비밀번호 변경' },
+    acc_pass_btn:     { ar: 'تحديث كلمة المرور', en: 'Update password', ko: '비밀번호 변경' },
+    acc_save:         { ar: 'حفظ التغييرات', en: 'Save changes', ko: '변경 사항 저장' },
+    acc_saved:        { ar: 'تم الحفظ ✓', en: 'Saved ✓', ko: '저장됨 ✓' },
+    acc_remove:       { ar: 'إزالة', en: 'Remove', ko: '삭제' },
+    acc_order_date:   { ar: 'تاريخ الطلب', en: 'Order date', ko: '주문일' },
+    acc_show_timeline:{ ar: 'عرض مراحل الشحنة ▾', en: 'Show shipment timeline ▾', ko: '배송 단계 보기 ▾' },
+    acc_hide_timeline:{ ar: 'إخفاء مراحل الشحنة ▴', en: 'Hide shipment timeline ▴', ko: '배송 단계 숨기기 ▴' },
+    acc_no_ms:        { ar: 'لا توجد مراحل مسجلة بعد — سيصلك إشعار مع كل تحديث', en: 'No milestones yet — you will be notified on every update', ko: '아직 기록된 단계가 없습니다 — 업데이트마다 알림을 받게 됩니다' },
+    acc_order_updated:{ ar: 'تحديث على طلبك', en: 'Order updated', ko: '주문 업데이트' },
+    acc_load_err:     { ar: 'تعذر التحميل — أعد المحاولة', en: 'Loading failed — try again', ko: '불러오기 실패 — 다시 시도하세요' }
   };
 
   /* ── TEXT_MAP: static visible text, keyed by normalized Arabic ──

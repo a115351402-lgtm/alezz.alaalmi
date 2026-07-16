@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#09090F" />
+  <meta name="robots" content="noindex" />
+  <title>حسابي — العز العالمي</title>
+  <link rel="stylesheet" href="tailwind.css" />
+  <script>
+    window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Tajawal', sans-serif; background: #09090F; color: #C8D8F0; }
+    h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; }
+    .navbar-glass { background: rgba(9,9,15,0.55); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); border-bottom: 1px solid rgba(255,255,255,0.07); }
+    .btn-gold { background: linear-gradient(135deg,#C9A84C,#F0D98A,#A0802A); color:#fff; font-family:'Cairo',sans-serif; font-weight:700; cursor:pointer; transition:transform 0.2s, box-shadow 0.2s; border:none; }
+    .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,168,76,0.45); }
+    .btn-gold:disabled { opacity: 0.55; cursor: wait; transform: none; box-shadow: none; }
+    .btn-ghost { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); color: #C8D8F0; font-family: 'Cairo', sans-serif; font-weight: 700; cursor: pointer; }
+    .panel { background: rgba(12,13,26,0.85); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; }
+    .fld { display: block; width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 0.8rem 1rem; color: #fff; font-family: 'Tajawal', sans-serif; font-size: 0.95rem; outline: none; }
+    .fld:focus { border-color: #C9A84C; }
+    .fld-label { display: block; font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 0.8rem; margin-bottom: 0.35rem; color: rgba(200,216,240,0.75); }
+    input.fld[type=email], input.fld[type=tel] { direction: ltr; text-align: start; }
+    /* Tabs */
+    .acc-tab { position: relative; padding: 0.7rem 1.1rem; border-radius: 12px; font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 0.85rem; cursor: pointer; color: rgba(200,216,240,0.6); white-space: nowrap; user-select: none; }
+    .acc-tab.on { background: linear-gradient(135deg,#C9A84C,#F0D98A,#A0802A); color: #09090F; }
+    .tab-badge { position: absolute; top: 2px; inset-inline-end: 2px; background: #f87171; color: #fff; font-size: 0.62rem; font-weight: 800; border-radius: 999px; padding: 0 5px; min-width: 15px; text-align: center; }
+    /* Order card */
+    .ord-img { width: 110px; height: 78px; border-radius: 12px; object-fit: cover; background: #131426; flex: 0 0 auto; }
+    .st-chip { font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 0.7rem; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+    /* Progress rail */
+    .rail { display: flex; align-items: center; gap: 0; margin: 0.9rem 0 0.3rem; }
+    .rail-dot { width: 14px; height: 14px; border-radius: 50%; background: rgba(255,255,255,0.12); border: 2px solid rgba(255,255,255,0.2); flex: 0 0 auto; }
+    .rail-dot.done { background: #C9A84C; border-color: #F0D98A; }
+    .rail-dot.now  { background: #C9A84C; border-color: #fff; box-shadow: 0 0 10px rgba(201,168,76,0.8); }
+    .rail-seg { height: 3px; flex: 1; background: rgba(255,255,255,0.1); }
+    .rail-seg.done { background: linear-gradient(90deg,#C9A84C,#F0D98A); }
+    /* Timeline */
+    .tl { border-inline-start: 2px solid rgba(201,168,76,0.35); margin-inline-start: 7px; padding-inline-start: 18px; }
+    .tl-item { position: relative; padding-bottom: 1rem; }
+    .tl-item::before { content: ''; position: absolute; inset-inline-start: -25px; top: 3px; width: 12px; height: 12px; border-radius: 50%; background: #C9A84C; border: 2px solid #09090F; box-shadow: 0 0 0 2px rgba(201,168,76,0.5); }
+    /* Notification row */
+    .ntf { border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 0.85rem 1rem; cursor: pointer; transition: background 0.2s; }
+    .ntf:hover { background: rgba(255,255,255,0.03); }
+    .ntf.unread { background: rgba(26,77,184,0.12); border-color: rgba(91,155,245,0.3); }
+    .skel { position: relative; overflow: hidden; background: rgba(255,255,255,0.05); border-radius: 14px; }
+    .skel::after { content:''; position:absolute; inset:0; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent); animation:sh 1.4s infinite; }
+    @keyframes sh { 0%{transform:translateX(100%);} 100%{transform:translateX(-100%);} }
+    /* Toast */
+    #toast { position: fixed; bottom: 22px; inset-inline-start: 50%; transform: translateX(50%); background: #0F1125; border: 1px solid rgba(201,168,76,0.5); color: #F0D98A; font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 0.85rem; padding: 0.8rem 1.4rem; border-radius: 999px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 90; max-width: 92vw; text-align: center; }
+    html[dir="ltr"] #toast { transform: translateX(-50%); }
+    #toast.show { opacity: 1; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.35); border-radius: 4px; }
+  </style>
+
+  <script src="i18n.js"></script>
+  <script src="currency.js"></script>
+  <script src="vendor/supabase-js-v2.min.js"></script>
+  <script src="supabase-client.js"></script>
+</head>
+<body>
+
+<nav class="navbar-glass fixed top-0 right-0 left-0 z-50 px-4 py-3">
+  <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-2">
+      <div class="w-10 h-10 rounded-full flex items-center justify-center shadow-lg" style="background:#1A4DB8;">
+        <svg viewBox="0 0 24 24" fill="#C9A84C" width="22" height="22"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+      </div>
+      <div>
+        <p class="font-cairo font-black leading-none text-lg" style="color:#5B9BF5;">العز العالمي</p>
+        <p class="text-xs" style="color:#C9A84C;">استيراد سيارات كورية فاخرة</p>
+      </div>
+    </a>
+    <div class="flex items-center gap-3">
+      <a id="nav-admin" href="admin.html" style="display:none;color:#F0D98A;" class="font-cairo font-bold text-sm" data-i18n="acc_admin_link">لوحة التحكم</a>
+      <a href="index.html" class="font-cairo font-bold text-sm" style="color:#C8D8F0;" data-i18n="auth_back_home">← الرئيسية</a>
+    </div>
+  </div>
+</nav>
+
+<main class="max-w-4xl mx-auto px-4 sm:px-6 pt-24 pb-16">
+
+  <div class="mb-6">
+    <h1 class="font-black text-2xl text-white mb-1"><span data-i18n="acc_hello">مرحباً</span> <span id="hi-name" class="text-gold-gradient" style="background:linear-gradient(135deg,#C9A84C,#F0D98A,#A0802A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;" data-no-i18n></span> 👋</h1>
+    <p class="text-sm" style="color:rgba(200,216,240,0.55);" data-i18n="acc_sub">تابع طلباتك ومفضلتك وإشعاراتك من هنا</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="flex gap-2 p-1.5 rounded-2xl mb-6 overflow-x-auto" style="background:rgba(255,255,255,0.05);" id="tabs">
+    <div class="acc-tab on" data-tab="orders"><span data-i18n="acc_tab_orders">طلباتي</span></div>
+    <div class="acc-tab" data-tab="favorites"><span data-i18n="acc_tab_favs">المفضلة</span></div>
+    <div class="acc-tab" data-tab="notifications"><span data-i18n="acc_tab_ntfs">الإشعارات</span><span class="tab-badge" id="ntf-badge" style="display:none;">0</span></div>
+    <div class="acc-tab" data-tab="profile"><span data-i18n="acc_tab_profile">حسابي</span></div>
+  </div>
+
+  <!-- ── Orders ─────────────────────────────────────────────── -->
+  <section id="v-orders">
+    <div id="orders-loading"><div class="skel" style="height:120px;margin-bottom:12px;"></div><div class="skel" style="height:120px;"></div></div>
+    <div id="orders-empty" style="display:none;" class="panel text-center py-14 px-6">
+      <p class="text-5xl mb-3">🚗</p>
+      <p class="font-cairo font-bold text-white text-lg mb-2" data-i18n="acc_no_orders">لا توجد طلبات بعد</p>
+      <p class="text-sm mb-6" style="color:rgba(200,216,240,0.55);" data-i18n="acc_no_orders_d">تصفح السيارات واضغط «اطلب هذه السيارة» وسيظهر طلبك هنا مع تتبع مباشر لكل مرحلة</p>
+      <a href="cars.html" class="btn-gold inline-block px-8 py-3 rounded-full text-sm" data-i18n="acc_browse">تصفح السيارات</a>
+    </div>
+    <div id="orders-list" class="space-y-4"></div>
+  </section>
+
+  <!-- ── Favorites ──────────────────────────────────────────── -->
+  <section id="v-favorites" style="display:none;">
+    <div id="favs-loading"><div class="skel" style="height:100px;"></div></div>
+    <div id="favs-empty" style="display:none;" class="panel text-center py-14 px-6">
+      <p class="text-5xl mb-3">🤍</p>
+      <p class="font-cairo font-bold text-white text-lg mb-2" data-i18n="acc_no_favs">مفضلتك فارغة</p>
+      <p class="text-sm mb-6" style="color:rgba(200,216,240,0.55);" data-i18n="acc_no_favs_d">اضغط على القلب في أي سيارة لحفظها هنا</p>
+      <a href="cars.html" class="btn-gold inline-block px-8 py-3 rounded-full text-sm" data-i18n="acc_browse">تصفح السيارات</a>
+    </div>
+    <div id="favs-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+  </section>
+
+  <!-- ── Notifications ──────────────────────────────────────── -->
+  <section id="v-notifications" style="display:none;">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="font-black text-white text-lg" data-i18n="acc_tab_ntfs">الإشعارات</h2>
+      <button id="b-readall" class="btn-ghost text-xs px-4 py-2 rounded-full" data-i18n="acc_read_all">تحديد الكل كمقروء</button>
+    </div>
+    <div id="ntfs-loading"><div class="skel" style="height:70px;"></div></div>
+    <div id="ntfs-empty" style="display:none;" class="panel text-center py-14 px-6">
+      <p class="text-5xl mb-3">🔔</p>
+      <p class="font-cairo font-bold text-white text-lg" data-i18n="acc_no_ntfs">لا توجد إشعارات</p>
+    </div>
+    <div id="ntfs-list" class="space-y-3"></div>
+  </section>
+
+  <!-- ── Profile ────────────────────────────────────────────── -->
+  <section id="v-profile" style="display:none;">
+    <div class="panel p-6 mb-4">
+      <h2 class="font-black text-white text-lg mb-5" data-i18n="acc_profile_title">بياناتي</h2>
+      <div class="mb-4">
+        <label class="fld-label" data-i18n="auth_email">البريد الإلكتروني</label>
+        <input class="fld" id="pf-email" type="email" disabled style="opacity:0.55;" />
+      </div>
+      <div class="mb-4">
+        <label class="fld-label" for="pf-name" data-i18n="auth_fullname">الاسم الكامل</label>
+        <input class="fld" id="pf-name" type="text" autocomplete="name" />
+      </div>
+      <div class="mb-5">
+        <label class="fld-label" for="pf-phone" data-i18n="auth_phone">رقم الجوال</label>
+        <input class="fld" id="pf-phone" type="tel" autocomplete="tel" placeholder="05XXXXXXXX" />
+      </div>
+      <button id="b-save-profile" class="btn-gold w-full py-3 rounded-2xl text-sm" data-i18n="acc_save">حفظ التغييرات</button>
+    </div>
+
+    <div class="panel p-6 mb-4">
+      <h2 class="font-black text-white text-lg mb-5" data-i18n="acc_pass_title">تغيير كلمة المرور</h2>
+      <div class="mb-5">
+        <label class="fld-label" for="pf-pass" data-i18n="auth_new_password">كلمة المرور الجديدة</label>
+        <input class="fld" id="pf-pass" type="password" autocomplete="new-password" data-i18n-attr="placeholder:auth_pass_ph" placeholder="8 أحرف على الأقل" />
+      </div>
+      <button id="b-save-pass" class="btn-ghost w-full py-3 rounded-2xl text-sm" data-i18n="acc_pass_btn">تحديث كلمة المرور</button>
+    </div>
+
+    <button id="b-logout" class="w-full py-3 rounded-2xl font-cairo font-bold text-sm" style="background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.35);color:#f87171;cursor:pointer;" data-i18n="auth_logout">تسجيل الخروج</button>
+  </section>
+
+</main>
+
+<div id="toast" data-no-i18n></div>
+
+<script>
+(function () {
+  'use strict';
+  if (!window.SB) { location.replace('/auth'); return; }
+
+  function el(i) { return document.getElementById(i); }
+  var T = function (k, vars) { return window.I18N ? I18N.t(k, vars) : k; };
+  var lang = function () { return window.I18N ? I18N.lang : 'ar'; };
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]; }); }
+  function sar(n) { return (window.CUR && n != null) ? CUR.formatSar(Number(n)) : (n != null ? Number(n).toLocaleString('en-US') + ' SAR' : '—'); }
+  function dt(s) { try { return new Date(s).toLocaleDateString(lang() === 'ar' ? 'ar-SA' : lang() === 'ko' ? 'ko-KR' : 'en-GB', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }); } catch (e) { return s; } }
+
+  var toastTimer;
+  function toast(msg) {
+    var t = el('toast'); t.textContent = msg; t.classList.add('show');
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.classList.remove('show'); }, 3500);
+  }
+
+  // ── order status model (7 steps) ──────────────────────────
+  var STEPS = ['pending_payment','secured_in_korea','shipping','at_port','customs','ready_for_delivery','delivered'];
+  var STATUS_L = {
+    pending_payment:    { ar: 'بانتظار الدفع',            en: 'Awaiting payment',    ko: '결제 대기' },
+    secured_in_korea:   { ar: 'تم التأمين في كوريا',      en: 'Secured in Korea',    ko: '한국에서 확보됨' },
+    shipping:           { ar: 'الشحن البحري',             en: 'Shipping',            ko: '해상 운송 중' },
+    at_port:            { ar: 'وصلت الميناء',             en: 'At port',             ko: '항구 도착' },
+    customs:            { ar: 'التخليص الجمركي',          en: 'Customs clearance',   ko: '통관 중' },
+    ready_for_delivery: { ar: 'جاهزة للتسليم',            en: 'Ready for delivery',  ko: '인도 준비 완료' },
+    delivered:          { ar: 'تم التسليم',               en: 'Delivered',           ko: '인도 완료' }
+  };
+  function stLabel(s) { var e = STATUS_L[s]; return e ? (e[lang()] || e.ar) : s; }
+  function stColor(s) { return s === 'delivered' ? '#34d399' : s === 'pending_payment' ? '#F0D98A' : '#5B9BF5'; }
+
+  var uid = null, state = { orders: [], favs: [], ntfs: [], profile: null, openMilestones: {} };
+
+  // ── tabs (hash-routed) ────────────────────────────────────
+  var TABS = ['orders','favorites','notifications','profile'];
+  function showTab(name) {
+    if (TABS.indexOf(name) === -1) name = 'orders';
+    TABS.forEach(function (t) {
+      el('v-' + t).style.display = (t === name) ? '' : 'none';
+    });
+    document.querySelectorAll('.acc-tab').forEach(function (b) {
+      b.classList.toggle('on', b.getAttribute('data-tab') === name);
+    });
+    if (history.replaceState) history.replaceState(null, '', '#' + name);
+  }
+  el('tabs').addEventListener('click', function (e) {
+    var b = e.target.closest('.acc-tab'); if (b) showTab(b.getAttribute('data-tab'));
+  });
+  window.addEventListener('hashchange', function () { showTab(location.hash.slice(1)); });
+
+  // ── orders ────────────────────────────────────────────────
+  function vehTitle(v) {
+    if (!v) return '—';
+    var t = [v.make, v.model, v.year].filter(Boolean).join(' ');
+    return t || (v.specs && v.specs.title) || '—';
+  }
+  function orderCard(o) {
+    var v = o.vehicles || {};
+    var img = (v.images && v.images[0]) || '';
+    var idx = STEPS.indexOf(o.status);
+    var rail = STEPS.map(function (s, i) {
+      var dot = '<div class="rail-dot' + (i < idx ? ' done' : i === idx ? ' now' : '') + '" title="' + esc(stLabel(s)) + '"></div>';
+      return i ? '<div class="rail-seg' + (i <= idx ? ' done' : '') + '"></div>' + dot : dot;
+    }).join('');
+    var open = !!state.openMilestones[o.id];
+    return '<div class="panel p-4" id="ord-' + o.id + '">'
+      + '<div class="flex gap-4 items-start">'
+      +   (img ? '<img class="ord-img" src="' + esc(img) + '" loading="lazy" onerror="this.style.display=\'none\'" />' : '')
+      +   '<div class="flex-1 min-w-0">'
+      +     '<div class="flex items-center justify-between gap-2 flex-wrap mb-1">'
+      +       '<p class="font-cairo font-bold text-white truncate">' + esc(vehTitle(v)) + '</p>'
+      +       '<span class="st-chip" style="background:' + stColor(o.status) + '22;color:' + stColor(o.status) + ';border:1px solid ' + stColor(o.status) + '55;">' + esc(stLabel(o.status)) + '</span>'
+      +     '</div>'
+      +     '<p class="text-xs mb-1" style="color:rgba(200,216,240,0.5);">' + T('acc_order_date') + ': ' + dt(o.created_at) + '</p>'
+      +     '<p class="font-cairo font-black" style="color:#F0D98A;" data-no-i18n>' + sar(o.final_price_sar) + '</p>'
+      +   '</div>'
+      + '</div>'
+      + '<div class="rail" dir="ltr">' + rail + '</div>'
+      + '<div class="flex justify-between text-xs mt-1" style="color:rgba(200,216,240,0.4);" dir="ltr"><span>' + esc(stLabel(STEPS[0])) + '</span><span>' + esc(stLabel(STEPS[6])) + '</span></div>'
+      + '<button class="btn-ghost w-full mt-3 py-2.5 rounded-xl text-xs" data-ms="' + o.id + '">' + (open ? T('acc_hide_timeline') : T('acc_show_timeline')) + '</button>'
+      + '<div id="ms-' + o.id + '" class="mt-4" style="' + (open ? '' : 'display:none;') + '"></div>'
+      + '</div>';
+  }
+  function renderOrders() {
+    el('orders-loading').style.display = 'none';
+    el('orders-empty').style.display = state.orders.length ? 'none' : '';
+    el('orders-list').innerHTML = state.orders.map(orderCard).join('');
+    Object.keys(state.openMilestones).forEach(function (id) {
+      if (state.openMilestones[id]) loadMilestones(id, true);
+    });
+  }
+  function loadOrders() {
+    return SB.client.from('orders')
+      .select('id, status, final_price_sar, created_at, vehicles(make, model, year, images, specs)')
+      .order('created_at', { ascending: false })
+      .then(function (r) {
+        if (r.error) { console.warn(r.error); toast(T('acc_load_err')); return; }
+        state.orders = r.data || [];
+        renderOrders();
+      });
+  }
+  function loadMilestones(orderId, silent) {
+    var box = el('ms-' + orderId); if (!box) return;
+    if (!silent) box.innerHTML = '<div class="skel" style="height:50px;"></div>';
+    SB.client.from('order_milestones')
+      .select('step_title, step_description, location, completed_at')
+      .eq('order_id', orderId)
+      .order('completed_at', { ascending: false })
+      .then(function (r) {
+        if (r.error) { box.innerHTML = ''; return; }
+        var items = r.data || [];
+        box.innerHTML = items.length
+          ? '<div class="tl">' + items.map(function (m) {
+              return '<div class="tl-item">'
+                + '<p class="font-cairo font-bold text-white text-sm">' + esc(m.step_title) + '</p>'
+                + (m.step_description ? '<p class="text-xs mt-0.5" style="color:rgba(200,216,240,0.6);">' + esc(m.step_description) + '</p>' : '')
+                + '<p class="text-xs mt-1" style="color:rgba(200,216,240,0.4);">' + (m.location ? '📍 ' + esc(m.location) + ' · ' : '') + dt(m.completed_at) + '</p>'
+                + '</div>';
+            }).join('') + '</div>'
+          : '<p class="text-xs py-2" style="color:rgba(200,216,240,0.45);">' + T('acc_no_ms') + '</p>';
+      });
+  }
+  el('orders-list').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-ms]'); if (!b) return;
+    var id = b.getAttribute('data-ms');
+    var box = el('ms-' + id);
+    var opening = box.style.display === 'none';
+    box.style.display = opening ? '' : 'none';
+    state.openMilestones[id] = opening;
+    b.textContent = opening ? T('acc_hide_timeline') : T('acc_show_timeline');
+    if (opening) loadMilestones(id);
+  });
+
+  // ── favorites ─────────────────────────────────────────────
+  function favLink(v) {
+    if (v && v.specs && v.specs.source_url) return v.specs.source_url;
+    if (v && v.source === 'encar' && v.source_id) return '/car.html?id=' + encodeURIComponent(v.source_id);
+    if (v && v.source === 'auction' && v.source_id) return '/auction-car.html?id=' + encodeURIComponent(v.source_id);
+    return '#';
+  }
+  function favCard(f) {
+    var v = f.vehicles || {};
+    var img = (v.images && v.images[0]) || '';
+    return '<div class="panel p-3 flex gap-3 items-center">'
+      + '<a href="' + esc(favLink(v)) + '">' + (img ? '<img class="ord-img" src="' + esc(img) + '" loading="lazy" onerror="this.style.display=\'none\'" />' : '<div class="ord-img"></div>') + '</a>'
+      + '<div class="flex-1 min-w-0">'
+      +   '<a href="' + esc(favLink(v)) + '" class="font-cairo font-bold text-white text-sm block truncate mb-1">' + esc(vehTitle(v)) + '</a>'
+      +   '<p class="font-cairo font-black text-sm" style="color:#F0D98A;" data-no-i18n>' + sar(v.price_sar) + '</p>'
+      + '</div>'
+      + '<button class="btn-ghost text-xs px-3 py-2 rounded-xl" data-unfav="' + f.id + '" title="' + T('acc_remove') + '">✕</button>'
+      + '</div>';
+  }
+  function loadFavs() {
+    return SB.client.from('favorites')
+      .select('id, vehicles(make, model, year, images, price_sar, source, source_id, specs)')
+      .order('created_at', { ascending: false })
+      .then(function (r) {
+        el('favs-loading').style.display = 'none';
+        if (r.error) { console.warn(r.error); return; }
+        state.favs = r.data || [];
+        el('favs-empty').style.display = state.favs.length ? 'none' : '';
+        el('favs-list').innerHTML = state.favs.map(favCard).join('');
+      });
+  }
+  el('favs-list').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-unfav]'); if (!b) return;
+    var id = Number(b.getAttribute('data-unfav'));
+    SB.client.from('favorites').delete().eq('id', id).then(function (r) {
+      if (r.error) return toast(T('acc_load_err'));
+      state.favs = state.favs.filter(function (f) { return f.id !== id; });
+      el('favs-empty').style.display = state.favs.length ? 'none' : '';
+      el('favs-list').innerHTML = state.favs.map(favCard).join('');
+    });
+  });
+
+  // ── notifications ─────────────────────────────────────────
+  function ntfRow(n) {
+    return '<div class="ntf' + (n.is_read ? '' : ' unread') + '" data-ntf="' + n.id + '">'
+      + '<div class="flex items-start justify-between gap-2">'
+      +   '<p class="font-cairo font-bold text-sm ' + (n.is_read ? '' : 'text-white') + '">' + esc(n.title) + '</p>'
+      +   (n.is_read ? '' : '<span style="width:8px;height:8px;border-radius:50%;background:#5B9BF5;flex:0 0 auto;margin-top:6px;"></span>')
+      + '</div>'
+      + (n.message ? '<p class="text-xs mt-1" style="color:rgba(200,216,240,0.6);">' + esc(n.message) + '</p>' : '')
+      + '<p class="text-xs mt-1.5" style="color:rgba(200,216,240,0.35);">' + dt(n.created_at) + '</p>'
+      + '</div>';
+  }
+  function unreadCount() { return state.ntfs.filter(function (n) { return !n.is_read; }).length; }
+  function renderNtfs() {
+    el('ntfs-loading').style.display = 'none';
+    el('ntfs-empty').style.display = state.ntfs.length ? 'none' : '';
+    el('ntfs-list').innerHTML = state.ntfs.map(ntfRow).join('');
+    var u = unreadCount();
+    el('ntf-badge').style.display = u ? '' : 'none';
+    el('ntf-badge').textContent = u;
+  }
+  function loadNtfs() {
+    return SB.client.from('in_app_notifications')
+      .select('id, title, message, is_read, created_at')
+      .order('created_at', { ascending: false })
+      .limit(50)
+      .then(function (r) {
+        if (r.error) { console.warn(r.error); return; }
+        state.ntfs = r.data || [];
+        renderNtfs();
+      });
+  }
+  el('ntfs-list').addEventListener('click', function (e) {
+    var row = e.target.closest('[data-ntf]'); if (!row) return;
+    var id = row.getAttribute('data-ntf');
+    var n = state.ntfs.find(function (x) { return String(x.id) === id; });
+    if (!n || n.is_read) return;
+    n.is_read = true; renderNtfs();
+    SB.client.from('in_app_notifications').update({ is_read: true }).eq('id', id).then(function () {});
+  });
+  el('b-readall').addEventListener('click', function () {
+    if (!unreadCount()) return;
+    state.ntfs.forEach(function (n) { n.is_read = true; }); renderNtfs();
+    SB.client.from('in_app_notifications').update({ is_read: true }).eq('is_read', false).then(function () {});
+  });
+
+  // ── profile ───────────────────────────────────────────────
+  function normPhone(raw) {
+    var v = String(raw || '').replace(/[\s\-()]/g, '');
+    if (/^00\d{8,15}$/.test(v)) v = '+' + v.slice(2);
+    if (/^\+9665\d{8}$/.test(v)) return v;
+    if (/^9665\d{8}$/.test(v))  return '+' + v;
+    if (/^05\d{8}$/.test(v))    return '+966' + v.slice(1);
+    if (/^5\d{8}$/.test(v))     return '+966' + v;
+    if (/^\+\d{8,15}$/.test(v)) return v;
+    return null;
+  }
+  function loadProfile() {
+    return SB.client.from('profiles').select('email, full_name, phone_number').eq('id', uid).maybeSingle()
+      .then(function (r) {
+        if (r.error || !r.data) return;
+        state.profile = r.data;
+        el('pf-email').value = r.data.email || '';
+        el('pf-name').value = r.data.full_name || '';
+        el('pf-phone').value = r.data.phone_number || '';
+        el('hi-name').textContent = (r.data.full_name || '').split(' ')[0] || '';
+      });
+  }
+  el('b-save-profile').addEventListener('click', function () {
+    var name = el('pf-name').value.trim();
+    var phoneRaw = el('pf-phone').value.trim();
+    var phone = phoneRaw ? normPhone(phoneRaw) : null;
+    if (!name) return toast(T('auth_e_fill'));
+    if (phoneRaw && !phone) return toast(T('auth_e_bad_phone'));
+    SB.client.from('profiles').update({ full_name: name, phone_number: phone }).eq('id', uid)
+      .then(function (r) {
+        if (r.error) {
+          return toast(/duplicate|unique/i.test(r.error.message) ? T('auth_e_phone_taken') : T('acc_load_err'));
+        }
+        el('hi-name').textContent = name.split(' ')[0];
+        toast(T('acc_saved'));
+      });
+  });
+  el('b-save-pass').addEventListener('click', function () {
+    var pass = el('pf-pass').value;
+    if (pass.length < 8) return toast(T('auth_e_weak'));
+    SB.client.auth.updateUser({ password: pass }).then(function (r) {
+      if (r.error) return toast(T('acc_load_err'));
+      el('pf-pass').value = '';
+      toast(T('auth_ok_pass_updated'));
+    });
+  });
+  el('b-logout').addEventListener('click', function () {
+    SB.client.auth.signOut().then(function () { location.replace('/'); });
+  });
+
+  // ── realtime: live order tracking + notifications ─────────
+  function subscribeRealtime() {
+    SB.client.channel('account-live')
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'orders', filter: 'customer_id=eq.' + uid }, function (p) {
+        var o = state.orders.find(function (x) { return x.id === p.new.id; });
+        if (o) { o.status = p.new.status; renderOrders(); }
+        else loadOrders();
+        toast(T('acc_order_updated') + ': ' + stLabel(p.new.status));
+      })
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'order_milestones' }, function (p) {
+        var oid = p.new && p.new.order_id;
+        if (!oid || !state.orders.some(function (o) { return o.id === oid; })) return;
+        if (state.openMilestones[oid]) loadMilestones(oid, true);
+        toast('📍 ' + (p.new.step_title || T('acc_order_updated')));
+      })
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'in_app_notifications', filter: 'user_id=eq.' + uid }, function (p) {
+        state.ntfs.unshift(p.new); renderNtfs();
+      })
+      .subscribe();
+  }
+
+  // ── re-render on language / currency switches ─────────────
+  window.addEventListener('langchange', function () { renderOrders(); el('favs-list').innerHTML = state.favs.map(favCard).join(''); renderNtfs(); });
+  window.addEventListener('currencychange', function () { renderOrders(); el('favs-list').innerHTML = state.favs.map(favCard).join(''); });
+
+  // ── boot ──────────────────────────────────────────────────
+  SB.requireAuth('/account' + (location.hash || '')).then(function (user) {
+    if (!user) return; // redirecting
+    uid = user.id;
+    el('hi-name').textContent = ((user.user_metadata && user.user_metadata.full_name) || user.email || '').split(' ')[0];
+    SB.isStaff().then(function (staff) { if (staff) el('nav-admin').style.display = ''; });
+    Promise.all([loadOrders(), loadFavs(), loadNtfs(), loadProfile()]).then(function () {
+      subscribeRealtime();
+    });
+    showTab(location.hash.slice(1) || 'orders');
+  });
+})();
+</script>
+</body>
+</html>
