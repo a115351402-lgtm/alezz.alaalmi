@@ -24,16 +24,16 @@
 
 عند أي شك بتسريب مفتاح service_role: لوحة سوبابيس → Settings → API → Rotate.
 
-## تعيين أول super_admin (يُنفَّذ مرة واحدة)
+## تعيين أول super_admin — ✅ نُفِّذ بتاريخ 2026-07-16
 
-بعد أن يسجّل المالك حسابه من صفحة `auth.html` (المرحلة 2)، يُنفَّذ التالي مرة واحدة
-عبر `execute_sql` (ليست migration لأنها مرتبطة بتوقيت التسجيل):
+حساب المالك `a115351402@gmail.com` سُجّل من صفحة `auth.html` ثم رُفِّع بالأمر التالي
+(يُحتفظ به هنا كمرجع إن احتجنا ترفيع حساب طوارئ آخر مستقبلاً):
 
 ```sql
 insert into public.user_roles (user_id, role, assigned_by)
 select id, 'super_admin', id
 from auth.users
-where email = 'a115351401@gmail.com'
+where email = 'a115351402@gmail.com'
 on conflict (user_id, role) do nothing;
 ```
 
