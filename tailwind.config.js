@@ -3,7 +3,11 @@
  *    npx tailwindcss@3 -o tailwind.css --minify
  */
 module.exports = {
-  content: ['index.html', 'cars.html', 'car.html', 'i18n.js', 'currency.js'],
+  content: [
+    'index.html', 'cars.html', 'car.html', 'auctions.html', 'auction-car.html',
+    'auth.html',
+    'i18n.js', 'currency.js', 'supabase-client.js',
+  ],
   theme: {
     extend: {
       colors: {

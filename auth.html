@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#09090F" />
+  <meta name="robots" content="noindex" />
+  <title>تسجيل الدخول — العز العالمي</title>
+  <link rel="stylesheet" href="tailwind.css" />
+  <script>
+    window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Tajawal', sans-serif; background: #09090F; color: #C8D8F0; }
+    h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; }
+    .text-gold-gradient { background: linear-gradient(135deg,#C9A84C,#F0D98A,#A0802A); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .navbar-glass { background: rgba(9,9,15,0.55); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); border-bottom: 1px solid rgba(255,255,255,0.07); }
+    .btn-gold { background: linear-gradient(135deg,#C9A84C,#F0D98A,#A0802A); color:#fff; font-family:'Cairo',sans-serif; font-weight:700; cursor:pointer; transition:transform 0.2s, box-shadow 0.2s; border:none; }
+    .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,168,76,0.45); }
+    .btn-gold:disabled { opacity: 0.55; cursor: wait; transform: none; box-shadow: none; }
+    .panel { background: rgba(12,13,26,0.85); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; }
+    /* Form controls */
+    .fld { display: block; width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 0.8rem 1rem; color: #fff; font-family: 'Tajawal', sans-serif; font-size: 0.95rem; outline: none; transition: border-color 0.2s, background 0.2s; }
+    .fld:focus { border-color: #C9A84C; background: rgba(255,255,255,0.06); }
+    .fld::placeholder { color: rgba(200,216,240,0.35); }
+    .fld-label { display: block; font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 0.8rem; margin-bottom: 0.35rem; color: rgba(200,216,240,0.75); }
+    input.fld[type=email], input.fld[type=tel] { direction: ltr; text-align: start; }
+    /* Tabs */
+    .auth-tab { flex: 1; text-align: center; padding: 0.7rem 0; border-radius: 12px; font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 0.9rem; cursor: pointer; color: rgba(200,216,240,0.6); transition: all 0.2s; user-select: none; }
+    .auth-tab.on { background: linear-gradient(135deg,#C9A84C,#F0D98A,#A0802A); color: #09090F; }
+    /* Alert */
+    #alert { display: none; border-radius: 12px; padding: 0.75rem 1rem; font-size: 0.85rem; line-height: 1.7; margin-bottom: 1rem; }
+    #alert.err { display: block; background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.4); color: #f87171; }
+    #alert.ok  { display: block; background: rgba(52,211,153,0.10); border: 1px solid rgba(52,211,153,0.35); color: #34d399; }
+    .eye-btn { position: absolute; inset-inline-end: 0.8rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: rgba(200,216,240,0.5); font-size: 1rem; padding: 4px; }
+    .spin { display: inline-block; width: 1em; height: 1em; border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: rot 0.7s linear infinite; vertical-align: -0.15em; }
+    @keyframes rot { to { transform: rotate(360deg); } }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.35); border-radius: 4px; }
+  </style>
+
+  <!-- Trilingual engine + Supabase (shared singletons) -->
+  <script src="i18n.js"></script>
+  <script src="vendor/supabase-js-v2.min.js"></script>
+  <script src="supabase-client.js"></script>
+</head>
+<body>
+
+<nav class="navbar-glass fixed top-0 right-0 left-0 z-50 px-4 py-3">
+  <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-2">
+      <div class="w-10 h-10 rounded-full flex items-center justify-center shadow-lg" style="background:#1A4DB8;">
+        <svg viewBox="0 0 24 24" fill="#C9A84C" width="22" height="22"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+      </div>
+      <div>
+        <p class="font-cairo font-black leading-none text-lg" style="color:#5B9BF5;">العز العالمي</p>
+        <p class="text-xs" style="color:#C9A84C;">استيراد سيارات كورية فاخرة</p>
+      </div>
+    </a>
+    <a href="index.html" class="font-cairo font-bold text-sm" style="color:#C8D8F0;" data-i18n="auth_back_home">← الرئيسية</a>
+  </div>
+</nav>
+
+<main class="min-h-screen flex items-center justify-center px-4 pt-24 pb-16">
+  <div class="w-full" style="max-width: 430px;">
+
+    <div class="text-center mb-6">
+      <h1 class="font-black text-2xl text-white mb-1" data-i18n="auth_title">حسابك في العز العالمي</h1>
+      <p class="text-sm" style="color:rgba(200,216,240,0.55);" data-i18n="auth_subtitle">تابع طلباتك وشحناتك ومفضلتك من مكان واحد</p>
+    </div>
+
+    <div class="panel p-6">
+
+      <!-- Tabs -->
+      <div id="tabs" class="flex gap-2 p-1.5 rounded-2xl mb-6" style="background:rgba(255,255,255,0.05);">
+        <div class="auth-tab on" id="tab-login" data-i18n="auth_tab_login">تسجيل الدخول</div>
+        <div class="auth-tab" id="tab-signup" data-i18n="auth_tab_signup">حساب جديد</div>
+      </div>
+
+      <div id="alert"></div>
+
+      <!-- ── Login ─────────────────────────────────────────── -->
+      <form id="f-login" novalidate>
+        <div class="mb-4">
+          <label class="fld-label" for="li-email" data-i18n="auth_email">البريد الإلكتروني</label>
+          <input class="fld" id="li-email" type="email" autocomplete="email" placeholder="name@example.com" />
+        </div>
+        <div class="mb-2">
+          <label class="fld-label" for="li-pass" data-i18n="auth_password">كلمة المرور</label>
+          <div class="relative">
+            <input class="fld" id="li-pass" type="password" autocomplete="current-password" placeholder="••••••••" />
+            <button type="button" class="eye-btn" data-eye="li-pass" aria-label="إظهار كلمة المرور">👁</button>
+          </div>
+        </div>
+        <div class="text-left mb-5" style="text-align: end;">
+          <a href="#" id="lnk-forgot" class="text-xs font-cairo font-bold" style="color:#5B9BF5;" data-i18n="auth_forgot">نسيت كلمة المرور؟</a>
+        </div>
+        <button type="submit" class="btn-gold w-full py-3.5 rounded-2xl text-base" id="b-login">
+          <span data-i18n="auth_login_btn">دخول</span>
+        </button>
+      </form>
+
+      <!-- ── Signup ────────────────────────────────────────── -->
+      <form id="f-signup" style="display:none;" novalidate>
+        <div class="mb-4">
+          <label class="fld-label" for="su-name" data-i18n="auth_fullname">الاسم الكامل</label>
+          <input class="fld" id="su-name" type="text" autocomplete="name" data-i18n-attr="placeholder:auth_fullname_ph" placeholder="مثال: محمد العتيبي" />
+        </div>
+        <div class="mb-4">
+          <label class="fld-label" for="su-email" data-i18n="auth_email">البريد الإلكتروني</label>
+          <input class="fld" id="su-email" type="email" autocomplete="email" placeholder="name@example.com" />
+        </div>
+        <div class="mb-4">
+          <label class="fld-label" for="su-phone" data-i18n="auth_phone">رقم الجوال</label>
+          <input class="fld" id="su-phone" type="tel" autocomplete="tel" placeholder="05XXXXXXXX" />
+          <p class="text-xs mt-1" style="color:rgba(200,216,240,0.4);" data-i18n="auth_phone_hint">سعودي: 05XXXXXXXX — دولي: ابدأ بـ +</p>
+        </div>
+        <div class="mb-5">
+          <label class="fld-label" for="su-pass" data-i18n="auth_password">كلمة المرور</label>
+          <div class="relative">
+            <input class="fld" id="su-pass" type="password" autocomplete="new-password" data-i18n-attr="placeholder:auth_pass_ph" placeholder="8 أحرف على الأقل" />
+            <button type="button" class="eye-btn" data-eye="su-pass" aria-label="إظهار كلمة المرور">👁</button>
+          </div>
+        </div>
+        <button type="submit" class="btn-gold w-full py-3.5 rounded-2xl text-base" id="b-signup">
+          <span data-i18n="auth_signup_btn">إنشاء الحساب</span>
+        </button>
+        <p class="text-center text-xs mt-3" style="color:rgba(200,216,240,0.4);" data-i18n="auth_terms">بإنشائك الحساب فأنت توافق على تواصلنا معك بخصوص طلباتك</p>
+      </form>
+
+      <!-- ── Forgot password (request link) ────────────────── -->
+      <form id="f-forgot" style="display:none;" novalidate>
+        <p class="text-sm mb-4" style="color:rgba(200,216,240,0.65);" data-i18n="auth_forgot_hint">أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة تعيين كلمة المرور</p>
+        <div class="mb-5">
+          <label class="fld-label" for="fg-email" data-i18n="auth_email">البريد الإلكتروني</label>
+          <input class="fld" id="fg-email" type="email" autocomplete="email" placeholder="name@example.com" />
+        </div>
+        <button type="submit" class="btn-gold w-full py-3.5 rounded-2xl text-base" id="b-forgot">
+          <span data-i18n="auth_forgot_btn">إرسال رابط الاستعادة</span>
+        </button>
+        <p class="text-center mt-3">
+          <a href="#" id="lnk-back-login" class="text-xs font-cairo font-bold" style="color:#5B9BF5;" data-i18n="auth_back_login">← العودة لتسجيل الدخول</a>
+        </p>
+      </form>
+
+      <!-- ── New password (arrived from recovery link) ─────── -->
+      <form id="f-reset" style="display:none;" novalidate>
+        <p class="text-sm mb-4" style="color:rgba(200,216,240,0.65);" data-i18n="auth_reset_hint">أدخل كلمة المرور الجديدة لحسابك</p>
+        <div class="mb-5">
+          <label class="fld-label" for="rs-pass" data-i18n="auth_new_password">كلمة المرور الجديدة</label>
+          <div class="relative">
+            <input class="fld" id="rs-pass" type="password" autocomplete="new-password" data-i18n-attr="placeholder:auth_pass_ph" placeholder="8 أحرف على الأقل" />
+            <button type="button" class="eye-btn" data-eye="rs-pass" aria-label="إظهار كلمة المرور">👁</button>
+          </div>
+        </div>
+        <button type="submit" class="btn-gold w-full py-3.5 rounded-2xl text-base" id="b-reset">
+          <span data-i18n="auth_reset_btn">تحديث كلمة المرور</span>
+        </button>
+      </form>
+
+      <!-- ── Already signed in ─────────────────────────────── -->
+      <div id="v-signedin" style="display:none;" class="text-center py-2">
+        <p class="text-4xl mb-3">✅</p>
+        <p class="font-cairo font-bold text-white mb-1"><span data-i18n="auth_signedin_as">أنت مسجل الدخول باسم</span></p>
+        <p class="text-sm mb-5" style="color:#F0D98A;" id="si-name" data-no-i18n></p>
+        <a href="#" id="b-continue" class="btn-gold block w-full py-3.5 rounded-2xl text-base mb-3" data-i18n="auth_continue">متابعة</a>
+        <button type="button" id="b-logout" class="w-full py-3 rounded-2xl font-cairo font-bold text-sm"
+                style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);color:#C8D8F0;cursor:pointer;"
+                data-i18n="auth_logout">تسجيل الخروج</button>
+      </div>
+
+    </div>
+
+    <p class="text-center text-xs mt-5" style="color:rgba(200,216,240,0.35);">
+      <span data-i18n="auth_help">تحتاج مساعدة؟</span>
+      <a href="https://wa.me/966550112411" target="_blank" rel="noopener" style="color:#C9A84C;font-weight:700;" data-no-i18n>واتساب</a>
+    </p>
+  </div>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  function el(i) { return document.getElementById(i); }
+  var T = function (k, vars) { return window.I18N ? I18N.t(k, vars) : k; };
+
+  // ── guards ────────────────────────────────────────────────
+  if (!window.SB) {
+    document.addEventListener('DOMContentLoaded', function () {
+      var a = el('alert'); a.className = 'err';
+      a.textContent = 'تعذّر تحميل نظام الحسابات — أعد تحميل الصفحة';
+    });
+    return;
+  }
+
+  var params = new URLSearchParams(location.search);
+
+  // ?next= must be a same-site relative path (blocks open-redirect)
+  var next = params.get('next') || '';
+  if (!/^\/(?!\/)/.test(next)) next = '/';
+
+  var mode = params.get('mode') || '';
+
+  // ── view switching ────────────────────────────────────────
+  var views = ['f-login', 'f-signup', 'f-forgot', 'f-reset', 'v-signedin'];
+  function show(view) {
+    views.forEach(function (v) { el(v).style.display = (v === view) ? '' : 'none'; });
+    el('tabs').style.display = (view === 'f-login' || view === 'f-signup') ? '' : 'none';
+    el('tab-login').classList.toggle('on', view === 'f-login');
+    el('tab-signup').classList.toggle('on', view === 'f-signup');
+    hideAlert();
+  }
+  el('tab-login').addEventListener('click', function () { show('f-login'); });
+  el('tab-signup').addEventListener('click', function () { show('f-signup'); });
+  el('lnk-forgot').addEventListener('click', function (e) { e.preventDefault(); show('f-forgot'); });
+  el('lnk-back-login').addEventListener('click', function (e) { e.preventDefault(); show('f-login'); });
+
+  // ── alert helpers ─────────────────────────────────────────
+  function alertErr(msg) { var a = el('alert'); a.className = 'err'; a.textContent = msg; }
+  function alertOk(msg)  { var a = el('alert'); a.className = 'ok';  a.textContent = msg; }
+  function hideAlert()   { var a = el('alert'); a.className = '';    a.textContent = ''; }
+
+  function busy(btnId, on) {
+    var b = el(btnId);
+    b.disabled = on;
+    if (on) { b.setAttribute('data-txt', b.innerHTML); b.innerHTML = '<span class="spin"></span>'; }
+    else if (b.getAttribute('data-txt')) { b.innerHTML = b.getAttribute('data-txt'); b.removeAttribute('data-txt'); }
+  }
+
+  // ── show/hide password ────────────────────────────────────
+  document.querySelectorAll('.eye-btn').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var inp = el(b.getAttribute('data-eye'));
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+    });
+  });
+
+  // ── phone normalization → E.164 ───────────────────────────
+  // Saudi: 05XXXXXXXX / 5XXXXXXXX → +9665XXXXXXXX · intl: +CCXXXXXXXX
+  function normPhone(raw) {
+    var v = String(raw || '').replace(/[\s\-()]/g, '');
+    if (/^00\d{8,15}$/.test(v)) v = '+' + v.slice(2);
+    if (/^\+9665\d{8}$/.test(v)) return v;
+    if (/^9665\d{8}$/.test(v))  return '+' + v;
+    if (/^05\d{8}$/.test(v))    return '+966' + v.slice(1);
+    if (/^5\d{8}$/.test(v))     return '+966' + v;
+    if (/^\+\d{8,15}$/.test(v)) return v;
+    return null;
+  }
+
+  // ── friendly Arabic/EN/KO error mapping ───────────────────
+  function mapErr(e) {
+    var m = (e && (e.message || e.error_description || '')) || '';
+    if (/invalid login credentials/i.test(m))            return T('auth_e_creds');
+    if (/already registered|already exists/i.test(m))    return T('auth_e_email_taken');
+    if (/password.*(short|at least|characters)/i.test(m))return T('auth_e_weak');
+    if (/email not confirmed/i.test(m))                  return T('auth_e_unconfirmed');
+    if (/valid email|invalid.*email/i.test(m))           return T('auth_e_bad_email');
+    if (/rate limit|too many/i.test(m))                  return T('auth_e_rate');
+    if (/database error saving/i.test(m))                return T('auth_e_phone_taken');
+    return T('auth_e_generic') + (m ? ' (' + m + ')' : '');
+  }
+
+  function goNext() { location.replace(next); }
+
+  // ── signed-in view ────────────────────────────────────────
+  function showSignedIn(user) {
+    var name = (user.user_metadata && user.user_metadata.full_name) || user.email || '';
+    el('si-name').textContent = name;
+    el('b-continue').setAttribute('href', next);
+    show('v-signedin');
+  }
+  el('b-logout') && el('b-logout').addEventListener('click', function () {
+    SB.client.auth.signOut().then(function () { show('f-login'); });
+  });
+
+  // ── login ─────────────────────────────────────────────────
+  el('f-login').addEventListener('submit', function (e) {
+    e.preventDefault(); hideAlert();
+    var email = el('li-email').value.trim(), pass = el('li-pass').value;
+    if (!email || !pass) return alertErr(T('auth_e_fill'));
+    busy('b-login', true);
+    SB.client.auth.signInWithPassword({ email: email, password: pass })
+      .then(function (r) {
+        if (r.error) { busy('b-login', false); return alertErr(mapErr(r.error)); }
+        goNext();
+      });
+  });
+
+  // ── signup ────────────────────────────────────────────────
+  el('f-signup').addEventListener('submit', function (e) {
+    e.preventDefault(); hideAlert();
+    var name  = el('su-name').value.trim(),
+        email = el('su-email').value.trim(),
+        phone = normPhone(el('su-phone').value),
+        pass  = el('su-pass').value;
+    if (!name || !email || !el('su-phone').value.trim() || !pass) return alertErr(T('auth_e_fill'));
+    if (!phone) return alertErr(T('auth_e_bad_phone'));
+    if (pass.length < 8) return alertErr(T('auth_e_weak'));
+    busy('b-signup', true);
+
+    // pre-check the unique phone so the user gets a clear message
+    SB.client.rpc('phone_taken', { _phone: phone })
+      .then(function (r) {
+        if (!r.error && r.data === true) throw { message: 'phone_taken_local' };
+        return SB.client.auth.signUp({
+          email: email,
+          password: pass,
+          options: { data: { full_name: name, phone_number: phone } }
+        });
+      })
+      .then(function (r) {
+        if (!r) return;
+        if (r.error) { busy('b-signup', false); return alertErr(mapErr(r.error)); }
+        if (r.data && r.data.session) { goNext(); return; }
+        // email confirmation is ON → no session until the link is clicked
+        busy('b-signup', false);
+        alertOk(T('auth_ok_confirm_email'));
+      })
+      .catch(function (err) {
+        busy('b-signup', false);
+        alertErr(err && err.message === 'phone_taken_local' ? T('auth_e_phone_taken') : mapErr(err));
+      });
+  });
+
+  // ── forgot password ───────────────────────────────────────
+  el('f-forgot').addEventListener('submit', function (e) {
+    e.preventDefault(); hideAlert();
+    var email = el('fg-email').value.trim();
+    if (!email) return alertErr(T('auth_e_fill'));
+    busy('b-forgot', true);
+    SB.client.auth.resetPasswordForEmail(email, { redirectTo: location.origin + '/auth?mode=reset' })
+      .then(function (r) {
+        busy('b-forgot', false);
+        if (r.error) return alertErr(mapErr(r.error));
+        alertOk(T('auth_ok_reset_sent'));
+      });
+  });
+
+  // ── set new password (recovery link landing) ──────────────
+  el('f-reset').addEventListener('submit', function (e) {
+    e.preventDefault(); hideAlert();
+    var pass = el('rs-pass').value;
+    if (pass.length < 8) return alertErr(T('auth_e_weak'));
+    busy('b-reset', true);
+    SB.client.auth.updateUser({ password: pass })
+      .then(function (r) {
+        busy('b-reset', false);
+        if (r.error) return alertErr(mapErr(r.error));
+        alertOk(T('auth_ok_pass_updated'));
+        setTimeout(goNext, 1200);
+      });
+  });
+
+  // ── boot: pick the right view ─────────────────────────────
+  window.addEventListener('sb:auth', function (ev) {
+    if (ev.detail && ev.detail.event === 'PASSWORD_RECOVERY') show('f-reset');
+  });
+
+  if (mode === 'reset') {
+    show('f-reset');
+  } else {
+    SB.session().then(function (s) {
+      if (s) showSignedIn(s.user);
+      else if (mode === 'signup') show('f-signup');
+    });
+  }
+})();
+</script>
+</body>
+</html>
