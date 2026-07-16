@@ -5,7 +5,7 @@
 module.exports = {
   content: [
     'index.html', 'cars.html', 'car.html', 'auctions.html', 'auction-car.html',
-    'auth.html', 'account.html',
+    'auth.html', 'account.html', 'admin.html',
     'i18n.js', 'currency.js', 'supabase-client.js',
   ],
   theme: {
