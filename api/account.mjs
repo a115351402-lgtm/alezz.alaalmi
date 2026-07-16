@@ -63,6 +63,16 @@ export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
   res.setHeader('Cache-Control', 'no-store');
 
+  // Safe diagnostics: /api/account?diag=1 (no secrets exposed)
+  if (req.method === 'GET' && req.query && req.query.diag === '1') {
+    const sk = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim();
+    return res.status(200).json({
+      service_key_present: Boolean(sk),
+      service_key_prefix: sk ? sk.slice(0, 10) + '…' : null,
+      supabase_url_env: Boolean((process.env.SUPABASE_URL || '').trim()),
+    });
+  }
+
   if (req.method !== 'POST') return fail(res, 405, 'POST only');
 
   let caller;

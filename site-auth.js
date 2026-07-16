@@ -154,8 +154,9 @@
           headers: Object.assign({ 'Content-Type': 'application/json' }, h),
           body: JSON.stringify({ action: 'snapshot', source: src, source_id: sid })
         });
-      }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, status: r.status, j: j }; }); })
         .then(function (x) {
+          if (x.status === 401) { favBusy = false; paint(); goAuth(); return; }
           if (!x.ok || !x.j.vehicle_id) throw 0;
           return SB.client.from('favorites')
             .insert({ user_id: s.user.id, vehicle_id: x.j.vehicle_id })
@@ -219,12 +220,13 @@
           headers: Object.assign({ 'Content-Type': 'application/json' }, h),
           body: JSON.stringify({ action: 'order', source: source, source_id: sid })
         });
-      }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, status: r.status, j: j }; }); })
         .then(function (x) {
           ordering = false;
           if (span) span.textContent = old;
+          if (x.status === 401) { goAuth(); return; }
           if (!x.ok) {
-            toast(T('site_order_fail') + (x.j && x.j.error ? '' : ''));
+            toast(T('site_order_fail'));
             return;
           }
           modal(

@@ -11,7 +11,13 @@ import { createClient } from '@supabase/supabase-js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://rkdwqptiaknoedmsmrjk.supabase.co';
 
+// Public by design (same key that ships in supabase-client.js).
+// Used ONLY to verify caller JWTs, so auth checks never depend on
+// the service key being configured correctly.
+const PUBLISHABLE_KEY = 'sb_publishable_RHPNqmH06RXBrwkMmLPBLQ_G3nuhMym';
+
 let _service = null;
+let _verifier = null;
 
 /** Service-role client (full access, bypasses RLS). Server only. */
 export function serviceClient() {
@@ -28,13 +34,20 @@ export function serviceClient() {
 /**
  * Verify the caller's JWT from the Authorization header.
  * Returns the auth user object, or null when missing/invalid.
+ * Uses the publishable key — valid user tokens are accepted even
+ * if the service key env var is missing or wrong.
  */
 export async function getCallerFromReq(req) {
   const h = String(req.headers.authorization || '');
   const token = h.startsWith('Bearer ') ? h.slice(7).trim() : '';
   if (!token) return null;
   try {
-    const { data, error } = await serviceClient().auth.getUser(token);
+    if (!_verifier) {
+      _verifier = createClient(SUPABASE_URL, PUBLISHABLE_KEY, {
+        auth: { persistSession: false, autoRefreshToken: false },
+      });
+    }
+    const { data, error } = await _verifier.auth.getUser(token);
     if (error || !data || !data.user) return null;
     return data.user;
   } catch {

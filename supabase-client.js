@@ -129,18 +129,55 @@
       .catch(function () { return 0; });
   }
 
+  function injectNavStyles() {
+    if (document.getElementById('sb-nav-css')) return;
+    var st = document.createElement('style');
+    st.id = 'sb-nav-css';
+    st.textContent =
+      '#nav-auth{display:inline-flex;align-items:center;gap:8px;flex:0 0 auto;}' +
+      '.sb-pill{display:inline-flex;align-items:center;gap:.4em;padding:.5em 1.05em;border-radius:9999px;' +
+      'background:linear-gradient(135deg,#C9A84C,#F0D98A,#A0802A);color:#09090F;font-family:Cairo,sans-serif;' +
+      'font-weight:700;font-size:.82rem;white-space:nowrap;text-decoration:none;}' +
+      '.sb-chip{display:inline-flex;align-items:center;gap:.45em;padding:.3em .8em .3em .5em;border-radius:9999px;' +
+      'background:rgba(26,77,184,.25);border:1px solid rgba(91,155,245,.35);color:#C8D8F0;' +
+      'font-family:Cairo,sans-serif;font-weight:700;font-size:.8rem;white-space:nowrap;text-decoration:none;}' +
+      '.sb-avatar{position:relative;display:inline-flex;align-items:center;justify-content:center;' +
+      'width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#C9A84C,#A0802A);' +
+      'color:#09090F;font-weight:800;font-size:.85rem;flex:0 0 auto;}' +
+      '.sb-badge{position:absolute;top:-5px;inset-inline-start:-5px;background:#f87171;color:#fff;' +
+      'border-radius:9999px;padding:0 4px;min-width:15px;height:15px;line-height:15px;font-size:.6rem;' +
+      'font-weight:800;text-align:center;border:1.5px solid #09090F;}' +
+      '.sb-dash{display:inline-flex;align-items:center;padding:.42em .9em;border-radius:9999px;' +
+      'border:1px solid rgba(201,168,76,.5);color:#F0D98A;font-family:Cairo,sans-serif;font-weight:700;' +
+      'font-size:.78rem;white-space:nowrap;text-decoration:none;}' +
+      '@media (max-width: 767px){' +
+        '.sb-pill{width:38px;height:38px;padding:0;justify-content:center;border-radius:50%;}' +
+        '.sb-pill .sb-txt{display:none;}' +
+        '.sb-chip{padding:0;background:none;border:none;}' +
+        '.sb-chip .sb-txt{display:none;}' +
+        '.sb-avatar{width:36px;height:36px;font-size:.95rem;}' +
+        '.sb-dash{display:none;}' +
+      '}';
+    document.head.appendChild(st);
+  }
+
+  var SB_USER_SVG =
+    '<svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true">' +
+    '<path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>';
+
   function mountNavAuth(el) {
     if (!el) return;
     el.setAttribute('data-no-i18n', '');
+    injectNavStyles();
 
     function render() {
       session().then(function (s) {
         if (!s) {
           el.innerHTML =
-            '<a href="/auth?next=' + encodeURIComponent(herePath()) + '"' +
-            ' style="display:inline-flex;align-items:center;gap:.4em;padding:.45em 1.1em;border-radius:9999px;' +
-            'background:linear-gradient(135deg,#C9A84C,#A0802A);color:#09090F;font-weight:700;font-size:.85em;white-space:nowrap;">' +
-            tr('تسجيل الدخول', 'Sign in', '로그인') + '</a>';
+            '<a href="/auth?next=' + encodeURIComponent(herePath()) + '" class="sb-pill"' +
+            ' title="' + tr('تسجيل الدخول', 'Sign in', '로그인') + '">' +
+            SB_USER_SVG +
+            '<span class="sb-txt">' + tr('تسجيل الدخول', 'Sign in', '로그인') + '</span></a>';
           return;
         }
         var u = s.user;
@@ -149,21 +186,13 @@
         Promise.all([isStaff(), unreadCount()]).then(function (res) {
           var staff = res[0], unread = res[1];
           var html =
-            '<a href="/account" title="' + esc(name) + '"' +
-            ' style="display:inline-flex;align-items:center;gap:.45em;padding:.35em .9em;border-radius:9999px;' +
-            'background:rgba(26,77,184,.25);border:1px solid rgba(91,155,245,.35);color:#C8D8F0;font-size:.85em;white-space:nowrap;">' +
-            '<span style="display:inline-flex;align-items:center;justify-content:center;width:1.7em;height:1.7em;border-radius:50%;' +
-            'background:linear-gradient(135deg,#C9A84C,#A0802A);color:#09090F;font-weight:800;">' + esc(initial) + '</span>' +
-            '<span>' + tr('حسابي', 'My account', '내 계정') + '</span>' +
-            (unread > 0
-              ? '<span style="background:#f87171;color:#fff;border-radius:9999px;padding:0 .5em;font-size:.75em;font-weight:700;">' + unread + '</span>'
-              : '') +
-            '</a>';
+            '<a href="/account" class="sb-chip" title="' + esc(name) + '">' +
+            '<span class="sb-avatar">' + esc(initial) +
+            (unread > 0 ? '<span class="sb-badge">' + (unread > 9 ? '9+' : unread) + '</span>' : '') +
+            '</span>' +
+            '<span class="sb-txt">' + tr('حسابي', 'My account', '내 계정') + '</span></a>';
           if (staff) {
-            html +=
-              ' <a href="/admin" style="display:inline-flex;align-items:center;padding:.35em .9em;border-radius:9999px;' +
-              'border:1px solid rgba(201,168,76,.5);color:#F0D98A;font-size:.85em;white-space:nowrap;">' +
-              tr('لوحة التحكم', 'Dashboard', '대시보드') + '</a>';
+            html += '<a href="/admin" class="sb-dash">' + tr('لوحة التحكم', 'Dashboard', '대시보드') + '</a>';
           }
           el.innerHTML = html;
         });
