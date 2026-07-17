@@ -1662,6 +1662,240 @@
     </div><!-- /canvas-sticky -->
   </div><!-- /canvas-wrap -->
 
+  <!-- ═══════════════════════════════════════════
+     STICKY FILTER BAR
+     Appears fixed after scrolling past canvas-wrap
+═══════════════════════════════════════════ -->
+  <style>
+    /* ── Sticky Filter Bar ── */
+    #sticky-filter-bar {
+      position: fixed;
+      top: 68px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-16px);
+      z-index: 45;
+      width: calc(100% - 32px);
+      max-width: 860px;
+      background: rgba(14, 14, 26, 0.82);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 999px;
+      padding: 0.55rem 0.65rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(201,168,76,0.08);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s cubic-bezier(0.22,1,0.36,1),
+                  transform 0.35s cubic-bezier(0.22,1,0.36,1);
+    }
+    #sticky-filter-bar.sfb-visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+    /* Search button */
+    #sfb-search-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: linear-gradient(135deg, #7C3AED, #9F67FA);
+      color: #fff;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 0.82rem;
+      border: none;
+      border-radius: 999px;
+      padding: 0.52rem 1.1rem;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      box-shadow: 0 4px 18px rgba(124,58,237,0.45);
+    }
+    #sfb-search-btn:hover { transform: scale(1.04); box-shadow: 0 6px 24px rgba(124,58,237,0.6); }
+    /* Divider */
+    .sfb-sep {
+      width: 1px;
+      height: 22px;
+      background: rgba(255,255,255,0.12);
+      flex-shrink: 0;
+    }
+    /* Dropdown trigger */
+    .sfb-dd {
+      position: relative;
+      flex: 1;
+      min-width: 0;
+    }
+    .sfb-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.4rem;
+      width: 100%;
+      background: none;
+      border: none;
+      color: #C8D8F0;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 0.4rem 0.6rem;
+      cursor: pointer;
+      border-radius: 999px;
+      transition: background 0.2s;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .sfb-trigger:hover { background: rgba(255,255,255,0.06); }
+    .sfb-trigger svg { flex-shrink: 0; opacity: 0.6; transition: transform 0.2s; }
+    .sfb-dd.open .sfb-trigger svg { transform: rotate(180deg); }
+    .sfb-trigger-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    /* Dropdown panel */
+    .sfb-menu {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      left: 0;
+      background: rgba(14, 14, 26, 0.97);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      padding: 0.5rem;
+      max-height: 320px;
+      overflow-y: auto;
+      z-index: 200;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+      opacity: 0;
+      transform: translateY(-8px);
+      pointer-events: none;
+      transition: opacity 0.22s ease, transform 0.22s ease;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(201,168,76,0.3) transparent;
+      min-width: 180px;
+    }
+    .sfb-dd.open .sfb-menu {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .sfb-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.52rem 0.8rem;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 0.82rem;
+      color: #C8D8F0;
+      transition: background 0.15s;
+      gap: 0.5rem;
+    }
+    .sfb-option:hover { background: rgba(255,255,255,0.06); }
+    .sfb-option.selected {
+      background: rgba(201,168,76,0.14);
+      color: #F0D98A;
+    }
+    .sfb-option .sfb-count {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: rgba(200,216,240,0.45);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 999px;
+      padding: 0.1rem 0.55rem;
+      flex-shrink: 0;
+    }
+    .sfb-option.selected .sfb-count { color: rgba(240,217,138,0.6); border-color: rgba(201,168,76,0.25); }
+    /* Loading placeholder in menu */
+    .sfb-loading {
+      text-align: center;
+      padding: 1.2rem 0;
+      color: rgba(200,216,240,0.4);
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.8rem;
+    }
+    /* Active filter indicator on trigger */
+    .sfb-trigger.has-filter { color: #F0D98A; }
+    /* Mobile: hide model & year on very small screens */
+    @media (max-width: 480px) {
+      #sfb-dd-model, #sfb-sep-model, #sfb-dd-year, #sfb-sep-year { display: none; }
+      #sticky-filter-bar { gap: 0.3rem; padding: 0.5rem; }
+    }
+    @media (max-width: 640px) {
+      .sfb-trigger { font-size: 0.75rem; padding: 0.35rem 0.45rem; }
+      #sfb-search-btn { font-size: 0.75rem; padding: 0.48rem 0.85rem; }
+    }
+    /* Light mode */
+    html.theme-light #sticky-filter-bar {
+      background: rgba(255,255,255,0.92);
+      border-color: rgba(0,0,0,0.10);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.15), 0 0 0 1px rgba(201,168,76,0.12);
+    }
+    html.theme-light .sfb-trigger { color: #1e293b; }
+    html.theme-light .sfb-sep { background: rgba(0,0,0,0.12); }
+    html.theme-light .sfb-menu { background: rgba(255,255,255,0.98); border-color: rgba(0,0,0,0.10); }
+    html.theme-light .sfb-option { color: #1e293b; }
+    html.theme-light .sfb-option:hover { background: rgba(0,0,0,0.04); }
+    html.theme-light .sfb-option .sfb-count { color: #64748b; background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.08); }
+    html.theme-light .sfb-trigger.has-filter { color: #92400e; }
+  </style>
+
+  <!-- Sticky Filter Bar Element -->
+  <div id="sticky-filter-bar" role="search" aria-label="فلتر السيارات">
+
+    <!-- Search Button -->
+    <button id="sfb-search-btn" onclick="document.getElementById('live-cars').scrollIntoView({behavior:'smooth'})">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14">
+        <circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/>
+      </svg>
+      <span>بحث</span>
+    </button>
+
+    <div class="sfb-sep"></div>
+
+    <!-- Brands Dropdown -->
+    <div class="sfb-dd" id="sfb-dd-brand">
+      <button class="sfb-trigger" id="sfb-trigger-brand" aria-haspopup="listbox">
+        <span class="sfb-trigger-label" id="sfb-label-brand">جميع البراندات</span>
+        <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><path d="M7 10l5 5 5-5z"/></svg>
+      </button>
+      <div class="sfb-menu" id="sfb-menu-brand" role="listbox">
+        <div class="sfb-loading">جارٍ التحميل…</div>
+      </div>
+    </div>
+
+    <div class="sfb-sep" id="sfb-sep-model"></div>
+
+    <!-- Models Dropdown -->
+    <div class="sfb-dd" id="sfb-dd-model">
+      <button class="sfb-trigger" id="sfb-trigger-model" aria-haspopup="listbox">
+        <span class="sfb-trigger-label" id="sfb-label-model">جميع الموديلات</span>
+        <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><path d="M7 10l5 5 5-5z"/></svg>
+      </button>
+      <div class="sfb-menu" id="sfb-menu-model" role="listbox">
+        <div class="sfb-loading">اختر براند أولاً</div>
+      </div>
+    </div>
+
+    <div class="sfb-sep" id="sfb-sep-year"></div>
+
+    <!-- Year Dropdown -->
+    <div class="sfb-dd" id="sfb-dd-year">
+      <button class="sfb-trigger" id="sfb-trigger-year" aria-haspopup="listbox">
+        <span class="sfb-trigger-label" id="sfb-label-year">سنة الصنع</span>
+        <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><path d="M7 10l5 5 5-5z"/></svg>
+      </button>
+      <div class="sfb-menu" id="sfb-menu-year" role="listbox">
+        <div class="sfb-loading">جارٍ التحميل…</div>
+      </div>
+    </div>
+
+  </div><!-- /sticky-filter-bar -->
 
   <!-- ═══════════════════════════════════════════
      LIVE CARS FROM KOREA — Carapis API
@@ -1957,6 +2191,9 @@
 
       window.lcReload = function () { load(); };
 
+      // Expose cardHTML for the sticky filter bar to reuse
+      window._sfbCardHTML = cardHTML;
+
       // Re-render the loaded cards (no re-fetch) when language or currency changes
       window.addEventListener('langchange', render);
       window.addEventListener('currencychange', render);
@@ -1998,6 +2235,276 @@
       }, { passive: true });
       setTimeout(ensureLoaded, 4000);
     })();
+  </script>
+
+  <!-- ═══════════════════════════════════════════
+     STICKY FILTER BAR — JavaScript
+═══════════════════════════════════════════ -->
+  <script>
+  (function () {
+    'use strict';
+
+    /* ─── Configuration ─── */
+    var API_BASE_SFB = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+      ? 'https://alezz-alaalmi.vercel.app/api/cars'
+      : '/api/cars';
+    var FETCH_SIZE = 100;
+
+    /* ─── State ─── */
+    var sfbData    = [];
+    var sfbLoaded  = false;
+    var sfbFilters = { brand: '', model: '', year: '' };
+
+    /* ─── DOM refs ─── */
+    var bar       = document.getElementById('sticky-filter-bar');
+    var wrap      = document.getElementById('canvas-wrap');
+    var lcSection = document.getElementById('live-cars');
+    var lcGrid    = document.getElementById('lc-grid');
+
+    /* ─── Sticky show/hide via IntersectionObserver ─── */
+    if ('IntersectionObserver' in window && wrap) {
+      var stickyObs = new IntersectionObserver(function (entries) {
+        if (!entries[0].isIntersecting) {
+          bar.classList.add('sfb-visible');
+        } else {
+          bar.classList.remove('sfb-visible');
+        }
+      }, { threshold: 0, rootMargin: '0px' });
+      stickyObs.observe(wrap);
+    }
+
+    /* ─── Close dropdowns on outside click ─── */
+    document.addEventListener('click', function (e) {
+      ['sfb-dd-brand','sfb-dd-model','sfb-dd-year'].forEach(function (id) {
+        var dd = document.getElementById(id);
+        if (dd && !dd.contains(e.target)) dd.classList.remove('open');
+      });
+    });
+
+    /* ─── Toggle dropdown ─── */
+    function toggleDd(id) {
+      var dd = document.getElementById(id);
+      var isOpen = dd.classList.contains('open');
+      ['sfb-dd-brand','sfb-dd-model','sfb-dd-year'].forEach(function (i) {
+        document.getElementById(i).classList.remove('open');
+      });
+      if (!isOpen) dd.classList.add('open');
+    }
+
+    document.getElementById('sfb-trigger-brand').addEventListener('click', function (e) {
+      e.stopPropagation(); toggleDd('sfb-dd-brand');
+    });
+    document.getElementById('sfb-trigger-model').addEventListener('click', function (e) {
+      e.stopPropagation(); toggleDd('sfb-dd-model');
+    });
+    document.getElementById('sfb-trigger-year').addEventListener('click', function (e) {
+      e.stopPropagation(); toggleDd('sfb-dd-year');
+    });
+
+    /* ─── Arabic numerals ─── */
+    function toAr(n) {
+      return String(n).replace(/\d/g, function(d){ return '٠١٢٣٤٥٦٧٨٩'[+d]; });
+    }
+
+    /* ─── Brand name map ─── */
+    var BRAND_AR = {
+      genesis: 'جينيسيس', hyundai: 'هيونداي', kia: 'كيا',
+      bmw: 'BMW', benz: 'مرسيدس', mercedes: 'مرسيدس',
+      audi: 'أودي', lexus: 'لكزس', toyota: 'تويوتا',
+      honda: 'هوندا', nissan: 'نيسان', chevrolet: 'شيفرولية',
+    };
+    function brandLabel(slug, rawName) {
+      if (!slug) return rawName || '—';
+      return BRAND_AR[slug.toLowerCase()] || rawName || slug;
+    }
+
+    /* ─── Compute counts from all fetched cars ─── */
+    function getCounts() {
+      var brands = {};
+      var years  = {};
+      sfbData.forEach(function (v) {
+        var bRaw   = (v.brand_name || '').trim();
+        var bSlug  = bRaw.toLowerCase().replace(/\s+/g, '_');
+        var bDisp  = brandLabel(bSlug, bRaw);
+        var mName  = (v.model_name || '').trim() || 'غير محدد';
+        var yr     = String(v.year || '');
+        if (!brands[bSlug]) brands[bSlug] = { label: bDisp, slug: bSlug, count: 0, models: {} };
+        brands[bSlug].count++;
+        brands[bSlug].models[mName] = (brands[bSlug].models[mName] || 0) + 1;
+        if (yr) years[yr] = (years[yr] || 0) + 1;
+      });
+      return { brands: brands, years: years };
+    }
+
+    /* ─── Get filtered subset ─── */
+    function getFiltered(overrides) {
+      var f = Object.assign({}, sfbFilters, overrides || {});
+      return sfbData.filter(function (v) {
+        var bSlug = (v.brand_name || '').trim().toLowerCase().replace(/\s+/g, '_');
+        if (f.brand && bSlug !== f.brand) return false;
+        if (f.model && (v.model_name || '').trim() !== f.model) return false;
+        if (f.year  && String(v.year || '') !== f.year)          return false;
+        return true;
+      });
+    }
+
+    /* ─── Build brand menu ─── */
+    function buildBrandMenu(counts) {
+      var menu = document.getElementById('sfb-menu-brand');
+      var html = '<div class="sfb-option' + (!sfbFilters.brand ? ' selected' : '')
+        + '" data-val="" data-type="brand"><span>جميع البراندات</span>'
+        + '<span class="sfb-count">' + toAr(sfbData.length) + '</span></div>';
+      Object.keys(counts.brands)
+        .sort(function(a,b){ return counts.brands[b].count - counts.brands[a].count; })
+        .forEach(function (slug) {
+          var b = counts.brands[slug];
+          html += '<div class="sfb-option' + (sfbFilters.brand === slug ? ' selected' : '')
+            + '" data-val="' + slug + '" data-type="brand"><span>' + b.label + '</span>'
+            + '<span class="sfb-count">' + toAr(b.count) + '</span></div>';
+        });
+      menu.innerHTML = html;
+      attachListeners(menu);
+    }
+
+    /* ─── Build model menu ─── */
+    function buildModelMenu(counts) {
+      var menu = document.getElementById('sfb-menu-model');
+      if (!sfbFilters.brand) {
+        menu.innerHTML = '<div class="sfb-loading">اختر براند أولاً</div>'; return;
+      }
+      var bData = counts.brands[sfbFilters.brand];
+      if (!bData) { menu.innerHTML = '<div class="sfb-loading">لا توجد موديلات</div>'; return; }
+      var html = '<div class="sfb-option' + (!sfbFilters.model ? ' selected' : '')
+        + '" data-val="" data-type="model"><span>جميع موديلات ' + bData.label + '</span>'
+        + '<span class="sfb-count">' + toAr(bData.count) + '</span></div>';
+      Object.keys(bData.models)
+        .sort(function(a,b){ return bData.models[b] - bData.models[a]; })
+        .forEach(function (m) {
+          html += '<div class="sfb-option' + (sfbFilters.model === m ? ' selected' : '')
+            + '" data-val="' + m + '" data-type="model"><span>' + m + '</span>'
+            + '<span class="sfb-count">' + toAr(bData.models[m]) + '</span></div>';
+        });
+      menu.innerHTML = html;
+      attachListeners(menu);
+    }
+
+    /* ─── Build year menu ─── */
+    function buildYearMenu() {
+      var menu  = document.getElementById('sfb-menu-year');
+      var filt  = getFiltered({ year: '' });
+      var yCnts = {};
+      filt.forEach(function(v){ var y = String(v.year||''); if(y) yCnts[y] = (yCnts[y]||0)+1; });
+      var html  = '<div class="sfb-option' + (!sfbFilters.year ? ' selected' : '')
+        + '" data-val="" data-type="year"><span>جميع السنوات</span>'
+        + '<span class="sfb-count">' + toAr(filt.length) + '</span></div>';
+      Object.keys(yCnts).sort(function(a,b){ return b-a; }).forEach(function(yr){
+        html += '<div class="sfb-option' + (sfbFilters.year === yr ? ' selected' : '')
+          + '" data-val="' + yr + '" data-type="year"><span>' + yr + '</span>'
+          + '<span class="sfb-count">' + toAr(yCnts[yr]) + '</span></div>';
+      });
+      menu.innerHTML = html;
+      attachListeners(menu);
+    }
+
+    /* ─── Attach click listeners to options ─── */
+    function attachListeners(menu) {
+      menu.querySelectorAll('.sfb-option').forEach(function (opt) {
+        opt.addEventListener('click', function () {
+          selectFilter(opt.getAttribute('data-type'), opt.getAttribute('data-val'));
+        });
+      });
+    }
+
+    /* ─── Handle filter selection ─── */
+    function selectFilter(type, val) {
+      sfbFilters[type] = val;
+      if (type === 'brand') sfbFilters.model = '';
+      updateLabels();
+      ['sfb-dd-brand','sfb-dd-model','sfb-dd-year'].forEach(function(id){
+        document.getElementById(id).classList.remove('open');
+      });
+      var counts = getCounts();
+      buildBrandMenu(counts);
+      buildModelMenu(counts);
+      buildYearMenu();
+      applyFilter();
+      syncChips();
+      if (lcSection) lcSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    /* ─── Update trigger labels ─── */
+    function updateLabels() {
+      var counts = getCounts();
+      // Brand
+      var bl = document.getElementById('sfb-label-brand');
+      var bt = document.getElementById('sfb-trigger-brand');
+      if (sfbFilters.brand && counts.brands[sfbFilters.brand]) {
+        bl.textContent = counts.brands[sfbFilters.brand].label;
+        bt.classList.add('has-filter');
+      } else { bl.textContent = 'جميع البراندات'; bt.classList.remove('has-filter'); }
+      // Model
+      var ml = document.getElementById('sfb-label-model');
+      var mt = document.getElementById('sfb-trigger-model');
+      if (sfbFilters.model) { ml.textContent = sfbFilters.model; mt.classList.add('has-filter'); }
+      else { ml.textContent = 'جميع الموديلات'; mt.classList.remove('has-filter'); }
+      // Year
+      var yl = document.getElementById('sfb-label-year');
+      var yt = document.getElementById('sfb-trigger-year');
+      if (sfbFilters.year) { yl.textContent = sfbFilters.year; yt.classList.add('has-filter'); }
+      else { yl.textContent = 'سنة الصنع'; yt.classList.remove('has-filter'); }
+    }
+
+    /* ─── Apply filter → render grid ─── */
+    function applyFilter() {
+      if (!lcGrid) return;
+      var results = getFiltered();
+      if (!results.length) {
+        lcGrid.innerHTML = '<p class="font-tajawal text-center" style="grid-column:1/-1;color:rgba(200,216,240,0.5);padding:3rem 0;">لا توجد سيارات بهذا الفلتر</p>';
+        return;
+      }
+      var fn = window._sfbCardHTML;
+      if (!fn) return;
+      var html = '';
+      results.slice(0, 12).forEach(function(v,i){ html += fn(v,i); });
+      lcGrid.innerHTML = html;
+    }
+
+    /* ─── Sync existing lc-chip buttons ─── */
+    function syncChips() {
+      document.querySelectorAll('#lc-filters .lc-chip').forEach(function(chip){
+        var q = chip.getAttribute('data-q') || '';
+        chip.classList.toggle('active', q === sfbFilters.brand || (!q && !sfbFilters.brand));
+      });
+    }
+
+    /* ─── Fetch cars for counting ─── */
+    function fetchForCounting() {
+      if (sfbLoaded) return;
+      fetch(API_BASE_SFB + '?source=encar&page=1&page_size=' + FETCH_SIZE)
+        .then(function(r){ return r.json(); })
+        .then(function(data){
+          sfbData   = data.results || [];
+          sfbLoaded = true;
+          var counts = getCounts();
+          buildBrandMenu(counts);
+          buildModelMenu(counts);
+          buildYearMenu();
+        })
+        .catch(function(){
+          document.getElementById('sfb-menu-brand').innerHTML = '<div class="sfb-loading">تعذّر التحميل</div>';
+        });
+    }
+
+    /* ─── Trigger fetch when user scrolls past canvas-wrap ─── */
+    if ('IntersectionObserver' in window && wrap) {
+      var fetchObs = new IntersectionObserver(function(entries){
+        if (!entries[0].isIntersecting) { fetchObs.disconnect(); fetchForCounting(); }
+      }, { threshold: 0 });
+      fetchObs.observe(wrap);
+    }
+    setTimeout(fetchForCounting, 5000);
+
+  })();
   </script>
 
   <!-- ═══════════════════════════════════════════
