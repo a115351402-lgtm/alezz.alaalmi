@@ -336,7 +336,7 @@
     logistics: ['لوجستي', '#34d399'], customer: ['عميل', 'rgba(200,216,240,0.5)']
   };
 
-  var uid = null, isAdmin = false, isSuper = false;
+  var uid = null, isAdmin = false, isSuper = false, isLogistics = false;
   var st = { vf: 'pending', of: 'open', vehicles: [], orders: [], customers: [], roles: {}, staff: [],
              editVeh: null, moCust: null, moVeh: null, mgUser: null, openMs: {} };
 
@@ -543,7 +543,7 @@
   function ordRow(o) {
     var v = o.vehicles || {};
     var open = !!st.openMs[o.id];
-    var statusCtl = isAdmin
+    var statusCtl = (isAdmin || isLogistics)
       ? '<select class="fld" style="width:auto;padding:0.4rem 0.7rem;font-size:0.75rem;" data-ost="' + o.id + '">'
         + OSTEPS.map(function (s) { return '<option value="' + s + '"' + (s === o.status ? ' selected' : '') + '>' + esc(ol(s)) + '</option>'; }).join('')
         + '</select>'
@@ -931,8 +931,8 @@
   SB.requireStaff().then(function (user) {
     if (!user) return;
     uid = user.id;
-    Promise.all([SB.isAdmin(), SB.isSuperAdmin()]).then(function (rs) {
-      isAdmin = rs[0]; isSuper = rs[1];
+    Promise.all([SB.isAdmin(), SB.isSuperAdmin(), SB.isLogistics()]).then(function (rs) {
+      isAdmin = rs[0]; isSuper = rs[1]; isLogistics = rs[2];
       // tab visibility by role
       document.querySelector('[data-tab="vehicles"]').style.display = isAdmin ? '' : 'none';
       document.querySelector('[data-tab="customers"]').style.display = isAdmin ? '' : 'none';
