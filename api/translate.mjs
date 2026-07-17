@@ -44,7 +44,7 @@ export default async function handler(req, res) {
     const chunks = splitText(q.slice(0, MAX_TEXT));
     const out = [];
     for (const chunk of chunks) {
-      const url = `${GOOGLE_URL}?client=gtx&sl=en&tl=${tl}&dt=t&q=${encodeURIComponent(chunk)}`;
+      const url = `${GOOGLE_URL}?client=gtx&sl=auto&tl=${tl}&dt=t&q=${encodeURIComponent(chunk)}`;
       const upstream = await fetch(url, {
         headers: { 'Accept': 'application/json' },
         signal: AbortSignal.timeout(20000),
