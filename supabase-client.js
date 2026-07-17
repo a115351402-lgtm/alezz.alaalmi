@@ -85,9 +85,18 @@
   }
   function requireAuth(next) {
     return session().then(function (s) {
-      if (s) return s.user;
-      location.replace('/auth?next=' + encodeURIComponent(next || herePath()));
-      return null;
+      if (!s) {
+        location.replace('/auth?next=' + encodeURIComponent(next || herePath()));
+        return null;
+      }
+      return client.from('profiles').select('is_frozen').eq('id', s.user.id).maybeSingle().then(function (r) {
+        if (r.data && r.data.is_frozen) {
+          client.auth.signOut();
+          location.replace('/auth?frozen=1');
+          return null;
+        }
+        return s.user;
+      });
     });
   }
   function requireStaff() {
@@ -181,20 +190,27 @@
           return;
         }
         var u = s.user;
-        var name = (u.user_metadata && u.user_metadata.full_name) || u.email || '';
-        var initial = name.trim().charAt(0).toUpperCase() || '👤';
-        Promise.all([isStaff(), unreadCount()]).then(function (res) {
-          var staff = res[0], unread = res[1];
-          var html =
-            '<a href="/account" class="sb-chip" title="' + esc(name) + '">' +
-            '<span class="sb-avatar">' + esc(initial) +
-            (unread > 0 ? '<span class="sb-badge">' + (unread > 9 ? '9+' : unread) + '</span>' : '') +
-            '</span>' +
-            '<span class="sb-txt">' + tr('حسابي', 'My account', '내 계정') + '</span></a>';
-          if (staff) {
-            html += '<a href="/admin" class="sb-dash">' + tr('لوحة التحكم', 'Dashboard', '대시보드') + '</a>';
+        client.from('profiles').select('is_frozen').eq('id', u.id).maybeSingle().then(function (r) {
+          if (r.data && r.data.is_frozen) {
+            client.auth.signOut();
+            location.replace('/auth?frozen=1');
+            return;
           }
-          el.innerHTML = html;
+          var name = (u.user_metadata && u.user_metadata.full_name) || u.email || '';
+          var initial = name.trim().charAt(0).toUpperCase() || '👤';
+          Promise.all([isStaff(), unreadCount()]).then(function (res) {
+            var staff = res[0], unread = res[1];
+            var html =
+              '<a href="/account" class="sb-chip" title="' + esc(name) + '">' +
+              '<span class="sb-avatar">' + esc(initial) +
+              (unread > 0 ? '<span class="sb-badge">' + (unread > 9 ? '9+' : unread) + '</span>' : '') +
+              '</span>' +
+              '<span class="sb-txt">' + tr('حسابي', 'My account', '내 계정') + '</span></a>';
+            if (staff) {
+              html += '<a href="/admin" class="sb-dash">' + tr('لوحة التحكم', 'Dashboard', '대시보드') + '</a>';
+            }
+            el.innerHTML = html;
+          });
         });
       });
     }

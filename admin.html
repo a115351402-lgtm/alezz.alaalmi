@@ -280,6 +280,7 @@
       <select class="fld" id="mg-role">
         <option value="admin">أدمن</option>
         <option value="logistics">لوجستي</option>
+        <option value="super_admin">مالك (Super Admin)</option>
       </select>
     </div>
     <div class="flex gap-2">
@@ -747,12 +748,26 @@
       var b = ROLE_BADGE[r] || [r, '#888'];
       return '<span class="role-badge" style="background:' + b[1] + '22;color:' + b[1] + ';border:1px solid ' + b[1] + '55;">' + b[0] + '</span>';
     }).join(' ');
+    if (p.is_frozen) {
+      badges += ' <span class="role-badge" style="background:#f8717122;color:#f87171;border:1px solid #f8717155;">مجمد</span>';
+    }
+    var freezeBtn = '';
+    if (isSuper && p.id !== uid) {
+      if (p.is_frozen) {
+        freezeBtn = '<button class="btn-gold text-xs px-3 py-1.5 rounded-lg" data-unfreeze="' + p.id + '">إلغاء التجميد</button>';
+      } else {
+        freezeBtn = '<button class="btn-danger text-xs px-3 py-1.5 rounded-lg" data-freeze="' + p.id + '">تجميد</button>';
+      }
+    }
     return '<div class="panel p-3 flex items-center gap-3 flex-wrap">'
       + '<div class="flex-1 min-w-0" style="min-width:180px;">'
       +   '<p class="font-cairo font-bold text-white text-sm">' + esc(p.full_name || '؟') + ' ' + badges + '</p>'
       +   '<p class="text-xs" style="color:rgba(200,216,240,0.5);" dir="ltr">' + esc(p.email || '') + (p.phone_number ? ' · ' + esc(p.phone_number) : '') + '</p>'
       + '</div>'
-      + '<span class="text-xs" style="color:rgba(200,216,240,0.35);">' + dt(p.created_at) + '</span>'
+      + '<div class="flex items-center gap-2">'
+      +   freezeBtn
+      +   '<span class="text-xs" style="color:rgba(200,216,240,0.35);">' + dt(p.created_at) + '</span>'
+      + '</div>'
       + '</div>';
   }
   function renderCustomers() {
@@ -769,7 +784,7 @@
   }
   function loadCustomers() {
     return Promise.all([
-      SB.client.from('profiles').select('id, full_name, email, phone_number, created_at').order('created_at', { ascending: false }).limit(300),
+      SB.client.from('profiles').select('id, full_name, email, phone_number, created_at, is_frozen').order('created_at', { ascending: false }).limit(300),
       SB.client.from('user_roles').select('user_id, role')
     ]).then(function (rs) {
       if (rs[0].error || rs[1].error) { console.warn(rs[0].error || rs[1].error); return; }
@@ -783,6 +798,30 @@
     });
   }
   el('cust-search').addEventListener('input', debounce(renderCustomers, 250));
+  el('cust-list').addEventListener('click', function (e) {
+    var fr = e.target.closest('[data-freeze]');
+    if (fr) {
+      var pid = fr.getAttribute('data-freeze');
+      if (confirm('هل أنت متأكد من تجميد هذا الحساب؟')) {
+        SB.client.from('profiles').update({ is_frozen: true }).eq('id', pid).then(function (r) {
+          if (r.error) return toast(T('acc_load_err'));
+          toast(T('acc_saved')); loadCustomers();
+        });
+      }
+      return;
+    }
+    var unfr = e.target.closest('[data-unfreeze]');
+    if (unfr) {
+      var pid = unfr.getAttribute('data-unfreeze');
+      if (confirm('هل أنت متأكد من إلغاء تجميد هذا الحساب؟')) {
+        SB.client.from('profiles').update({ is_frozen: false }).eq('id', pid).then(function (r) {
+          if (r.error) return toast(T('acc_load_err'));
+          toast(T('acc_saved')); loadCustomers();
+        });
+      }
+      return;
+    }
+  });
   el('b-new-cust').addEventListener('click', function () {
     el('m-user-title').textContent = T('adm_new_cust');
     el('mu-role-wrap').style.display = 'none';
@@ -802,7 +841,7 @@
       var badges = roles.map(function (r) {
         var b = ROLE_BADGE[r] || [r, '#888'];
         return '<span class="role-badge" style="background:' + b[1] + '22;color:' + b[1] + ';border:1px solid ' + b[1] + '55;">' + b[0] + '</span>'
-          + (r !== 'super_admin' ? '<button class="btn-danger role-badge" style="cursor:pointer;" data-revoke="' + p.id + '" data-role="' + r + '">✕ ' + b[0] + '</button>' : '');
+          + (p.id !== uid ? '<button class="btn-danger role-badge" style="cursor:pointer;" data-revoke="' + p.id + '" data-role="' + r + '">✕ ' + b[0] + '</button>' : '');
       }).join(' ');
       rows.push('<div class="panel p-3 flex items-center gap-3 flex-wrap">'
         + '<div class="flex-1 min-w-0"><p class="font-cairo font-bold text-white text-sm">' + esc(p.full_name || '؟') + '</p>'

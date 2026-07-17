@@ -84,6 +84,26 @@ export default async function handler(req, res) {
   }
   if (!caller) return fail(res, 401, 'sign in required');
 
+  // abuse / freeze check
+  try {
+    const dbCheck = serviceClient();
+    const { data: profile, error: profErr } = await dbCheck
+      .from('profiles')
+      .select('is_frozen')
+      .eq('id', caller.id)
+      .maybeSingle();
+    if (profErr) {
+      console.error('profile freeze check failed:', profErr.message);
+      return fail(res, 500, 'database error checking profile state');
+    }
+    if (profile && profile.is_frozen) {
+      return fail(res, 403, 'account frozen');
+    }
+  } catch (err) {
+    console.error('profile freeze check failed:', err && err.message);
+    return fail(res, 500, 'database error checking profile state');
+  }
+
   const body = typeof req.body === 'object' && req.body ? req.body : {};
   const action = String(body.action || '');
 

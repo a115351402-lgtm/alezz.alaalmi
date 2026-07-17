@@ -20,6 +20,9 @@
 
   /* ── KEYS: stable-key table for dynamic / JS-generated strings ── */
   var KEYS = {
+    auth_e_frozen: { ar: 'تم تجميد هذا الحساب من قبل الإدارة. يرجى التواصل مع الدعم الفني للاستفسار.',
+                     en: 'This account has been frozen by the administration. Please contact support.',
+                     ko: '이 계정은 관리자에 의해 정지되었습니다. 고객 지원에 문의해 주세요.' },
     lc_new:        { ar: 'وصل حديثاً', en: 'Just arrived', ko: '방금 입고' },
     lc_ask:        { ar: 'اسأل عن هذه السيارة', en: 'Ask about this car', ko: '이 차량 문의' },
     lc_no_results: { ar: 'لا توجد نتائج لهذا البحث حالياً', en: 'No results for this search right now', ko: '현재 검색 결과가 없습니다' },

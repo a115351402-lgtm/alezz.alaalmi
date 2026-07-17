@@ -379,6 +379,9 @@
   if (mode === 'reset') {
     show('f-reset');
   } else {
+    if (params.get('frozen') === '1') {
+      alertErr(T('auth_e_frozen'));
+    }
     SB.session().then(function (s) {
       if (s) showSignedIn(s.user);
       else if (mode === 'signup') show('f-signup');
