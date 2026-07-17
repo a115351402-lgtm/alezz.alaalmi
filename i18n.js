@@ -652,9 +652,323 @@
 
   state.lang = detect();
   injectFontsOnce();
+  injectThemeStyles();
   setHtmlState();
 
-  function boot() { apply(document.body); emit(); }
+  // ─── THEME STYLES ──────────────────────────────────────────────
+  function injectThemeStyles() {
+    if (document.getElementById('theme-styles')) return;
+    var st = document.createElement('style');
+    st.id = 'theme-styles';
+    st.textContent =
+      /* CSS custom properties — dark mode defaults */
+      ':root {' +
+      '  --bg-primary: #09090F;' +
+      '  --text-primary: #C8D8F0;' +
+      '  --text-title: #FFFFFF;' +
+      '  --text-muted: rgba(200,216,240,0.55);' +
+      '  --border-primary: rgba(255,255,255,0.08);' +
+      '  --bg-panel: rgba(12,13,26,0.85);' +
+      '  --bg-navbar-mobile: #09090F;' +
+      '  --bg-card: #11131F;' +
+      '}' +
+      /* Light mode variables */
+      'html.theme-light {' +
+      '  --bg-primary: #F1F5F9;' +
+      '  --text-primary: #334155;' +
+      '  --text-title: #0F172A;' +
+      '  --text-muted: #64748B;' +
+      '  --border-primary: rgba(15,23,42,0.10);' +
+      '  --bg-panel: #FFFFFF;' +
+      '  --bg-navbar-mobile: #FFFFFF;' +
+      '  --bg-card: #FFFFFF;' +
+      '}' +
+      /* Body */
+      'html.theme-light body {' +
+      '  background-color: var(--bg-primary) !important;' +
+      '  color: var(--text-primary) !important;' +
+      '}' +
+      /* Hero canvas: keep animation running, just tint wrapper slightly */
+      'html.theme-light #canvas-sticky {' +
+      '  background-color: rgba(241,245,249,0.3) !important;' +
+      '}' +
+      'html.theme-light .seq-overlay {' +
+      '  background: rgba(241,245,249,0.25) !important;' +
+      '}' +
+      'html.theme-light .seq-overlay::before,' +
+      'html.theme-light .seq-overlay::after {' +
+      '  opacity: 0.4 !important;' +
+      '}' +
+      'html.theme-light .seq-grain { display: none !important; }' +
+      /* section-fade ::before/::after: change from dark to light blending */
+      'html.theme-light .section-fade::before {' +
+      '  background: linear-gradient(to bottom,#F1F5F9 0%,rgba(241,245,249,.98) 15%,rgba(241,245,249,.7) 50%,rgba(241,245,249,.2) 82%,transparent 100%) !important;' +
+      '}' +
+      'html.theme-light .section-fade::after {' +
+      '  background: linear-gradient(to top,#F1F5F9 0%,rgba(241,245,249,.98) 15%,rgba(241,245,249,.7) 50%,rgba(241,245,249,.2) 82%,transparent 100%) !important;' +
+      '}' +
+      /* Named sections */
+      'html.theme-light #live-cars,' +
+      'html.theme-light #s3-section,' +
+      'html.theme-light #auctions,' +
+      'html.theme-light #horizontal-scroll-container,' +
+      'html.theme-light #success,' +
+      'html.theme-light #faq {' +
+      '  background: var(--bg-primary) !important;' +
+      '}' +
+      /* Inline-style dark background overrides */
+      'html.theme-light [style*="background:#09090F"],' +
+      'html.theme-light [style*="background: #09090F"],' +
+      'html.theme-light [style*="background:#0F1020"],' +
+      'html.theme-light [style*="background: #0F1020"],' +
+      'html.theme-light [style*="background:#11131F"],' +
+      'html.theme-light [style*="background: #11131F"],' +
+      'html.theme-light [style*="background:#1A1C2E"],' +
+      'html.theme-light [style*="background: #1A1C2E"] {' +
+      '  background: var(--bg-panel) !important;' +
+      '}' +
+      /* Footer */
+      'html.theme-light #footer-section,' +
+      'html.theme-light [style*="background:#050508"],' +
+      'html.theme-light [style*="background: #050508"] {' +
+      '  background: #E2E8F0 !important;' +
+      '}' +
+      'html.theme-light #footer-section p,' +
+      'html.theme-light #footer-section a,' +
+      'html.theme-light #footer-section span {' +
+      '  color: var(--text-primary) !important;' +
+      '}' +
+      'html.theme-light #footer-section a:hover {' +
+      '  color: #9A7020 !important;' +
+      '}' +
+      /* Testimonial cards */
+      'html.theme-light .testimonial-card {' +
+      '  background-color: #FFFFFF !important;' +
+      '  background: #FFFFFF !important;' +
+      '  border-color: rgba(15,23,42,0.10) !important;' +
+      '  color: var(--text-primary) !important;' +
+      '}' +
+      'html.theme-light .testimonial-card.active-card {' +
+      '  background: linear-gradient(135deg,rgba(255,255,255,1) 0%,rgba(245,248,255,1) 100%) !important;' +
+      '  border-color: #C9A84C !important;' +
+      '  box-shadow: 0 0 30px rgba(201,168,76,0.20) !important;' +
+      '}' +
+      /* Horizontal panels */
+      'html.theme-light .horizontal-panel { background: var(--bg-primary) !important; }' +
+      /* Cards and panels */
+      'html.theme-light .panel,' +
+      'html.theme-light .f-panel,' +
+      'html.theme-light .m-body,' +
+      'html.theme-light .modal,' +
+      'html.theme-light .vehicle-card,' +
+      'html.theme-light .auction-card,' +
+      'html.theme-light .lc-card,' +
+      'html.theme-light .au-card,' +
+      'html.theme-light .brand-list,' +
+      'html.theme-light .lc-photo,' +
+      'html.theme-light .au-photo,' +
+      'html.theme-light .success-card {' +
+      '  background-color: var(--bg-panel) !important;' +
+      '  background: var(--bg-panel) !important;' +
+      '  color: var(--text-primary) !important;' +
+      '  border-color: var(--border-primary) !important;' +
+      '  box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;' +
+      '}' +
+      /* WhatsApp button in card */
+      'html.theme-light .lc-wa {' +
+      '  color: #15803d !important;' +
+      '  background: rgba(34, 197, 94, 0.1) !important;' +
+      '  border-color: rgba(34, 197, 94, 0.3) !important;' +
+      '}' +
+      'html.theme-light .lc-wa:hover {' +
+      '  color: #ffffff !important;' +
+      '  background: #22c55e !important;' +
+      '  border-color: #22c55e !important;' +
+      '}' +
+      'html.theme-light .lc-wa svg {' +
+      '  fill: currentColor !important;' +
+      '}' +
+      /* Calculator result card background and items */
+      'html.theme-light .calculator-result-card {' +
+      '  background: #FFFFFF !important;' +
+      '  border-color: rgba(15, 23, 42, 0.10) !important;' +
+      '  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05) !important;' +
+      '}' +
+      'html.theme-light .result-comparison-item {' +
+      '  background: rgba(15, 23, 42, 0.02) !important;' +
+      '  border-color: rgba(15, 23, 42, 0.06) !important;' +
+      '}' +
+      'html.theme-light .comparison-label {' +
+      '  color: var(--text-muted) !important;' +
+      '}' +
+      /* Hero / Seq content floating panels and layout */
+      'html.theme-light .seq-content .bg-black\\/30,' +
+      'html.theme-light .seq-content .bg-black\\/40,' +
+      'html.theme-light .seq-content .bg-white\\/10 {' +
+      '  background: rgba(255, 255, 255, 0.85) !important;' +
+      '  border-color: rgba(15, 23, 42, 0.15) !important;' +
+      '  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;' +
+      '}' +
+      'html.theme-light .seq-content p,' +
+      'html.theme-light .seq-content span,' +
+      'html.theme-light .seq-content h1,' +
+      'html.theme-light .seq-content h2,' +
+      'html.theme-light .seq-content strong {' +
+      '  color: var(--text-title) !important;' +
+      '  text-shadow: none !important;' +
+      '}' +
+      'html.theme-light .seq-content .bg-sky\\/80 {' +
+      '  background: #1A4DB8 !important;' +
+      '  color: #FFFFFF !important;' +
+      '}' +
+      'html.theme-light .seq-content .bg-gold\\/80 {' +
+      '  background: #A07828 !important;' +
+      '  color: #FFFFFF !important;' +
+      '}' +
+      'html.theme-light .seq-content .scroll-indicator svg {' +
+      '  fill: var(--text-primary) !important;' +
+      '  opacity: 0.8 !important;' +
+      '}' +
+      /* FAQ items */
+      'html.theme-light .faq-item {' +
+      '  background: rgba(255,255,255,0.9) !important;' +
+      '  border-color: rgba(15,23,42,0.10) !important;' +
+      '  box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;' +
+      '}' +
+      'html.theme-light .faq-trigger,' +
+      'html.theme-light .faq-answer { color: var(--text-title) !important; }' +
+      /* Blobs */
+      'html.theme-light .success-blob { opacity: 0.3 !important; }' +
+      /* Text */
+      'html.theme-light .text-white { color: var(--text-title) !important; }' +
+      'html.theme-light h1,html.theme-light h2,html.theme-light h3,' +
+      'html.theme-light h4,html.theme-light h5,html.theme-light th,' +
+      'html.theme-light strong { color: var(--text-title) !important; }' +
+      /* Tailwind text-white opacity utility overrides */
+      'html.theme-light .text-white\\/95,' +
+      'html.theme-light .text-white\\/90,' +
+      'html.theme-light .text-white\\/85,' +
+      'html.theme-light .text-white\\/80 { color: var(--text-title) !important; }' +
+      'html.theme-light .text-white\\/75,' +
+      'html.theme-light .text-white\\/70,' +
+      'html.theme-light .text-white\\/65,' +
+      'html.theme-light .text-white\\/60,' +
+      'html.theme-light .text-white\\/50 { color: var(--text-primary) !important; }' +
+      'html.theme-light .text-white\\/40,' +
+      'html.theme-light .text-white\\/30 { color: var(--text-muted) !important; }' +
+      /* Gold & sky accent — keep but adapt to light */
+      'html.theme-light .text-gold,[class*="text-gold"] { color: #9A7020 !important; }' +
+      'html.theme-light .text-sky,[class*="text-sky"] { color: #1A4DB8 !important; }' +
+      /* Spec/chips */
+      'html.theme-light .lc-spec,html.theme-light .au-spec,' +
+      'html.theme-light .spec-item,html.theme-light .f-chip {' +
+      '  background-color: rgba(15,23,42,0.04) !important;' +
+      '  border-color: rgba(15,23,42,0.08) !important;' +
+      '  color: var(--text-primary) !important;' +
+      '}' +
+      'html.theme-light .spec-item p:first-child { color: var(--text-muted) !important; }' +
+      'html.theme-light .spec-item p:last-child { color: var(--text-title) !important; }' +
+      'html.theme-light .rep-row { border-color: rgba(15,23,42,0.06) !important; }' +
+      'html.theme-light .rep-na { color: var(--text-muted) !important; }' +
+      'html.theme-light .desc-body p,' +
+      'html.theme-light .desc-body li { color: var(--text-primary) !important; }' +
+      /* Inline text color overrides */
+      'html.theme-light [style*="color:#C8D8F0"],' +
+      'html.theme-light [style*="color: #C8D8F0"],' +
+      'html.theme-light [style*="color:rgb(200,216,240)"],' +
+      'html.theme-light [style*="color: rgb(200, 216, 240)"],' +
+      'html.theme-light [style*="color:rgba(200,216,240"],' +
+      'html.theme-light [style*="color: rgba(200, 216, 240"],' +
+      'html.theme-light [style*="color:rgba(255,255,255"],' +
+      'html.theme-light [style*="color: rgba(255, 255, 255"],' +
+      'html.theme-light [style*="color:rgb(200,216,240"],' +
+      'html.theme-light [style*="color:#fff"],' +
+      'html.theme-light [style*="color:#FFF"],' +
+      'html.theme-light [style*="color:#ffffff"],' +
+      'html.theme-light [style*="color:#FFFFFF"] { color: var(--text-primary) !important; }' +
+      /* Keep price and model year badge white inside photo container in Light Mode */
+      'html.theme-light .lc-photo p.text-white,' +
+      'html.theme-light .lc-photo span[style*="color:#fff"],' +
+      'html.theme-light .lc-photo span[style*="color: #fff"],' +
+      'html.theme-light .lc-photo [style*="color:#ffffff"],' +
+      'html.theme-light .lc-photo [style*="color:#FFFFFF"],' +
+      'html.theme-light .au-photo p.text-white,' +
+      'html.theme-light .au-photo span[style*="color:#fff"],' +
+      'html.theme-light .au-photo span[style*="color: #fff"],' +
+      'html.theme-light .au-photo [style*="color:#ffffff"],' +
+      'html.theme-light .au-photo [style*="color:#FFFFFF"] { color: #ffffff !important; }' +
+      /* Ensure absolute white values on dark background of result comparison in simulator */
+      'html.theme-light .calculator-result-card [style*="color:#C9A84C"] { color: #C9A84C !important; }' +
+      'html.theme-light .calculator-result-card .line-through { color: rgba(15, 23, 42, 0.4) !important; }' +
+      /* Inputs */
+      'html.theme-light input,html.theme-light select,html.theme-light textarea,html.theme-light .fld {' +
+      '  background-color: #FFFFFF !important;' +
+      '  color: var(--text-title) !important;' +
+      '  border-color: var(--border-primary) !important;' +
+      '}' +
+      'html.theme-light input::placeholder,html.theme-light textarea::placeholder { color: var(--text-muted) !important; }' +
+      /* Dropdown menus */
+      'html.theme-light .loc-menu {' +
+      '  background: #FFFFFF !important;' +
+      '  border-color: rgba(15,23,42,0.10) !important;' +
+      '  box-shadow: 0 8px 30px rgba(0,0,0,0.10) !important;' +
+      '}' +
+      'html.theme-light .loc-opt { color: var(--text-primary) !important; }' +
+      /* Mobile navbar */
+      '@media (max-width:767px){' +
+      '  html.theme-light .navbar-glass {' +
+      '    background: var(--bg-navbar-mobile) !important;' +
+      '    border-bottom: 1px solid var(--border-primary) !important;' +
+      '  }' +
+      '}' +
+      /* Theme toggle button */
+      '.loc-btn#theme-toggle {' +
+      '  border: 1.5px solid var(--border-primary);' +
+      '  border-radius: 9999px;' +
+      '  cursor: pointer;' +
+      '  font-size: 0.85rem;' +
+      '  transition: all 0.2s ease;' +
+      '  background: transparent;' +
+      '  color: var(--text-primary);' +
+      '}' +
+      '.loc-btn#theme-toggle:hover { border-color: #C9A84C; color: #C9A84C; }';
+    document.head.appendChild(st);
+  }
+
+  // ─── THEME TOGGLE BUTTON ──────────────────────────────────────
+  function injectThemeToggle() {
+    if (document.getElementById('theme-toggle')) return;
+    var btn = document.createElement('button');
+    btn.id = 'theme-toggle';
+    btn.className = 'loc-btn';
+    btn.style.padding = '0.35rem 0.6rem';
+    btn.style.display = 'inline-flex';
+    btn.style.alignItems = 'center';
+    btn.style.justifyContent = 'center';
+    btn.setAttribute('aria-label', 'Toggle Theme');
+
+    function updateIcon() {
+      var isLight = document.documentElement.classList.contains('theme-light');
+      btn.innerHTML = isLight ? '\uD83C\uDF19' : '\u2600';
+    }
+    updateIcon();
+
+    btn.addEventListener('click', function () {
+      var isLight = document.documentElement.classList.toggle('theme-light');
+      try { localStorage.setItem('theme', isLight ? 'light' : 'dark'); } catch (e) {}
+      updateIcon();
+    });
+
+    var target = document.getElementById('locale-ctrl');
+    if (target) {
+      target.appendChild(btn);
+    } else {
+      var navDiv = document.querySelector('nav .flex.items-center.gap-3');
+      if (navDiv) navDiv.insertBefore(btn, navDiv.firstChild);
+    }
+  }
+
+  function boot() { apply(document.body); emit(); injectThemeToggle(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
 
