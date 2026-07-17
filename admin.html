@@ -15,6 +15,15 @@
     body { font-family: 'Tajawal', sans-serif; background: #09090F; color: #C8D8F0; }
     h1,h2,h3,h4 { font-family: 'Cairo', sans-serif; }
     .navbar-glass { background: rgba(9,9,15,0.55); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); border-bottom: 1px solid rgba(255,255,255,0.07); }
+
+    @media (max-width: 767px) {
+      .navbar-glass {
+        background: #09090F !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+      }
+    }
     .btn-gold { background: linear-gradient(135deg,#C9A84C,#F0D98A,#A0802A); color:#09090F; font-family:'Cairo',sans-serif; font-weight:700; cursor:pointer; transition:transform 0.2s; border:none; }
     .btn-gold:hover { transform: translateY(-1px); }
     .btn-gold:disabled { opacity: 0.55; cursor: wait; transform: none; }
