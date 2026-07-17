@@ -62,6 +62,58 @@
     #toast.show { opacity: 1; }
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.35); border-radius: 4px; }
+
+    /* ── Light Mode Overrides for Admin / Logistics / Owner ── */
+    html.theme-light body {
+      color: #000000 !important;
+    }
+    html.theme-light .fld-label {
+      color: #334155 !important;
+    }
+    html.theme-light .adm-tab:not(.on) {
+      color: #475569 !important;
+    }
+    html.theme-light .chip:not(.on) {
+      color: #475569 !important;
+      border-color: rgba(15,23,42,0.15) !important;
+      background: rgba(15,23,42,0.04) !important;
+    }
+    html.theme-light .btn-ghost {
+      color: #334155 !important;
+      border-color: rgba(15,23,42,0.15) !important;
+      background: rgba(15,23,42,0.04) !important;
+    }
+    html.theme-light .fld {
+      color: #000000 !important;
+      background: #ffffff !important;
+      border-color: rgba(15,23,42,0.2) !important;
+    }
+    html.theme-light .fld:focus {
+      border-color: #C9A84C !important;
+    }
+    html.theme-light select.fld {
+      color: #000000 !important;
+    }
+    html.theme-light .text-white,
+    html.theme-light .font-bold.text-white {
+      color: #000000 !important;
+    }
+    /* Muted texts / metadata / details */
+    html.theme-light .flex-1 p.text-xs,
+    html.theme-light p[style*="color:rgba(200,216,240"],
+    html.theme-light p[style*="color: rgba(200, 216, 240"] {
+      color: #475569 !important;
+    }
+    /* Header nav links */
+    html.theme-light nav a[style*="color:#C8D8F0"],
+    html.theme-light nav a {
+      color: #1e293b !important;
+    }
+    /* Panels / Cards */
+    html.theme-light .panel {
+      background: #ffffff !important;
+      border-color: rgba(15,23,42,0.08) !important;
+    }
   </style>
 
   <script src="i18n.js"></script>
