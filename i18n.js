@@ -58,6 +58,7 @@
     ph_brand:      { ar: 'ابحث: Genesis، Kia، BMW…', en: 'Search: Genesis, Kia, BMW…', ko: '검색: Genesis, Kia, BMW…' },
     ph_model:      { ar: 'مثال: G80، Sorento، Carnival', en: 'e.g. G80, Sorento, Carnival', ko: '예: G80, Sorento, Carnival' },
     ph_ref:        { ar: 'أدخل الرقم المرجعي', en: 'Enter reference number', ko: '참조 번호 입력' },
+    filter_btn:    { ar: 'الفلاتر والبحث', en: 'Filters & Search', ko: '필터 및 검색' },
 
     // car.html (detail page)
     car_back:      { ar: '← رجوع', en: '← Back', ko: '← 뒤로' },
